@@ -9,8 +9,8 @@ def main():
     parser = argparse.ArgumentParser(description="bilili-dl")
     parser.add_argument("url", help="视频主页地址")
     parser.add_argument("-d", "--dir", default=r"", help="下载目录")
-    parser.add_argument("-r", "--sharpness", default="80",
-                        help="视频清晰度 80:超清，64:高清，32:标清，16:流畅")
+    parser.add_argument("-r", "--sharpness", default="112", choices=["112", "80", "64", "32", "16"],
+                        help="视频清晰度 112:1080P+, 80:1080P, 64:720P, 32:480P, 16:360P")
     parser.add_argument("-t", "--num-thread", default="10", help="最大下载线程数")
     parser.add_argument("-p", "--episodes", default="all", help="最大下载线程数")
     parser.add_argument("--playlist-type", default="dpl",
@@ -21,7 +21,8 @@ def main():
                         help="ffmpeg 路径")
 
     args = parser.parse_args()
-    sps = [80, 64, 32, 16]  # 高清 1080P  高清 720P  清晰 480P  流畅 360P
+    # 高清 1080P+ 高清 1080P  高清 720P  清晰 480P  流畅 360P
+    sps = [112, 80, 64, 32, 16]
 
     config = {
         "url": args.url,

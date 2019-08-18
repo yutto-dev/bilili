@@ -33,7 +33,7 @@ def get_info(url):
 
     for i, item in enumerate(res.json()["data"]):
         file_path = os.path.join(GLOBAL['video_dir'], repair_filename(
-                '{}.mp4'.format(item["part"])))
+            '{}.mp4'.format(item["part"])))
         if GLOBAL['playlist'] is not None:
             GLOBAL['playlist'].write_path(file_path)
         info.append({
@@ -48,14 +48,22 @@ def get_info(url):
     return avid, info
 
 
-def parse_segment_info(cid, avid):
+def parse_segment_info(item):
     """ 解析视频片段 url """
 
     segments = []
+    cid, avid = item["cid"], GLOBAL["avid"]
 
-    # 搜索支持的清晰度，并匹配最佳清晰度
-    accept_quality = spider.get(parse_api.format(avid=avid, cid=cid, sp=80)).json()[
-        'data']['accept_quality']
+    # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
+    touch_message = spider.get(parse_api.format(
+        avid=avid, cid=cid, sp=80)).json()
+    if touch_message["code"] != 0:
+        print("warn: 无法下载 {} ，原因： {}".format(
+            item["name"], touch_message["message"]))
+        item["merged"] = True
+        return
+
+    accept_quality = touch_message['data']['accept_quality']
     for sp in GLOBAL['sp_seq']:
         if sp in accept_quality:
             break
@@ -71,7 +79,7 @@ def parse_segment_info(cid, avid):
             "file_path": None,
             "downloaded": False
         })
-    return segments
+    item["segments"] = segments
 
 
 def start(url, config):
@@ -110,7 +118,7 @@ def start(url, config):
     # 解析片段信息及视频 url
     for i, item in enumerate(info):
         print("{:02}/{:02} parsing segments info...".format(i, len(info)), end="\r")
-        item["segments"] = parse_segment_info(item["cid"], avid)
+        parse_segment_info(item)
 
     # 创建下载线程池，准备下载
     pool = ThreadPool(GLOBAL["num_thread"])

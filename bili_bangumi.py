@@ -26,8 +26,8 @@ def get_title(url):
 def get_info(url):
     """ 从 url 中获取视频所需信息 """
     info = []
-    season_id = re.match(
-        r'https?://www.bilibili.com/bangumi/media/md(\d+)', url).group(1)
+    season_id = re.search(
+        r'"param":{"season_id":(\d+),"season_type":\d+}', spider.get(url).text).group(1)
 
     info_url = info_api.format(season_id=season_id)
     res = spider.get(info_url)
@@ -55,14 +55,24 @@ def get_info(url):
     return info
 
 
-def parse_segment_info(aid, cid, ep_id):
+def parse_segment_info(item):
     """ 解析视频片段 url """
 
     segments = []
+    aid, cid, ep_id = item["aid"], item["cid"], item["id"]
 
-    # 搜索支持的清晰度，并匹配最佳清晰度
-    accept_quality = spider.get(parse_api.format(avid=aid, cid=cid, ep_id=ep_id, sp=80)).json()[
-        'result']['accept_quality']
+    # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
+    touch_message = spider.get(parse_api.format(
+        avid=aid, cid=cid, ep_id=ep_id, sp=80)).json()
+    if touch_message["code"] != 0:
+        print("warn: 无法下载 {} ，原因： {}".format(
+            item["name"], touch_message["message"]))
+        item["merged"] = True
+        return
+    if touch_message["result"]["is_preview"] == 1:
+        print("warn: {} 为预览版视频".format(item["name"]))
+
+    accept_quality = touch_message['result']['accept_quality']
     for sp in GLOBAL['sp_seq']:
         if sp in accept_quality:
             break
@@ -78,7 +88,7 @@ def parse_segment_info(aid, cid, ep_id):
             "file_path": None,
             "downloaded": False
         })
-    return segments
+    item["segments"] = segments
 
 
 def start(url, config):
@@ -116,8 +126,7 @@ def start(url, config):
     # 解析片段信息及视频 url
     for i, item in enumerate(info):
         print("{:02}/{:02} parsing segments info...".format(i, len(info)), end="\r")
-        item["segments"] = parse_segment_info(
-            item["aid"], item["cid"], item["id"])
+        parse_segment_info(item)
 
     # 创建下载线程池，准备下载
     pool = ThreadPool(GLOBAL["num_thread"])
