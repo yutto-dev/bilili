@@ -2,7 +2,7 @@ import os
 import re
 import threading
 
-from downloader import download_segment, manager
+from common import download_segment, manager, parse_episodes
 from utils.common import Task, repair_filename, touch_dir
 from utils.crawler import BililiCrawler
 from utils.ffmpeg import FFmpeg
@@ -107,6 +107,11 @@ def start(url, config):
     GLOBAL["info"] = info
     if GLOBAL['playlist'] is not None:
         GLOBAL['playlist'].flush()
+
+    # 解析并过滤需要的选集
+    episodes = parse_episodes(GLOBAL["episodes"], len(info))
+    info = list(filter(lambda item: item["num"] in episodes, info))
+    GLOBAL["info"] = info
 
     # 解析片段信息及视频 url
     for i, item in enumerate(info):

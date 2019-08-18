@@ -1,7 +1,43 @@
 import os
+import re
 import time
 
 from utils.common import get_size, size_format
+
+
+def parse_episodes(episodes_str, total):
+    """ 将选集字符串转为列表 """
+
+    # 解析字符串为列表
+    print("全 {} 话".format(total))
+    if episodes_str == "all":
+        episode_list = list(range(1, total+1))
+    elif re.match(r"\d+~\d+", episodes_str):
+        start, end = episodes_str.split("~")
+        start, end = int(start), int(end)
+        assert end > start, "终点值应大于起点值"
+        episode_list = list(range(start, end+1))
+    elif re.match(r"\d+(,\d+)*", episodes_str):
+        episode_list = episodes_str.split(",")
+        episode_list = list(map(int, episode_list))
+    else:
+        episode_list = []
+
+    # 筛选满足条件的剧集
+    out_of_range = []
+    episodes = []
+    for episode in episode_list:
+        if episode in range(1, total+1):
+            if episode not in episodes:
+                episodes.append(episode)
+        else:
+            out_of_range.append(episode)
+    if out_of_range:
+        print("warn: 剧集 {} 不存在".format(",".join(list(map(str, out_of_range)))))
+
+    print("已选择第 {} 话".format(",".join(list(map(str, episodes)))))
+    assert episodes, "没有选中任何剧集"
+    return episodes
 
 
 def download_segment(segment_info, video_info, GLOBAL):
@@ -35,6 +71,9 @@ def manager(GLOBAL):
 
     size, t = get_size(GLOBAL['base_dir']), time.time()
     while True:
+        # TODO:
+        # 当前仅使用本地文件简单地统计速度与进度，会与实际值有所偏差，待改进
+
         # 下载速度
         now_size, now_t = get_size(GLOBAL['video_dir']), time.time()
         delta_size, delta_t = now_size - size, now_t - t
@@ -53,7 +92,7 @@ def manager(GLOBAL):
         len_done = 50 * num_done // total
         len_undone = 50 - len_done
         print('{}{} {:10}'.format(
-            "#" * len_done, "_" * len_undone, size_format(speed)+"/s"), end='\r')
+            "#" * len_done, "_" * len_undone, size_format(speed)+"/s").ljust(80), end='\r')
 
         # 监控是否全部完成
         if all([item["merged"] for item in GLOBAL["info"]]):
