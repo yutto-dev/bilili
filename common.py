@@ -89,9 +89,9 @@ def manager(GLOBAL):
         for item in GLOBAL["info"]:
             if item["merged"]:
                 num_done += 1
-        len_done = 50 * num_done // total
-        len_undone = 50 - len_done
-        print('{}{} {:10}'.format(
+        len_done = length * num_done // total
+        len_undone = length - len_done
+        print('{}{} {:12}'.format(
             "#" * len_done, "_" * len_undone, size_format(speed)+"/s").ljust(80), end='\r')
 
         # 监控是否全部完成
@@ -99,4 +99,7 @@ def manager(GLOBAL):
             print('\nEnjoy~')
             break
 
-        time.sleep(0.1)
+        try:
+            time.sleep(0.1)
+        except (SystemExit, KeyboardInterrupt):
+            raise

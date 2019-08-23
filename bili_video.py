@@ -122,6 +122,7 @@ def start(url, config):
 
     # 创建下载线程池，准备下载
     pool = ThreadPool(GLOBAL["num_thread"])
+    GLOBAL["pool"] = pool
 
     # 为线程池添加下载任务
     for item in info:
@@ -133,13 +134,5 @@ def start(url, config):
     # 启动下载线程池
     pool.run()
 
-    # 创建并启动监控线程
-    manager_thread = threading.Thread(target=manager, args=(GLOBAL, ))
-    manager_thread.setDaemon(True)
-    manager_thread.start()
-
-    # 等待下载全部完成
-    pool.join()
-
-    # 等待合并全部完成
-    manager_thread.join()
+    # 主线程监控
+    manager(GLOBAL)

@@ -12,9 +12,11 @@ class ThreadPool():
         self.threads = []
 
     def add_task(self, task):
+        """ 添加任务　"""
         self._taskQ.put(task)
 
     def _run_task(self):
+        """ 启动任务线程　"""
         while True:
             if not self._taskQ.empty():
                 task = self._taskQ.get(block = True, timeout = 1)
@@ -24,13 +26,13 @@ class ThreadPool():
                 break
 
     def run(self):
-        for i in range(self.num):
+        """ 启动线程池　"""
+        for _ in range(self.num):
             th = threading.Thread(target=self._run_task)
             th.setDaemon(True)
             self.threads.append(th)
             th.start()
 
     def join(self):
-        #for th in self.threads:
-        #    th.join()
+        """ 等待所有任务结束　"""
         self._taskQ.join()
