@@ -1,18 +1,22 @@
 import os
 import re
 import threading
+import json
 
-from common import download_segment, manager, parse_episodes
-from utils.common import Task, repair_filename, touch_dir
+from common import parse_episodes
+from utils.common import repair_filename, touch_dir
 from utils.crawler import BililiCrawler
-from utils.ffmpeg import FFmpeg
 from utils.playlist import Dpl, M3u
-from utils.thread import ThreadPool
+from utils.subtitle import Subtitle
+
 
 info_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&jsonp=jsonp"
 parse_api = "https://api.bilibili.com/x/player/playurl?avid={avid}&cid={cid}&qn={sp}&type=&otype=json"
+subtitle_api = "https://api.bilibili.com/x/player.so?id=cid:{cid}&aid={avid}"
 spider = BililiCrawler()
-GLOBAL = dict()
+CONFIG = dict()
+exports = dict()
+__all__ = ["exports"]
 
 
 def get_title(url):
@@ -32,12 +36,12 @@ def get_info(url):
     res = spider.get(info_url)
 
     for i, item in enumerate(res.json()["data"]):
-        file_path = os.path.join(GLOBAL['video_dir'], repair_filename(
+        file_path = os.path.join(CONFIG['video_dir'], repair_filename(
             '{}.mp4'.format(item["part"])))
-        if GLOBAL['playlist'] is not None:
-            GLOBAL['playlist'].write_path(file_path)
+        if CONFIG['playlist'] is not None:
+            CONFIG['playlist'].write_path(file_path)
         info.append({
-            "num": i+1,
+            "id": i+1,
             "cid": item["cid"],
             "name": item["part"],
             "file_path": file_path,
@@ -52,7 +56,17 @@ def parse_segment_info(item):
     """ 解析视频片段 url """
 
     segments = []
-    cid, avid = item["cid"], GLOBAL["avid"]
+    cid, avid = item["cid"], CONFIG["avid"]
+
+    # 检查是否有字幕并下载
+    subtitle_url = subtitle_api.format(avid=avid, cid=cid)
+    res = spider.get(subtitle_url)
+    subtitles_info = json.loads(re.search(r"<subtitle>(.+)</subtitle>", res.text).group(1))
+    for sub_info in subtitles_info["subtitles"]:
+        sub_path = os.path.splitext(item["file_path"])[0] + sub_info["lan_doc"] + ".srt"
+        subtitle = Subtitle(sub_path)
+        for sub_line in spider.get("https:"+sub_info["subtitle_url"]).json()["body"]:
+            subtitle.write_line(sub_line["content"], sub_line["from"], sub_line["to"])
 
     # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
     touch_message = spider.get(parse_api.format(
@@ -64,7 +78,7 @@ def parse_segment_info(item):
         return
 
     accept_quality = touch_message['data']['accept_quality']
-    for sp in GLOBAL['sp_seq']:
+    for sp in CONFIG['sp_seq']:
         if sp in accept_quality:
             break
 
@@ -72,67 +86,58 @@ def parse_segment_info(item):
     res = spider.get(parse_url)
 
     for i, segment in enumerate(res.json()['data']['durl']):
+        id = i + 1
+        file_path = os.path.join(CONFIG['video_dir'], repair_filename(
+                                '{}_{:02d}.flv'.format(item["name"], id)))
         segments.append({
-            "num": i+1,
+            "id": id,
             "url": segment["url"],
             "sp": sp,
-            "file_path": None,
+            "file_path": file_path,
             "downloaded": False
         })
     item["segments"] = segments
 
 
-def start(url, config):
+def parse(url, config):
     # 获取标题
-    GLOBAL.update(config)
-    GLOBAL["spider"] = spider
-    GLOBAL["ffmpeg"] = FFmpeg(GLOBAL["ffmpeg_path"])
+    CONFIG.update(config)
     title = get_title(url)
     print(title)
 
     # 创建所需目录结构
-    GLOBAL["base_dir"] = touch_dir(os.path.join(
-        GLOBAL['dir'], title + " - bilibili"))
-    GLOBAL["video_dir"] = touch_dir(os.path.join(GLOBAL['base_dir'], "Videos"))
-    if GLOBAL["playlist_type"] == "dpl":
-        GLOBAL['playlist'] = Dpl(os.path.join(
-            GLOBAL['base_dir'], 'Playlist.dpl'), path_type=GLOBAL["playlist_path_type"])
-    elif GLOBAL["playlist_type"] == "m3u":
-        GLOBAL['playlist'] = M3u(os.path.join(
-            GLOBAL['base_dir'], 'Playlist.m3u'), path_type=GLOBAL["playlist_path_type"])
+    CONFIG["base_dir"] = touch_dir(repair_filename(os.path.join(
+        CONFIG['dir'], title + " - bilibili")))
+    CONFIG["video_dir"] = touch_dir(os.path.join(CONFIG['base_dir'], "Videos"))
+    if CONFIG["playlist_type"] == "dpl":
+        CONFIG['playlist'] = Dpl(os.path.join(
+            CONFIG['base_dir'], 'Playlist.dpl'), path_type=CONFIG["playlist_path_type"])
+    elif CONFIG["playlist_type"] == "m3u":
+        CONFIG['playlist'] = M3u(os.path.join(
+            CONFIG['base_dir'], 'Playlist.m3u'), path_type=CONFIG["playlist_path_type"])
     else:
-        GLOBAL['playlist'] = None
+        CONFIG['playlist'] = None
 
     # 获取需要的信息
     avid, info = get_info(url)
-    GLOBAL['avid'] = avid
-    GLOBAL["info"] = info
-    if GLOBAL['playlist'] is not None:
-        GLOBAL['playlist'].flush()
+    CONFIG['avid'] = avid
+    CONFIG["info"] = info
+    if CONFIG['playlist'] is not None:
+        CONFIG['playlist'].flush()
 
     # 解析并过滤需要的选集
-    episodes = parse_episodes(GLOBAL["episodes"], len(info))
-    info = list(filter(lambda item: item["num"] in episodes, info))
-    GLOBAL["info"] = info
+    episodes = parse_episodes(CONFIG["episodes"], len(info))
+    info = list(filter(lambda item: item["id"] in episodes, info))
+    CONFIG["info"] = info
 
     # 解析片段信息及视频 url
     for i, item in enumerate(info):
         print("{:02}/{:02} parsing segments info...".format(i, len(info)), end="\r")
         parse_segment_info(item)
 
-    # 创建下载线程池，准备下载
-    pool = ThreadPool(GLOBAL["num_thread"])
-    GLOBAL["pool"] = pool
-
-    # 为线程池添加下载任务
-    for item in info:
-        for segment in item["segments"]:
-            segment["file_path"] = os.path.join(GLOBAL['video_dir'], repair_filename(
-                '{}_{:02d}.flv'.format(item["name"], segment["num"])))
-            pool.add_task(Task(download_segment, (segment, item, GLOBAL)))
-
-    # 启动下载线程池
-    pool.run()
-
-    # 主线程监控
-    manager(GLOBAL)
+    # 导出下载所需数据
+    exports.update({
+        "info": info,
+        "spider": spider,
+        "video_dir": CONFIG["video_dir"]
+    })

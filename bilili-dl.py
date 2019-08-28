@@ -2,6 +2,11 @@ import re
 import sys
 import argparse
 
+from common import download_segment, manager
+from utils.common import Task
+from utils.ffmpeg import FFmpeg
+from utils.thread import ThreadPool
+
 
 def main():
     """ 解析命令行参数并调用相关模块进行下载 """
@@ -11,7 +16,8 @@ def main():
     parser.add_argument("-d", "--dir", default=r"", help="下载目录")
     parser.add_argument("-r", "--sharpness", default="112", choices=["112", "80", "64", "32", "16"],
                         help="视频清晰度 112:1080P+, 80:1080P, 64:720P, 32:480P, 16:360P")
-    parser.add_argument("-t", "--num-thread", default="10", help="最大下载线程数")
+    parser.add_argument("-t", "--num-thread", default=10,
+                        type=int, help="最大下载线程数")
     parser.add_argument("-p", "--episodes", default="all", help="最大下载线程数")
     parser.add_argument("--playlist-type", default="dpl",
                         choices=["dpl", "m3u", "no"], help="播放列表类型，支持 dpl 和 m3u，输入 no 不生成播放列表")
@@ -28,22 +34,37 @@ def main():
         "url": args.url,
         "dir": args.dir,
         "sp_seq": sps[sps.index(int(args.sharpness)):] + list(reversed(sps[:sps.index(int(args.sharpness))])),
-        "num_thread": int(args.num_thread),
         "episodes": args.episodes,
         "playlist_type": args.playlist_type,
         "playlist_path_type": args.path_type.upper(),
-        "ffmpeg_path": args.ffmpeg
     }
 
     if re.match(r"https?://www.bilibili.com/video/av(\d+)", args.url):
-        import bili_video
-        bili_video.start(args.url, config)
+        import bili_video as bilili
     elif re.match(r"https?://www.bilibili.com/bangumi/media/md(\d+)", args.url):
-        import bili_bangumi
-        bili_bangumi.start(args.url, config)
+        import bili_bangumi as bilili
     else:
         print("视频地址有误！")
         sys.exit(1)
+
+    # 解析资源
+    bilili.parse(args.url, config)
+
+    # 创建下载线程池，准备下载
+    pool = ThreadPool(args.num_thread)
+    ffmpeg = FFmpeg(args.ffmpeg)
+
+    # 为线程池添加下载任务
+    for item in bilili.exports["info"]:
+        for segment in item["segments"]:
+            pool.add_task(
+                Task(download_segment, (segment, item, bilili.exports["spider"], ffmpeg)))
+
+    # 启动下载线程池
+    pool.run()
+
+    # 主线程监控
+    manager(bilili.exports["info"], bilili.exports["video_dir"])
 
 
 if __name__ == "__main__":

@@ -9,11 +9,11 @@ ref : https://github.com/soimort/you-get
 
 class FFmpeg():
     def __init__(self, ffmpeg_path):
-        if subprocess.run(["ffmpeg"], shell=True, stdout=subprocess.PIPE,
+        if subprocess.run(["ffmpeg"], stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE).returncode == 1:
             ffmpeg_path = "ffmpeg"
         else:
-            assert subprocess.run([ffmpeg_path], shell=True, stdout=subprocess.PIPE,
+            assert subprocess.run([ffmpeg_path], stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE).returncode == 1, "请配置正确的 FFmpeg 路径"
         self.path = os.path.normpath(ffmpeg_path)
         tmp_dir = os.path.join(os.path.dirname(ffmpeg_path), "tmp")
@@ -25,7 +25,7 @@ class FFmpeg():
         """ 调用 ffmpeg """
         cmd = [self.path]
         cmd.extend(params)
-        return subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def convert(self, input_path, output_path):
         """ 视频格式转换 """

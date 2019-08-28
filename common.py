@@ -40,15 +40,13 @@ def parse_episodes(episodes_str, total):
     return episodes
 
 
-def download_segment(segment_info, video_info, GLOBAL):
+def download_segment(segment_info, video_info, spider, ffmpeg):
     """ 下载视频片段，并检查该视频是否所有片段下载完成
     最后一个下载完成的片段对视频进行合并
     """
-    spider = GLOBAL["spider"]
-    ffmpeg = GLOBAL["ffmpeg"]
 
     print("-----> {} sp:{} {}/{}".format(
-        video_info["name"], segment_info["sp"], segment_info["num"], len(video_info["segments"])).ljust(80))
+        video_info["name"], segment_info["sp"], segment_info["id"], len(video_info["segments"])).ljust(80))
 
     # 下载片段
     spider.download_bin(segment_info["url"], segment_info["file_path"])
@@ -66,16 +64,16 @@ def download_segment(segment_info, video_info, GLOBAL):
             os.remove(segment["file_path"])
 
 
-def manager(GLOBAL):
+def manager(info, video_dir):
     """ 监控线程 """
 
-    size, t = get_size(GLOBAL['base_dir']), time.time()
+    size, t = get_size(video_dir), time.time()
     while True:
         # TODO:
         # 当前仅使用本地文件简单地统计速度与进度，会与实际值有所偏差，待改进
 
         # 下载速度
-        now_size, now_t = get_size(GLOBAL['video_dir']), time.time()
+        now_size, now_t = get_size(video_dir), time.time()
         delta_size, delta_t = now_size - size, now_t - t
         size, t = now_size, now_t
         if delta_t < 1e-6:
@@ -84,9 +82,9 @@ def manager(GLOBAL):
 
         # 下载进度
         num_done = 0
-        total = len(GLOBAL["info"])
+        total = len(info)
         length = 50
-        for item in GLOBAL["info"]:
+        for item in info:
             if item["merged"]:
                 num_done += 1
         len_done = length * num_done // total
@@ -95,7 +93,7 @@ def manager(GLOBAL):
             "#" * len_done, "_" * len_undone, size_format(speed)+"/s").ljust(80), end='\r')
 
         # 监控是否全部完成
-        if all([item["merged"] for item in GLOBAL["info"]]):
+        if all([item["merged"] for item in info]):
             print('\nEnjoy~')
             break
 
