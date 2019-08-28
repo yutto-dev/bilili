@@ -9,6 +9,7 @@ from utils.playlist import Dpl, M3u
 
 info_api = "https://api.bilibili.com/pgc/web/season/section?season_id={season_id}"
 parse_api = "https://api.bilibili.com/pgc/player/web/playurl?avid={avid}&cid={cid}&qn={sp}&ep_id={ep_id}"
+danmaku_api = "http://comment.bilibili.com/{cid}.xml"
 spider = BililiCrawler()
 CONFIG = dict()
 exports = dict()
@@ -60,6 +61,14 @@ def parse_segment_info(item):
 
     segments = []
     aid, cid, ep_id = item["aid"], item["cid"], item["epid"]
+
+    # 下载弹幕
+    danmaku_url = danmaku_api.format(cid=cid)
+    res = spider.get(danmaku_url)
+    res.encoding = "utf-8"
+    danmaku_path = os.path.splitext(item["file_path"])[0] + ".xml"
+    with open(danmaku_path, "w", encoding="utf-8") as f:
+        f.write(res.text)
 
     # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
     touch_message = spider.get(parse_api.format(

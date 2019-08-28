@@ -27,8 +27,8 @@ def main():
                         help="ffmpeg 路径")
 
     args = parser.parse_args()
-    # 高清 1080P+ 高清 1080P  高清 720P  清晰 480P  流畅 360P
-    sps = [112, 80, 64, 32, 16]
+    # 高清 1080P60 高清 1080P+ 高清 1080P  高清 720P60 高清 720P  清晰 480P  流畅 360P
+    sps = [116, 112, 80, 74, 64, 32, 16]
 
     config = {
         "url": args.url,

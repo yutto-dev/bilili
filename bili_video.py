@@ -13,6 +13,7 @@ from utils.subtitle import Subtitle
 info_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&jsonp=jsonp"
 parse_api = "https://api.bilibili.com/x/player/playurl?avid={avid}&cid={cid}&qn={sp}&type=&otype=json"
 subtitle_api = "https://api.bilibili.com/x/player.so?id=cid:{cid}&aid={avid}"
+danmaku_api = "http://comment.bilibili.com/{cid}.xml"
 spider = BililiCrawler()
 CONFIG = dict()
 exports = dict()
@@ -67,6 +68,14 @@ def parse_segment_info(item):
         subtitle = Subtitle(sub_path)
         for sub_line in spider.get("https:"+sub_info["subtitle_url"]).json()["body"]:
             subtitle.write_line(sub_line["content"], sub_line["from"], sub_line["to"])
+
+    # 下载弹幕
+    danmaku_url = danmaku_api.format(cid=cid)
+    res = spider.get(danmaku_url)
+    res.encoding = "utf-8"
+    danmaku_path = os.path.splitext(item["file_path"])[0] + ".xml"
+    with open(danmaku_path, "w", encoding="utf-8") as f:
+        f.write(res.text)
 
     # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
     touch_message = spider.get(parse_api.format(
