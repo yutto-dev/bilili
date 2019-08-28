@@ -49,6 +49,16 @@ python bilili-dl.py <url>
 -  `--playlist-type` 指定播放列表类型，支持 dpl 和 m3u ，默认为 dpl，设置为 no 即不生成播放列表
 -  `--path-type` 指定播放列表路径的类型（rp：相对路径，ap：绝对路径），默认为相对路径
 -  `--ffmpeg` 指定 `ffmpeg` 存放路径，默认为 `ffmpeg/ffmpeg.exe`
+-  `--override` 强制覆盖已下载视频
+- `--ass` 自动将 XML 弹幕转换为 ASS 弹幕
+
+## Kanck
+
+默认会下载 XML 格式的弹幕，如果想使用 ASS 格式的弹幕（大多数播放器都支持，可以自动加载），可以加参数 `--ass` 自动转换，或者手动在[us-danmaku](https://tiansh.github.io/us-danmaku/bilibili/)转换
+
+> 程序内自动转换依赖 [danmaku2ass](https://github.com/m13253/danmaku2ass) ，但是并没有将它存放在我的代码里，而是根据需要动态从 github 上下载并加载的
+
+## Blog
 
 具体实现见[使用 Python 爬取 B 站视频](https://www.sigure.xyz/Posts/17_bilili_dl.html)
 

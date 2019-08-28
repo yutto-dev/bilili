@@ -128,10 +128,21 @@ def parse(url, config):
     if CONFIG['playlist'] is not None:
         CONFIG['playlist'].flush()
 
-    # 解析并过滤需要的选集
+    # 解析并过滤不需要的选集
     episodes = parse_episodes(CONFIG["episodes"], len(info))
     info = list(filter(lambda item: item["id"] in episodes, info))
     CONFIG["info"] = info
+
+    # 过滤已下载的剧集
+    if not CONFIG["override"]:
+        dl_info = []
+        for item in info:
+            if not os.path.exists(item["file_path"]):
+                dl_info.append(item)
+            else:
+                print("{} already exists".format(os.path.split(item["file_path"])[-1]))
+        info = dl_info
+        CONFIG["info"] = info
 
     # 解析片段信息及视频 url
     for i, item in enumerate(info):

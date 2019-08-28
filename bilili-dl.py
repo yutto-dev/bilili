@@ -2,7 +2,7 @@ import re
 import sys
 import argparse
 
-from common import download_segment, manager
+from common import download_segment, manager, convert_danmaku
 from utils.common import Task
 from utils.ffmpeg import FFmpeg
 from utils.thread import ThreadPool
@@ -18,7 +18,9 @@ def main():
                         help="视频清晰度 112:1080P+, 80:1080P, 64:720P, 32:480P, 16:360P")
     parser.add_argument("-t", "--num-thread", default=10,
                         type=int, help="最大下载线程数")
-    parser.add_argument("-p", "--episodes", default="all", help="最大下载线程数")
+    parser.add_argument("-p", "--episodes", default="all", help="选集")
+    parser.add_argument("-w", "--override", action="store_true", help="强制覆盖已下载视频")
+    parser.add_argument("--ass", action="store_true", help="自动将 xml 弹幕转换为 ass 弹幕")
     parser.add_argument("--playlist-type", default="dpl",
                         choices=["dpl", "m3u", "no"], help="播放列表类型，支持 dpl 和 m3u，输入 no 不生成播放列表")
     parser.add_argument("--path-type", default="rp",
@@ -37,6 +39,7 @@ def main():
         "episodes": args.episodes,
         "playlist_type": args.playlist_type,
         "playlist_path_type": args.path_type.upper(),
+        "override": args.override,
     }
 
     if re.match(r"https?://www.bilibili.com/video/av(\d+)", args.url):
@@ -50,21 +53,31 @@ def main():
     # 解析资源
     bilili.parse(args.url, config)
 
-    # 创建下载线程池，准备下载
-    pool = ThreadPool(args.num_thread)
-    ffmpeg = FFmpeg(args.ffmpeg)
+    if bilili.exports["info"]:
+        # 创建下载线程池，准备下载
+        pool = ThreadPool(args.num_thread)
+        ffmpeg = FFmpeg(args.ffmpeg)
 
-    # 为线程池添加下载任务
-    for item in bilili.exports["info"]:
-        for segment in item["segments"]:
-            pool.add_task(
-                Task(download_segment, (segment, item, bilili.exports["spider"], ffmpeg)))
+        # 为线程池添加下载任务
+        for item in bilili.exports["info"]:
+            for segment in item["segments"]:
+                pool.add_task(
+                    Task(download_segment, (segment, item, bilili.exports["spider"], ffmpeg)))
 
-    # 启动下载线程池
-    pool.run()
+        # 启动下载线程池
+        pool.run()
 
-    # 主线程监控
-    manager(bilili.exports["info"], bilili.exports["video_dir"])
+        # 主线程监控
+        manager(bilili.exports["info"], bilili.exports["video_dir"])
+    else:
+        print("没有需要下载的视频！")
+
+    # 弹幕转换为 ass 格式
+    if args.ass:
+        convert_danmaku([
+            item["file_path"] for item in bilili.exports["info"]
+        ])
+        print("转换完成")
 
 
 if __name__ == "__main__":

@@ -59,7 +59,7 @@ def touch_dir(path):
 def touch_file(path):
     """ 若文件不存在则新建，并返回标准路径 """
     if not os.path.exists(path):
-        os.open(path, 'w').close()
+        open(path, 'w').close()
     return os.path.normpath(path)
 
 
