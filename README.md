@@ -51,12 +51,21 @@ python bilili-dl.py <url>
 -  `--ffmpeg` 指定 `ffmpeg` 存放路径，默认为 `ffmpeg/ffmpeg.exe`
 -  `--override` 强制覆盖已下载视频
 - `--ass` 自动将 XML 弹幕转换为 ASS 弹幕
+- `--no-block` 不使用分段下载器
+- `--segment-size` 指定分段下载器分块的大小
+- `-c`/`--sess-data` 传入 cookies 中的 SESSDATA
 
 ## Kanck
+
+### Danmaku
 
 默认会下载 XML 格式的弹幕，如果想使用 ASS 格式的弹幕（大多数播放器都支持，可以自动加载），可以加参数 `--ass` 自动转换，或者手动在[us-danmaku](https://tiansh.github.io/us-danmaku/bilibili/)转换
 
 > 程序内自动转换依赖 [danmaku2ass](https://github.com/m13253/danmaku2ass) ，但是并没有将它存放在我的代码里，而是根据需要动态从 github 上下载并加载的
+
+### Segment-dl
+
+使用分段下载器能够获得更高的速度，在 B 站默认分段数不多的情况下，每个线程下载速度非常慢，大概也就 300K/s ，分段下载器会在每个分段的基础上继续分块，充分利用多线程的优势进行下载，极大提高下载速度，但由于优化不足，可能会出现一些问题（比如因为某一个块连接出现问题而导致整个片段迟迟不合并，不过有着断点续传的机制，重新运行一次就可以只下载缺少的块了），如果觉得分段下载不可靠可以使用 `--no-block` 关闭该功能
 
 ## Blog
 

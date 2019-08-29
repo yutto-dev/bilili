@@ -2,13 +2,15 @@ import os
 import re
 import threading
 
-from common import parse_episodes
+from common import parse_episodes, BililiVideo, BililiVideoSegment, DONE
 from utils.common import repair_filename, touch_dir
 from utils.crawler import BililiCrawler
 from utils.playlist import Dpl, M3u
+from utils.subtitle import Subtitle
+
 
 info_api = "https://api.bilibili.com/pgc/web/season/section?season_id={season_id}"
-parse_api = "https://api.bilibili.com/pgc/player/web/playurl?avid={avid}&cid={cid}&qn={sp}&ep_id={ep_id}"
+parse_api = "https://api.bilibili.com/pgc/player/web/playurl?avid={avid}&cid={cid}&qn={qn}&ep_id={ep_id}"
 danmaku_api = "http://comment.bilibili.com/{cid}.xml"
 spider = BililiCrawler()
 CONFIG = dict()
@@ -24,9 +26,9 @@ def get_title(url):
     return title
 
 
-def get_info(url):
-    """ 从 url 中获取视频所需信息 """
-    info = []
+def get_videos(url):
+    """ 从 url 中获取视频列表 """
+    videos = []
     season_id = re.search(
         r'"param":{"season_id":(\d+),"season_type":\d+}', spider.get(url).text).group(1)
 
@@ -42,70 +44,73 @@ def get_info(url):
             '{}.mp4'.format(name)))
         if CONFIG['playlist'] is not None:
             CONFIG['playlist'].write_path(file_path)
-        info.append({
-            "id": i+1,
-            "aid": item["aid"],
-            "cid": item["cid"],
-            "epid": item["id"],
-            "name": name,
-            "file_path": file_path,
-            "merged": False,
-            "segments": []
-        })
+        videos.append(BililiVideo(
+            id = i+1,
+            name = name,
+            path = file_path,
+            meta = {
+                "aid": item["aid"],
+                "cid": item["cid"],
+                "epid": item["id"]
+            },
+            segment_dl = CONFIG["segment_dl"],
+            segment_size = CONFIG["segment_size"],
+            override = CONFIG["override"],
+            spider = spider
+        ))
+    return videos
 
-    return info
 
-
-def parse_segment_info(item):
+def parse_segment_info(video):
     """ 解析视频片段 url """
 
     segments = []
-    aid, cid, ep_id = item["aid"], item["cid"], item["epid"]
+    aid, cid, ep_id = video.meta["aid"], video.meta["cid"], video.meta["epid"]
 
     # 下载弹幕
     danmaku_url = danmaku_api.format(cid=cid)
     res = spider.get(danmaku_url)
     res.encoding = "utf-8"
-    danmaku_path = os.path.splitext(item["file_path"])[0] + ".xml"
+    danmaku_path = os.path.splitext(video.path)[0] + ".xml"
     with open(danmaku_path, "w", encoding="utf-8") as f:
         f.write(res.text)
 
     # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
     touch_message = spider.get(parse_api.format(
-        avid=aid, cid=cid, ep_id=ep_id, sp=80)).json()
+        avid=aid, cid=cid, ep_id=ep_id, qn=80)).json()
     if touch_message["code"] != 0:
         print("warn: 无法下载 {} ，原因： {}".format(
-            item["name"], touch_message["message"]))
-        item["merged"] = True
+            video.name, touch_message["message"]))
+        video.switch_status(DONE)
         return
     if touch_message["result"]["is_preview"] == 1:
-        print("warn: {} 为预览版视频".format(item["name"]))
+        print("warn: {} 为预览版视频".format(video.name))
 
     accept_quality = touch_message['result']['accept_quality']
-    for sp in CONFIG['sp_seq']:
-        if sp in accept_quality:
+    for qn in CONFIG['qn_seq']:
+        if qn in accept_quality:
             break
 
-    parse_url = parse_api.format(avid=aid, cid=cid, ep_id=ep_id, sp=sp)
+    parse_url = parse_api.format(avid=aid, cid=cid, ep_id=ep_id, qn=qn)
     res = spider.get(parse_url)
 
     for i, segment in enumerate(res.json()['result']['durl']):
         id = i + 1
         file_path = os.path.join(CONFIG['video_dir'], repair_filename(
-                                '{}_{:02d}.flv'.format(item["name"], id)))
-        segments.append({
-            "id": id,
-            "url": segment["url"],
-            "sp": sp,
-            "file_path": file_path,
-            "downloaded": False
-        })
-    item["segments"] = segments
+            '{}_{:02d}.flv'.format(video.name, id)))
+        video.segments.append(BililiVideoSegment(
+            id = id,
+            path = file_path,
+            url = segment["url"],
+            qn = qn,
+            video = video
+        ))
 
 
 def parse(url, config):
     # 获取标题
     CONFIG.update(config)
+    spider.set_cookies(config["cookies"])
     title = get_title(url)
     print(title)
 
@@ -123,35 +128,23 @@ def parse(url, config):
         CONFIG['playlist'] = None
 
     # 获取需要的信息
-    info = get_info(url)
-    CONFIG["info"] = info
+    videos = get_videos(url)
+    CONFIG["videos"] = videos
     if CONFIG['playlist'] is not None:
         CONFIG['playlist'].flush()
 
     # 解析并过滤不需要的选集
-    episodes = parse_episodes(CONFIG["episodes"], len(info))
-    info = list(filter(lambda item: item["id"] in episodes, info))
-    CONFIG["info"] = info
-
-    # 过滤已下载的剧集
-    if not CONFIG["override"]:
-        dl_info = []
-        for item in info:
-            if not os.path.exists(item["file_path"]):
-                dl_info.append(item)
-            else:
-                print("{} already exists".format(os.path.split(item["file_path"])[-1]))
-        info = dl_info
-        CONFIG["info"] = info
+    episodes = parse_episodes(CONFIG["episodes"], len(videos))
+    videos = list(filter(lambda video: video.id in episodes, videos))
+    CONFIG["videos"] = videos
 
     # 解析片段信息及视频 url
-    for i, item in enumerate(info):
-        print("{:02}/{:02} parsing segments info...".format(i, len(info)), end="\r")
-        parse_segment_info(item)
+    for i, video in enumerate(videos):
+        print("{:02}/{:02} parsing segments info...".format(i, len(videos)), end="\r")
+        parse_segment_info(video)
 
     # 导出下载所需数据
     exports.update({
-        "info": info,
-        "spider": spider,
+        "videos": videos,
         "video_dir": CONFIG["video_dir"]
     })

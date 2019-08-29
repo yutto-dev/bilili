@@ -2,7 +2,7 @@ import re
 import sys
 import argparse
 
-from common import download_segment, manager, convert_danmaku
+from common import convert_danmaku, BiliFileManager
 from utils.common import Task
 from utils.ffmpeg import FFmpeg
 from utils.thread import ThreadPool
@@ -16,30 +16,42 @@ def main():
     parser.add_argument("-d", "--dir", default=r"", help="下载目录")
     parser.add_argument("-r", "--sharpness", default="112", choices=["112", "80", "64", "32", "16"],
                         help="视频清晰度 112:1080P+, 80:1080P, 64:720P, 32:480P, 16:360P")
-    parser.add_argument("-t", "--num-thread", default=10,
+    parser.add_argument("-t", "--num-thread", default=30,
                         type=int, help="最大下载线程数")
     parser.add_argument("-p", "--episodes", default="all", help="选集")
-    parser.add_argument("-w", "--override", action="store_true", help="强制覆盖已下载视频")
-    parser.add_argument("--ass", action="store_true", help="自动将 xml 弹幕转换为 ass 弹幕")
+    parser.add_argument("-w", "--override",
+                        action="store_true", help="强制覆盖已下载视频")
+    parser.add_argument("-c", "--sess-data", default=None, help="输入 cookies")
+    parser.add_argument("--ass", action="store_true",
+                        help="自动将 xml 弹幕转换为 ass 弹幕")
+    parser.add_argument("--no-block", action="store_false", help="不使用分段下载")
     parser.add_argument("--playlist-type", default="dpl",
                         choices=["dpl", "m3u", "no"], help="播放列表类型，支持 dpl 和 m3u，输入 no 不生成播放列表")
     parser.add_argument("--path-type", default="rp",
                         help="播放列表路径类型（rp：相对路径，ap：绝对路径）")
+    parser.add_argument("--segment-size", default=4*1024*1024, type=int,
+                        help="分段下载器的块大小，默认为 3MB")
     parser.add_argument("--ffmpeg", default="ffmpeg/ffmpeg.exe",
                         help="ffmpeg 路径")
 
     args = parser.parse_args()
-    # 高清 1080P60 高清 1080P+ 高清 1080P  高清 720P60 高清 720P  清晰 480P  流畅 360P
-    sps = [116, 112, 80, 74, 64, 32, 16]
+    # 超清 4K 高清 1080P60 高清 1080P+ 高清 1080P  高清 720P60 高清 720P  清晰 480P  流畅 360P
+    qns = [120, 116, 112, 80, 74, 64, 32, 16]
+    cookies = {
+        "SESSDATA": args.sess_data
+    }
 
     config = {
         "url": args.url,
         "dir": args.dir,
-        "sp_seq": sps[sps.index(int(args.sharpness)):] + list(reversed(sps[:sps.index(int(args.sharpness))])),
+        "qn_seq": qns[qns.index(int(args.sharpness)):] + list(reversed(qns[:qns.index(int(args.sharpness))])),
         "episodes": args.episodes,
         "playlist_type": args.playlist_type,
         "playlist_path_type": args.path_type.upper(),
         "override": args.override,
+        "segment_size": args.segment_size,
+        "cookies": cookies,
+        "segment_dl": args.no_block,
     }
 
     if re.match(r"https?://www.bilibili.com/video/av(\d+)", args.url):
@@ -53,29 +65,23 @@ def main():
     # 解析资源
     bilili.parse(args.url, config)
 
-    if bilili.exports["info"]:
-        # 创建下载线程池，准备下载
-        pool = ThreadPool(args.num_thread)
+    if bilili.exports["videos"]:
+        # 创建文件管理器，并分发任务
         ffmpeg = FFmpeg(args.ffmpeg)
-
-        # 为线程池添加下载任务
-        for item in bilili.exports["info"]:
-            for segment in item["segments"]:
-                pool.add_task(
-                    Task(download_segment, (segment, item, bilili.exports["spider"], ffmpeg)))
-
-        # 启动下载线程池
-        pool.run()
-
-        # 主线程监控
-        manager(bilili.exports["info"], bilili.exports["video_dir"])
+        manager = BiliFileManager(
+            args.num_thread, 1024*1024, ffmpeg, args.override)
+        # 启动并监控任务
+        manager.dispense_resources(bilili.exports["videos"])
+        manager.run()
+        manager.monitoring()
+        print("已全部下载完成！")
     else:
         print("没有需要下载的视频！")
 
     # 弹幕转换为 ass 格式
     if args.ass:
         convert_danmaku([
-            item["file_path"] for item in bilili.exports["info"]
+            video.path for video in bilili.exports["videos"]
         ])
         print("转换完成")
 
