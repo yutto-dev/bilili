@@ -84,7 +84,7 @@ class BililiVideo():
     """
 
     def __init__(self, id, name, path, meta, segment_dl=True,
-                segment_size=10*1024*1024, override=False, spider=BililiCrawler()):
+                segment_size=10*1024*1024, overwrite=False, spider=BililiCrawler()):
 
         self.id = id
         self.name = name
@@ -92,7 +92,7 @@ class BililiVideo():
         self.meta = meta
         self.segment_dl = segment_dl
         self.segment_size = segment_size
-        self.override = override
+        self.overwrite = overwrite
         self.spider = spider
         self.segments = []
         self.qn = 0
@@ -138,7 +138,7 @@ class BililiVideoSegment(NetworkFile):
     def __init__(self, id, path, url, qn, video):
 
         self.video = video
-        super().__init__(url, path, video.segment_size, video.override, video.spider)
+        super().__init__(url, path, video.segment_size, video.overwrite, video.spider)
         self.id = id
         self.qn = qn
         self.video.qn = qn
@@ -198,16 +198,16 @@ class BiliFileManager():
     属性
         files: 待管理文件 List
         pool: 线程池
-        override: 是否强制覆盖，默认不强制覆盖
+        overwrite: 是否强制覆盖，默认不强制覆盖
         spider: 爬虫会话，requests.Session() 的封装
         segment_size: 片段大小，单位为字节
     """
 
-    def __init__(self, num_thread, segment_size, ffmpeg, override=False):
+    def __init__(self, num_thread, segment_size, ffmpeg, overwrite=False):
         self.ffmpeg = ffmpeg
         self.videos = []
         self.pool = ThreadPool(num_thread)
-        self.override = override
+        self.overwrite = overwrite
         self.segment_size = segment_size
 
     def dispense_resources(self, resources, log=True):
@@ -215,13 +215,13 @@ class BiliFileManager():
 
         for i, video in enumerate(resources):
             print("dispenser resources {}/{}".format(i, len(resources)), end="\r")
-            if os.path.exists(video.path) and not self.override:
+            if os.path.exists(video.path) and not self.overwrite:
                 sign = "!"
             else:
                 sign = ">"
                 self.videos.append(video)
                 for segment in video.segments:
-                    if os.path.exists(segment.path) and not self.override:
+                    if os.path.exists(segment.path) and not self.overwrite:
                         self.segment.switch_status(DONE)
                         continue
                     for block in segment.segments:

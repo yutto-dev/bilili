@@ -31,7 +31,10 @@ def get_title(url):
 def get_videos(url):
     """ 从 url 中获取视频列表 """
     videos = []
-    avid = re.match(r'https?://www.bilibili.com/video/av(\d+)', url).group(1)
+    if re.match(r"https?://www.bilibili.com/video/av(\d+)", url):
+        avid = re.match(r'https?://www.bilibili.com/video/av(\d+)', url).group(1)
+    elif re.match(r"https?://b23.tv/av(\d+)", url):
+        avid = re.match(r"https?://b23.tv/av(\d+)", url).group(1)
     CONFIG["avid"] = avid
 
     info_url = info_api.format(avid=avid)
@@ -51,7 +54,7 @@ def get_videos(url):
             },
             segment_dl = CONFIG["segment_dl"],
             segment_size = CONFIG["segment_size"],
-            override = CONFIG["override"],
+            overwrite = CONFIG["overwrite"],
             spider = spider
         ))
     return videos

@@ -21,7 +21,7 @@ class NetworkFile():
         path: 文件的本地存储路径
         name: 文件的名称
         segment_size: 单个片段的大小，单位为字节，默认 10MB
-        override: 是否强制覆盖，默认不强制覆盖
+        overwrite: 是否强制覆盖，默认不强制覆盖
         spider: 爬虫会话，requests.Session() 的封装
         size: 本地已下载部分大小
         initialized: 文件是否处于刚刚初始化的状态
@@ -33,11 +33,11 @@ class NetworkFile():
     """
 
     def __init__(self, url, path, segment_size=10*1024*1024,
-                 override=False, spider=Crawler()):
+                 overwrite=False, spider=Crawler()):
         self.url = url
         self.path = path
         self.name = os.path.split(self.path)[-1]
-        self.override = override
+        self.overwrite = overwrite
         self.spider = spider
         self.segment_size = segment_size
         self._status = INITIALIZED
@@ -144,7 +144,7 @@ class Segment():
         if self.file.initialized:
             self.file.switch_status()
 
-        if self.file.override:
+        if self.file.overwrite:
             self.remove()
         self.size = self.get_size()
         if not os.path.exists(self.path):
@@ -176,7 +176,6 @@ class Segment():
                         self.size += len(chunk)
                 else:
                     f.write(res.content)
-
             # 从临时文件迁移，并删除临时文件
             if os.path.exists(self.path):
                 with open(self.tmp_path, "rb") as fr:
@@ -243,15 +242,15 @@ class FileManager():
     属性
         files: 待管理文件 List
         pool: 线程池
-        override: 是否强制覆盖，默认不强制覆盖
+        overwrite: 是否强制覆盖，默认不强制覆盖
         spider: 爬虫会话，requests.Session() 的封装
         segment_size: 片段大小，单位为字节
     """
 
-    def __init__(self, num_thread, segment_size, override=False, spider=Crawler()):
+    def __init__(self, num_thread, segment_size, overwrite=False, spider=Crawler()):
         self.files = []
         self.pool = ThreadPool(num_thread)
-        self.override = override
+        self.overwrite = overwrite
         self.spider = spider
         self.segment_size = segment_size
 
@@ -261,14 +260,14 @@ class FileManager():
         for i, (url, file_path) in enumerate(resources):
             print("dispenser resources {}/{}".format(i, len(resources)), end="\r")
             file_name = os.path.split(file_path)[-1]
-            if os.path.exists(file_path) and not self.override:
+            if os.path.exists(file_path) and not self.overwrite:
                 if log:
                     print("------! {} already exist".format(file_name))
             else:
                 if log:
                     print("------> {}".format(file_name))
                 file = NetworkFile(url, file_path, segment_size=self.segment_size,
-                                   override=self.override, spider=self.spider)
+                                   overwrite=self.overwrite, spider=self.spider)
                 for segment in file.segments:
                     task = Task(segment.download)
                     self.pool.add_task(task)

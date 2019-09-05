@@ -19,7 +19,7 @@ def main():
     parser.add_argument("-t", "--num-thread", default=30,
                         type=int, help="最大下载线程数")
     parser.add_argument("-p", "--episodes", default="all", help="选集")
-    parser.add_argument("-w", "--override",
+    parser.add_argument("-w", "--overwrite",
                         action="store_true", help="强制覆盖已下载视频")
     parser.add_argument("-c", "--sess-data", default=None, help="输入 cookies")
     parser.add_argument("--ass", action="store_true",
@@ -48,13 +48,14 @@ def main():
         "episodes": args.episodes,
         "playlist_type": args.playlist_type,
         "playlist_path_type": args.path_type.upper(),
-        "override": args.override,
+        "overwrite": args.overwrite,
         "segment_size": args.segment_size,
         "cookies": cookies,
         "segment_dl": args.no_block,
     }
 
-    if re.match(r"https?://www.bilibili.com/video/av(\d+)", args.url):
+    if re.match(r"https?://www.bilibili.com/video/av(\d+)", args.url) or \
+        re.match(r"https?://b23.tv/av(\d+)", args.url):
         import bili_video as bilili
     elif re.match(r"https?://www.bilibili.com/bangumi/media/md(\d+)", args.url):
         import bili_bangumi as bilili
@@ -69,7 +70,7 @@ def main():
         # 创建文件管理器，并分发任务
         ffmpeg = FFmpeg(args.ffmpeg)
         manager = BiliFileManager(
-            args.num_thread, 1024*1024, ffmpeg, args.override)
+            args.num_thread, 1024*1024, ffmpeg, args.overwrite)
         # 启动并监控任务
         manager.dispense_resources(bilili.exports["videos"])
         manager.run()

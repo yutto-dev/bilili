@@ -55,7 +55,7 @@ def get_videos(url):
             },
             segment_dl = CONFIG["segment_dl"],
             segment_size = CONFIG["segment_size"],
-            override = CONFIG["override"],
+            overwrite = CONFIG["overwrite"],
             spider = spider
         ))
     return videos

@@ -10,7 +10,9 @@
 
 `bilili-dl` 可以从以下两种视频主页获取视频
 
--  普通视频： `https://www.bilibili.com/video/avxxxxxx`
+-  普通视频： 
+   - `https://www.bilibili.com/video/avxxxxxx`
+   - `https://b23.tv/avxxxxx`
 -  番剧视频： `https://www.bilibili.com/bangumi/media/mdxxxx`
 
 在下视频之前，首先要配置好 `ffmpeg` ，随便在网上下一个就好，存放在 `/ffmpeg/ffmpeg.exe` （也可以存放在其他路径，之后在参数中指定路径即可）
@@ -46,14 +48,14 @@ python bilili-dl.py <url>
    -  `<p1>,<p2>,<p3>,...,<pn>` 即通过 `,` 分割，不要加空格
    -  `<p_start>~<p_end>` 即通过 `~` 分隔，下载起始到终止的剧集
    -  `all` 全部下载
+-  `-w`/`--overwrite` 强制覆盖已下载视频
+- `-c`/`--sess-data` 传入 cookies 中的 SESSDATA
 -  `--playlist-type` 指定播放列表类型，支持 dpl 和 m3u ，默认为 dpl，设置为 no 即不生成播放列表
 -  `--path-type` 指定播放列表路径的类型（rp：相对路径，ap：绝对路径），默认为相对路径
 -  `--ffmpeg` 指定 `ffmpeg` 存放路径，默认为 `ffmpeg/ffmpeg.exe`
--  `--override` 强制覆盖已下载视频
 - `--ass` 自动将 XML 弹幕转换为 ASS 弹幕
 - `--no-block` 不使用分段下载器
 - `--segment-size` 指定分段下载器分块的大小
-- `-c`/`--sess-data` 传入 cookies 中的 SESSDATA
 
 ## Kanck
 
