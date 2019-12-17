@@ -8,13 +8,9 @@ ref : https://github.com/soimort/you-get
 
 
 class FFmpeg():
-    def __init__(self, ffmpeg_path):
-        if subprocess.run(["ffmpeg"], stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE).returncode == 1:
-            ffmpeg_path = "ffmpeg"
-        else:
-            assert subprocess.run([ffmpeg_path], stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE).returncode == 1, "请配置正确的 FFmpeg 路径"
+    def __init__(self, ffmpeg_path='ffmpeg'):
+        assert subprocess.run([ffmpeg_path], stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE).returncode == 1, "请配置正确的 FFmpeg 路径"
         self.path = os.path.normpath(ffmpeg_path)
         tmp_dir = os.path.join(os.path.dirname(ffmpeg_path), "tmp")
         if not os.path.exists(tmp_dir):
