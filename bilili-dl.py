@@ -66,7 +66,7 @@ def main():
 
     if bilili.exports["videos"]:
         # 创建文件管理器，并分发任务
-        ffmpeg = FFmpeg(args.ffmpeg)
+        ffmpeg = FFmpeg()
         manager = BiliFileManager(
             args.num_thread, 1024*1024, ffmpeg, args.overwrite)
         # 启动并监控任务

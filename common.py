@@ -222,7 +222,7 @@ class BiliFileManager():
                 self.videos.append(video)
                 for segment in video.segments:
                     if os.path.exists(segment.path) and not self.overwrite:
-                        self.segment.switch_status(DONE)
+                        segment.switch_status(DONE)
                         continue
                     for block in segment.segments:
                         task = Task(block.download, args=(self.ffmpeg, ))
