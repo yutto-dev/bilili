@@ -1,16 +1,19 @@
 import os
 import re
 import threading
+import json
 
-from common import parse_episodes, BililiVideo, BililiVideoSegment, DONE
-from utils.common import repair_filename, touch_dir
-from utils.crawler import BililiCrawler
-from utils.playlist import Dpl, M3u
-from utils.subtitle import Subtitle
+from utils.common import parse_episodes
+from utils.downloader import BililiVideo, BililiVideoSegment, Status
+from common.base import repair_filename, touch_dir
+from common.crawler import BililiCrawler
+from common.playlist import Dpl, M3u
+from common.subtitle import Subtitle
 
 
-info_api = "https://api.bilibili.com/pgc/web/season/section?season_id={season_id}"
-parse_api = "https://api.bilibili.com/pgc/player/web/playurl?avid={avid}&cid={cid}&qn={qn}&ep_id={ep_id}"
+info_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&jsonp=jsonp"
+parse_api = "https://api.bilibili.com/x/player/playurl?avid={avid}&cid={cid}&qn={qn}&type=&otype=json"
+subtitle_api = "https://api.bilibili.com/x/player.so?id=cid:{cid}&aid={avid}"
 danmaku_api = "http://comment.bilibili.com/{cid}.xml"
 spider = BililiCrawler()
 CONFIG = dict()
@@ -22,39 +25,36 @@ def get_title(url):
     """ 获取视频标题 """
     res = spider.get(url)
     title = re.search(
-        r'<span class="media-info-title-t">(.*?)</span>', res.text).group(1)
+        r'<title .*>(.*)_哔哩哔哩 \(゜-゜\)つロ 干杯~-bilibili</title>', res.text).group(1)
     return title
 
 
 def get_videos(url):
     """ 从 url 中获取视频列表 """
     videos = []
-    season_id = re.search(
-        r'"param":{"season_id":(\d+),"season_type":\d+}', spider.get(url).text).group(1)
+    if re.match(r"https?://www.bilibili.com/video/av(\d+)", url):
+        avid = re.match(r'https?://www.bilibili.com/video/av(\d+)', url).group(1)
+    elif re.match(r"https?://b23.tv/av(\d+)", url):
+        avid = re.match(r"https?://b23.tv/av(\d+)", url).group(1)
+    CONFIG["avid"] = avid
 
-    info_url = info_api.format(season_id=season_id)
+    info_url = info_api.format(avid=avid)
     res = spider.get(info_url)
 
-    for i, item in enumerate(res.json()["result"]["main_section"]["episodes"]):
-        index = item["title"]
-        if re.match(r'^\d*\.?\d*$', index):
-            index = '第{}话'.format(index)
-        name = repair_filename(' '.join([index, item["long_title"]]))
+    for i, item in enumerate(res.json()["data"]):
         file_path = os.path.join(CONFIG['video_dir'], repair_filename(
-            '{}.mp4'.format(name)))
+            '{}.mp4'.format(item["part"])))
         if CONFIG['playlist'] is not None:
             CONFIG['playlist'].write_path(file_path)
         videos.append(BililiVideo(
             id = i+1,
-            name = name,
+            name = item["part"],
             path = file_path,
             meta = {
-                "aid": item["aid"],
-                "cid": item["cid"],
-                "epid": item["id"]
+                "cid": item["cid"]
             },
-            segment_dl = CONFIG["segment_dl"],
-            segment_size = CONFIG["segment_size"],
+            segmentation = CONFIG["segmentation"],
+            block_size = CONFIG["block_size"],
             overwrite = CONFIG["overwrite"],
             spider = spider
         ))
@@ -64,8 +64,17 @@ def get_videos(url):
 def parse_segment_info(video):
     """ 解析视频片段 url """
 
-    segments = []
-    aid, cid, ep_id = video.meta["aid"], video.meta["cid"], video.meta["epid"]
+    cid, avid = video.meta["cid"], CONFIG["avid"]
+
+    # 检查是否有字幕并下载
+    subtitle_url = subtitle_api.format(avid=avid, cid=cid)
+    res = spider.get(subtitle_url)
+    subtitles_info = json.loads(re.search(r"<subtitle>(.+)</subtitle>", res.text).group(1))
+    for sub_info in subtitles_info["subtitles"]:
+        sub_path = os.path.splitext(video.path)[0] + sub_info["lan_doc"] + ".srt"
+        subtitle = Subtitle(sub_path)
+        for sub_line in spider.get("https:"+sub_info["subtitle_url"]).json()["body"]:
+            subtitle.write_line(sub_line["content"], sub_line["from"], sub_line["to"])
 
     # 下载弹幕
     danmaku_url = danmaku_api.format(cid=cid)
@@ -77,31 +86,30 @@ def parse_segment_info(video):
 
     # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
     touch_message = spider.get(parse_api.format(
-        avid=aid, cid=cid, ep_id=ep_id, qn=80)).json()
+        avid=avid, cid=cid, qn=80)).json()
     if touch_message["code"] != 0:
         print("warn: 无法下载 {} ，原因： {}".format(
             video.name, touch_message["message"]))
-        video.switch_status(DONE)
+        video.status.switch(Status.DONE)
         return
-    if touch_message["result"]["is_preview"] == 1:
-        print("warn: {} 为预览版视频".format(video.name))
 
-    accept_quality = touch_message['result']['accept_quality']
+    accept_quality = touch_message['data']['accept_quality']
     for qn in CONFIG['qn_seq']:
         if qn in accept_quality:
             break
 
-    parse_url = parse_api.format(avid=aid, cid=cid, ep_id=ep_id, qn=qn)
+    parse_url = parse_api.format(avid=avid, cid=cid, qn=qn)
     res = spider.get(parse_url)
 
-    for i, segment in enumerate(res.json()['result']['durl']):
+    for i, segment in enumerate(res.json()['data']['durl']):
         id = i + 1
         file_path = os.path.join(CONFIG['video_dir'], repair_filename(
-            '{}_{:02d}.flv'.format(video.name, id)))
+                                '{}_{:02d}.flv'.format(video.name, id)))
         video.segments.append(BililiVideoSegment(
             id = id,
             path = file_path,
             url = segment["url"],
+            size = segment["size"],
             qn = qn,
             video = video
         ))
@@ -115,8 +123,8 @@ def parse(url, config):
     print(title)
 
     # 创建所需目录结构
-    CONFIG["base_dir"] = touch_dir(os.path.join(
-        CONFIG['dir'], title + " - bilibili"))
+    CONFIG["base_dir"] = touch_dir(repair_filename(os.path.join(
+        CONFIG['dir'], title + " - bilibili")))
     CONFIG["video_dir"] = touch_dir(os.path.join(CONFIG['base_dir'], "Videos"))
     if CONFIG["playlist_type"] == "dpl":
         CONFIG['playlist'] = Dpl(os.path.join(

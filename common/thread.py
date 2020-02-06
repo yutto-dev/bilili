@@ -20,7 +20,7 @@ class ThreadPool():
         while True:
             if not self._taskQ.empty():
                 task = self._taskQ.get(block = True, timeout = 1)
-                task.run()
+                task()
                 self._taskQ.task_done()
             else:
                 break

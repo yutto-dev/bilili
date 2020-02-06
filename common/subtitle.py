@@ -1,4 +1,4 @@
-from utils.common import Text
+from common.base import Text
 
 
 class Subtitle(Text):

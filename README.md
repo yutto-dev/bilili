@@ -58,7 +58,7 @@ python bilili-dl.py <url>
 -  `--path-type` 指定播放列表路径的类型（`rp`：相对路径，`ap`：绝对路径），默认为相对路径
 -  `--ass` 自动将 `XML` 弹幕转换为 `ASS` 弹幕
 -  `--no-block` 不使用分段下载器
--  `--segment-size` 指定分段下载器分块的大小
+-  `--block-size` 指定分段下载器分块的大小
 
 ## Tips
 
@@ -75,10 +75,6 @@ python bilili-dl.py <url>
 ### Playlist
 
 默认生成**相对路径类型**的 **`PotPlayer`** 播放列表，如果你不想使用 `PotPlayer` 的话，可以通过参数来修改
-
-## TODO
-
--  [ ] 优化分段下载器代码，去除冗余部分（或者直接调用 `aria2`）
 
 ## Blog
 
