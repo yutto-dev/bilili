@@ -54,7 +54,9 @@ def main():
     }
 
     if re.match(r"https?://www.bilibili.com/video/av(\d+)", args.url) or \
-            re.match(r"https?://b23.tv/av(\d+)", args.url):
+            re.match(r"https?://b23.tv/av(\d+)", args.url) or \
+            re.match(r"https?://www.bilibili.com/video/BV(\w+)", args.url) or \
+            re.match(r"https?://b23.tv/BV(\w+)", args.url):
         import bilibili.video as bilili
     elif re.match(r"https?://www.bilibili.com/bangumi/media/md(\d+)", args.url):
         import bilibili.bangumi as bilili

@@ -36,6 +36,18 @@ def get_videos(url):
         avid = re.match(r'https?://www.bilibili.com/video/av(\d+)', url).group(1)
     elif re.match(r"https?://b23.tv/av(\d+)", url):
         avid = re.match(r"https?://b23.tv/av(\d+)", url).group(1)
+    elif re.match(r"https?://www.bilibili.com/video/BV(\w+)", url):
+        bvid = re.match(r"https?://www.bilibili.com/video/BV(\w+)", url).group(1)
+        res = spider.get(url)
+        avid_full = res.headers['vikingrMCCache'].split('-')[-1]
+        assert avid_full.startswith('av')
+        avid = avid_full[2:]
+    elif re.match(r"https?://b23.tv/BV(\w+)", url):
+        bvid = re.match(r"https?://b23.tv/BV(\w+)", url).group(1)
+        res = spider.get(url)
+        avid_full = res.headers['vikingrMCCache'].split('-')[-1]
+        assert avid_full.startswith('av')
+        avid = avid_full[2:]
     CONFIG["avid"] = avid
 
     info_url = info_api.format(avid=avid)
