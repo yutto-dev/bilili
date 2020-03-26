@@ -3,7 +3,6 @@ import sys
 import argparse
 
 from utils.common import convert_danmaku
-from utils.downloader import BiliFileManager
 from common.base import Task
 from common.ffmpeg import FFmpeg
 from common.thread import ThreadPool
@@ -14,6 +13,7 @@ def main():
 
     parser = argparse.ArgumentParser(description="bilili-dl")
     parser.add_argument("url", help="视频主页地址")
+    parser.add_argument('-s', '--source', default='flash', choices=['flash', 'h5'], help="选择播放源（html5 or Flash）")
     parser.add_argument("-d", "--dir", default=r"", help="下载目录")
     parser.add_argument("-r", "--sharpness", default='120', choices=['120', '116', '112', '80', '74', '64', '32', '16'],
                         help="视频清晰度 112:1080P+, 80:1080P, 64:720P, 32:480P, 16:360P")
@@ -30,8 +30,8 @@ def main():
                         choices=["dpl", "m3u", "no"], help="播放列表类型，支持 dpl 和 m3u，输入 no 不生成播放列表")
     parser.add_argument("--path-type", default="rp",
                         help="播放列表路径类型（rp：相对路径，ap：绝对路径）")
-    parser.add_argument("--block-size", default=4*1024*1024, type=int,
-                        help="分段下载器的块大小，默认为 4MB")
+    parser.add_argument("--block-size", default=64*1024*1024, type=int,
+                        help="分段下载器的块大小，默认为 64MB")
 
     args = parser.parse_args()
     # 超清 4K 高清 1080P60 高清 1080P+ 高清 1080P  高清 720P60 高清 720P  清晰 480P  流畅 360P
@@ -53,13 +53,24 @@ def main():
         "segmentation": args.no_block,
     }
 
+    if args.source == 'h5':
+        import bilibili_h5 as bili
+    else:
+        import bilibili as bili
+
     if re.match(r"https?://www.bilibili.com/video/av(\d+)", args.url) or \
             re.match(r"https?://b23.tv/av(\d+)", args.url) or \
             re.match(r"https?://www.bilibili.com/video/BV(\w+)", args.url) or \
             re.match(r"https?://b23.tv/BV(\w+)", args.url):
-        import bilibili.video as bilili
+        if args.source == 'h5':
+            import bilibili_h5.acg_video as bilili
+        else:
+            import bilibili.acg_video as bilili
     elif re.match(r"https?://www.bilibili.com/bangumi/media/md(\d+)", args.url):
-        import bilibili.bangumi as bilili
+        if args.source == 'h5':
+            import bilibili_h5.bangumi as bilili
+        else:
+            import bilibili.bangumi as bilili
     else:
         print("视频地址有误！")
         sys.exit(1)
@@ -70,7 +81,7 @@ def main():
     if bilili.exports["videos"]:
         # 创建文件管理器，并分发任务
         ffmpeg = FFmpeg()
-        manager = BiliFileManager(
+        manager = bili.downloader.BiliFileManager(
             args.num_thread, 1024*1024, ffmpeg, args.overwrite)
         # 启动并监控任务
         manager.dispense_resources(bilili.exports["videos"])

@@ -4,7 +4,7 @@ import threading
 import json
 
 from utils.common import parse_episodes
-from utils.downloader import BililiVideo, BililiVideoSegment, Status
+from bilibili_h5.downloader import BililiMultiMedia, BililiVideo, BililiAudio, Status
 from common.base import repair_filename, touch_dir
 from common.crawler import BililiCrawler
 from common.playlist import Dpl, M3u
@@ -12,7 +12,7 @@ from common.subtitle import Subtitle
 
 
 info_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&bvid={bvid}&jsonp=jsonp"
-parse_api = "https://api.bilibili.com/x/player/playurl?avid={avid}&cid={cid}&bvid={bvid}&qn={qn}&type=&otype=json"
+parse_api = "https://api.bilibili.com/x/player/playurl?avid={avid}&cid={cid}&bvid={bvid}&qn={qn}&type=&otype=json&fnver=0&fnval=16"
 subtitle_api = "https://api.bilibili.com/x/player.so?id=cid:{cid}&aid={avid}&bvid={bvid}"
 danmaku_api = "http://comment.bilibili.com/{cid}.xml"
 spider = BililiCrawler()
@@ -50,7 +50,7 @@ def get_videos(url):
             '{}.mp4'.format(item["part"])))
         if CONFIG['playlist'] is not None:
             CONFIG['playlist'].write_path(file_path)
-        videos.append(BililiVideo(
+        videos.append(BililiMultiMedia(
             id = i+1,
             name = item["part"],
             path = file_path,
@@ -65,17 +65,17 @@ def get_videos(url):
     return videos
 
 
-def parse_segment_info(video):
+def parse_segment_info(mm):
     """ 解析视频片段 url """
 
-    cid, avid, bvid = video.meta["cid"], CONFIG["avid"], CONFIG["bvid"]
+    cid, avid, bvid = mm.meta["cid"], CONFIG["avid"], CONFIG["bvid"]
 
     # 检查是否有字幕并下载
     subtitle_url = subtitle_api.format(avid=avid, cid=cid, bvid=bvid)
     res = spider.get(subtitle_url)
     subtitles_info = json.loads(re.search(r"<subtitle>(.+)</subtitle>", res.text).group(1))
     for sub_info in subtitles_info["subtitles"]:
-        sub_path = os.path.splitext(video.path)[0] + sub_info["lan_doc"] + ".srt"
+        sub_path = os.path.splitext(mm.path)[0] + sub_info["lan_doc"] + ".srt"
         subtitle = Subtitle(sub_path)
         for sub_line in spider.get("https:"+sub_info["subtitle_url"]).json()["body"]:
             subtitle.write_line(sub_line["content"], sub_line["from"], sub_line["to"])
@@ -84,39 +84,41 @@ def parse_segment_info(video):
     danmaku_url = danmaku_api.format(cid=cid)
     res = spider.get(danmaku_url)
     res.encoding = "utf-8"
-    danmaku_path = os.path.splitext(video.path)[0] + ".xml"
+    danmaku_path = os.path.splitext(mm.path)[0] + ".xml"
     with open(danmaku_path, "w", encoding="utf-8") as f:
         f.write(res.text)
 
     # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
-    touch_message = spider.get(parse_api.format(
+    play_info = spider.get(parse_api.format(
         avid=avid, cid=cid, bvid=bvid, qn=80)).json()
-    if touch_message["code"] != 0:
+    if play_info["code"] != 0:
         print("warn: 无法下载 {} ，原因： {}".format(
-            video.name, touch_message["message"]))
-        video.status.switch(Status.DONE)
+            mm.name, play_info["message"]))
+        mm.status.switch(Status.DONE)
         return
 
-    accept_quality = touch_message['data']['accept_quality']
+    # accept_quality = play_info['data']['accept_quality']
+    accept_quality = set([video['id'] for video in play_info['data']['dash']['video']])
     for qn in CONFIG['qn_seq']:
         if qn in accept_quality:
             break
 
     parse_url = parse_api.format(avid=avid, cid=cid, bvid=bvid, qn=qn)
-    res = spider.get(parse_url)
+    play_info = spider.get(parse_url).json()
 
-    for i, segment in enumerate(res.json()['data']['durl']):
-        id = i + 1
-        file_path = os.path.join(CONFIG['video_dir'], repair_filename(
-                                '{}_{:02d}.flv'.format(video.name, id)))
-        video.segments.append(BililiVideoSegment(
-            id = id,
-            path = file_path,
-            url = segment["url"],
-            size = segment["size"],
-            qn = qn,
-            video = video
-        ))
+    for video in play_info['data']['dash']['video']:
+        if video['id'] == qn:
+            mm.set_video(
+                url = video['base_url'],
+                qn = qn
+            )
+            break
+    for audio in play_info['data']['dash']['audio']:
+        mm.set_audio(
+            url = audio['base_url'],
+            qn = qn
+        )
+        break
 
 
 def parse(url, config):

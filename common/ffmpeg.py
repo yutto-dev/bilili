@@ -67,5 +67,3 @@ class FFmpeg():
         ]
 
         self.exec(params)
-        os.remove(video_path)
-        os.remove(audio_path)
