@@ -212,7 +212,7 @@ class BililiVideoBlock():
                 with open(self.tmp_path, "rb") as fr:
                     with open(self.path, "wb") as fw:
                         fw.write(fr.read())
-                os.remove(self.path)
+                os.remove(self.tmp_path)
             else:
                 os.rename(self.tmp_path, self.path)
         self.status.switch()

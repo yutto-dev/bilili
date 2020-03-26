@@ -40,7 +40,7 @@ class Crawler(requests.Session):
             with open(tmp_path, "rb") as fr:
                 with open(file_path, "wb") as fw:
                     fw.write(fr.read())
-            os.remove(file_path)
+            os.remove(tmp_path)
         else:
             os.rename(tmp_path, file_path)
 

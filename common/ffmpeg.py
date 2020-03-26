@@ -54,3 +54,18 @@ class FFmpeg():
         ]
         self.exec(params)
         os.remove(concat_list_path)
+
+    def join_video_audio(self, video_path, audio_path, output_path):
+        """ 将视频和音频合并 """
+
+        params = [
+            '-i', video_path,
+            '-i', audio_path,
+            '-codec', 'copy',
+            '-y',
+            output_path
+        ]
+
+        self.exec(params)
+        os.remove(video_path)
+        os.remove(audio_path)

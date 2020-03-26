@@ -11,9 +11,9 @@ from common.playlist import Dpl, M3u
 from common.subtitle import Subtitle
 
 
-info_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&jsonp=jsonp"
-parse_api = "https://api.bilibili.com/x/player/playurl?avid={avid}&cid={cid}&qn={qn}&type=&otype=json"
-subtitle_api = "https://api.bilibili.com/x/player.so?id=cid:{cid}&aid={avid}"
+info_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&bvid={bvid}&jsonp=jsonp"
+parse_api = "https://api.bilibili.com/x/player/playurl?avid={avid}&cid={cid}&bvid={bvid}&qn={qn}&type=&otype=json"
+subtitle_api = "https://api.bilibili.com/x/player.so?id=cid:{cid}&aid={avid}&bvid={bvid}"
 danmaku_api = "http://comment.bilibili.com/{cid}.xml"
 spider = BililiCrawler()
 CONFIG = dict()
@@ -32,25 +32,17 @@ def get_title(url):
 def get_videos(url):
     """ 从 url 中获取视频列表 """
     videos = []
+    CONFIG['avid'], CONFIG['bvid'] = '', ''
     if re.match(r"https?://www.bilibili.com/video/av(\d+)", url):
-        avid = re.match(r'https?://www.bilibili.com/video/av(\d+)', url).group(1)
+        CONFIG['avid'] = re.match(r'https?://www.bilibili.com/video/av(\d+)', url).group(1)
     elif re.match(r"https?://b23.tv/av(\d+)", url):
-        avid = re.match(r"https?://b23.tv/av(\d+)", url).group(1)
+        CONFIG['avid'] = re.match(r"https?://b23.tv/av(\d+)", url).group(1)
     elif re.match(r"https?://www.bilibili.com/video/BV(\w+)", url):
-        bvid = re.match(r"https?://www.bilibili.com/video/BV(\w+)", url).group(1)
-        res = spider.get(url)
-        avid_full = res.headers['vikingrMCCache'].split('-')[-1]
-        assert avid_full.startswith('av')
-        avid = avid_full[2:]
+        CONFIG['bvid'] = re.match(r"https?://www.bilibili.com/video/BV(\w+)", url).group(1)
     elif re.match(r"https?://b23.tv/BV(\w+)", url):
-        bvid = re.match(r"https?://b23.tv/BV(\w+)", url).group(1)
-        res = spider.get(url)
-        avid_full = res.headers['vikingrMCCache'].split('-')[-1]
-        assert avid_full.startswith('av')
-        avid = avid_full[2:]
-    CONFIG["avid"] = avid
+        CONFIG['bvid'] = re.match(r"https?://b23.tv/BV(\w+)", url).group(1)
 
-    info_url = info_api.format(avid=avid)
+    info_url = info_api.format(avid=CONFIG['avid'], bvid=CONFIG['bvid'])
     res = spider.get(info_url)
 
     for i, item in enumerate(res.json()["data"]):
@@ -76,10 +68,10 @@ def get_videos(url):
 def parse_segment_info(video):
     """ 解析视频片段 url """
 
-    cid, avid = video.meta["cid"], CONFIG["avid"]
+    cid, avid, bvid = video.meta["cid"], CONFIG["avid"], CONFIG["bvid"]
 
     # 检查是否有字幕并下载
-    subtitle_url = subtitle_api.format(avid=avid, cid=cid)
+    subtitle_url = subtitle_api.format(avid=avid, cid=cid, bvid=bvid)
     res = spider.get(subtitle_url)
     subtitles_info = json.loads(re.search(r"<subtitle>(.+)</subtitle>", res.text).group(1))
     for sub_info in subtitles_info["subtitles"]:
@@ -98,7 +90,7 @@ def parse_segment_info(video):
 
     # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
     touch_message = spider.get(parse_api.format(
-        avid=avid, cid=cid, qn=80)).json()
+        avid=avid, cid=cid, bvid=bvid, qn=80)).json()
     if touch_message["code"] != 0:
         print("warn: 无法下载 {} ，原因： {}".format(
             video.name, touch_message["message"]))
@@ -110,7 +102,7 @@ def parse_segment_info(video):
         if qn in accept_quality:
             break
 
-    parse_url = parse_api.format(avid=avid, cid=cid, qn=qn)
+    parse_url = parse_api.format(avid=avid, cid=cid, bvid=bvid, qn=qn)
     res = spider.get(parse_url)
 
     for i, segment in enumerate(res.json()['data']['durl']):
