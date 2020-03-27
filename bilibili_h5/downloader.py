@@ -101,7 +101,7 @@ class BililiMedia():
         self.mm = mm
         self.path = '{}_{}.m4s'.format(os.path.splitext(self.mm.path)[0], self.type)
         self.name = os.path.split(self.path)[-1]
-        self.total = self.get_total_size()
+        self._get_head()
         self.mm.total += self.total
 
         self.status = Status()
@@ -110,7 +110,7 @@ class BililiMedia():
 
     def _segmentation(self):
         """ 分段，将各个片段添加至 self.blocks """
-        if self.mm.segmentation:
+        if self.segmentation:
             for i in range(math.ceil(self.total/self.mm.block_size)):
                 block = BililiBlock(self, i)
                 self.blocks.append(block)
@@ -118,9 +118,17 @@ class BililiMedia():
             block = BililiBlock(self, 0)
             self.blocks.append(block)
 
-    def get_total_size(self):
-        res = self.mm.spider.head(self.url, headers={'Range': 'bytes=0-5'})
-        return int(res.headers['Content-Range'].split('/')[-1])
+    def _get_head(self):
+        res = self.mm.spider.head(self.url, headers={'Range': 'bytes=0-4'})
+        if res.headers.get('Content-Range'):
+            self.total = int(res.headers['Content-Range'].split('/')[-1])
+            self.segmentation = self.mm.segmentation
+        elif res.headers.get('Content-Length'):
+            self.total = int(res.headers['Content-Length'])
+            self.segmentation = False
+        else:
+            self.total = None
+            self.segmentation = False
 
     @property
     def size(self):
@@ -192,7 +200,7 @@ class BililiBlock():
         if not os.path.exists(self.path):
             # 设置 headers
             headers = dict(self.mm.spider.headers)
-            if self.mm.segmentation:
+            if self.media.segmentation:
                 headers["Range"] = "bytes={}-{}".format(
                     self.id * self.mm.block_size + self.size,
                     (self.id+1) * self.mm.block_size - 1)
@@ -205,7 +213,7 @@ class BililiBlock():
             while not connected:
                 try:
                     res = self.mm.spider.get(
-                        self.media.url, stream=True, headers=headers)
+                        self.media.url, stream=stream, headers=headers)
                     connected = True
                 except:
                     print("[warn] content failed, try again...")

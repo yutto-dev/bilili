@@ -11,7 +11,7 @@ from common.thread import ThreadPool
 def main():
     """ 解析命令行参数并调用相关模块进行下载 """
 
-    parser = argparse.ArgumentParser(description="bilili-dl")
+    parser = argparse.ArgumentParser(description="bilili B 站视频、弹幕下载器")
     parser.add_argument("url", help="视频主页地址")
     parser.add_argument('-s', '--source', default='flash', choices=['flash', 'h5'], help="选择播放源（html5 or Flash）")
     parser.add_argument("-d", "--dir", default=r"", help="下载目录")
@@ -53,7 +53,7 @@ def main():
         "segmentation": args.no_block,
     }
 
-    if args.source == 'h5':
+    if args.source.lower() == 'h5':
         import bilibili_h5 as bili
     else:
         import bilibili as bili

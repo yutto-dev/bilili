@@ -97,6 +97,9 @@ def parse_segment_info(mm):
         mm.status.switch(Status.DONE)
         return
 
+    if play_info['data'].get('dash') is None:
+        raise Exception('该视频尚不支持 H5 source 哦~')
+
     # accept_quality = play_info['data']['accept_quality']
     accept_quality = set([video['id'] for video in play_info['data']['dash']['video']])
     for qn in CONFIG['qn_seq']:

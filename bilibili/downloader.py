@@ -193,7 +193,7 @@ class BililiVideoBlock():
             while not connected:
                 try:
                     res = self.video.spider.get(
-                        self.segment.url, stream=True, headers=headers)
+                        self.segment.url, stream=stream, headers=headers)
                     connected = True
                 except:
                     print("[warn] content failed, try again...")

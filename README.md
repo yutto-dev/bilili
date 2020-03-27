@@ -1,4 +1,4 @@
-# bilili-dl
+# bilili
 
 ![python 3.6.7](https://img.shields.io/badge/python-3.6.7-green?style=flat-square&logo=python)
 
@@ -8,7 +8,7 @@
 
 ## Get Started
 
-`bilili-dl` 可以从以下两种视频主页获取视频
+`bilili` 可以从以下两种视频主页获取视频
 
 -  普通视频：
    -  `https://www.bilibili.com/video/avxxxxxx`
@@ -28,15 +28,16 @@ pip install -r requirements.txt
 下载的方式很简单，只需要在终端中运行如下命令即可
 
 ```bash
-python bilili-dl.py <url>
+python bilili.py <url>
 ```
 
 需要将 `<url>` 替换为前面的视频主页 url
 
 ## Options
 
-`bilili-dl` 还支持很多参数，具体如下
+`bilili` 还支持很多参数，具体如下
 
+- `-s`/`--source` 选择播放源（`flash` or `h5`）
 -  `-d`/`--dir` 指定存储目录，默认为根目录
 -  `-r`/`--sharpness` 指定清晰度，默认为 `120`，对应关系如下
    -  `120` # 超清 4K
@@ -86,7 +87,7 @@ python bilili-dl.py <url>
 
 ## Blog
 
-具体实现见[使用 Python 爬取 B 站视频](https://www.sigure.xyz/Posts/17_bilili_dl.html)
+具体实现见[使用 Python 爬取 B 站视频](https://www.sigure.xyz/posts/2019/08/18/bilili.html)
 
 # Reference
 
