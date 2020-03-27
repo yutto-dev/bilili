@@ -2,6 +2,7 @@ import os
 import re
 import time
 import math
+import requests
 
 from common.base import Task, size_format
 from common.crawler import BililiCrawler
@@ -178,43 +179,39 @@ class BililiVideoBlock():
             self.remove()
         self.size = self.get_size()
         if not os.path.exists(self.path):
-            # 设置 headers
-            headers = dict(self.video.spider.headers)
-            if self.video.segmentation:
-                headers["Range"] = "bytes={}-{}".format(
-                    self.id * self.video.block_size + self.size,
-                    (self.id+1) * self.video.block_size - 1)
-            else:
-                headers["Range"] = "bytes={}-".format(
-                    self.id * self.video.block_size + self.size)
-
-            # 尝试建立连接
-            connected = False
-            while not connected:
-                try:
-                    res = self.video.spider.get(
-                        self.segment.url, stream=stream, headers=headers)
-                    connected = True
-                except:
-                    print("[warn] content failed, try again...")
-            # 下载到临时路径
-            with open(self.tmp_path, 'ab') as f:
-                if stream:
-                    for chunk in res.iter_content(chunk_size=chunk_size):
-                        if not chunk:
-                            break
-                        f.write(chunk)
-                        self.size += len(chunk)
+            downloaded = False
+            while not downloaded:
+                # 设置 headers
+                headers = dict(self.video.spider.headers)
+                if self.video.segmentation:
+                    headers["Range"] = "bytes={}-{}".format(
+                        self.id * self.video.block_size + self.size,
+                        (self.id+1) * self.video.block_size - 1)
                 else:
-                    f.write(res.content)
+                    headers["Range"] = "bytes={}-".format(
+                        self.id * self.video.block_size + self.size)
+
+                try:
+                    # 尝试建立连接
+                    res = self.video.spider.get(
+                        self.segment.url, stream=stream, headers=headers, timeout=(5, 10))
+                    # 下载到临时路径
+                    with open(self.tmp_path, 'ab') as f:
+                        if stream:
+                            for chunk in res.iter_content(chunk_size=chunk_size):
+                                if not chunk:
+                                    break
+                                f.write(chunk)
+                                self.size += len(chunk)
+                        else:
+                            f.write(res.content)
+                    downloaded = True
+                except requests.exceptions.RequestException:
+                    print("[warn] file {}, request timeout, trying again...".format(self.name))
             # 从临时文件迁移，并删除临时文件
             if os.path.exists(self.path):
-                with open(self.tmp_path, "rb") as fr:
-                    with open(self.path, "wb") as fw:
-                        fw.write(fr.read())
-                os.remove(self.tmp_path)
-            else:
-                os.rename(self.tmp_path, self.path)
+                os.remove(self.path)
+            os.rename(self.tmp_path, self.path)
         self.status.switch()
 
         # 检查是否所有片段均已下载完成，如果是则合并
