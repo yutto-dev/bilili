@@ -4,7 +4,7 @@ import time
 import math
 import requests
 
-from common.base import Task, size_format
+from common.base import Task, size_format, get_string_width
 from common.crawler import BililiCrawler
 from common.thread import ThreadPool
 
@@ -89,6 +89,7 @@ class BililiMultiMedia():
         os.remove(self.video.path)
         os.remove(self.audio.path)
 
+
 class BililiMedia():
     """ bilibili 媒体类
     """
@@ -100,7 +101,8 @@ class BililiMedia():
         self.url = url
 
         self.mm = mm
-        self.path = '{}_{}.m4s'.format(os.path.splitext(self.mm.path)[0], self.type)
+        self.path = '{}_{}.m4s'.format(
+            os.path.splitext(self.mm.path)[0], self.type)
         self.name = os.path.split(self.path)[-1]
         self._get_head()
         self.mm.total += self.total
@@ -147,12 +149,14 @@ class BililiMedia():
                     fw.write(fr.read())
                 block.remove()
 
+
 class BililiVideo(BililiMedia):
     """ bilibili 纯视频类"""
 
     def __init__(self, *args, **kwargs):
 
         super().__init__(type='video', *args, **kwargs)
+
 
 class BililiAudio(BililiMedia):
     """ bilibili 纯音频类"""
@@ -227,7 +231,8 @@ class BililiBlock():
                             f.write(res.content)
                     downloaded = True
                 except requests.exceptions.RequestException:
-                    print("[warn] file {}, request timeout, trying again...".format(self.name))
+                    print(
+                        "[warn] file {}, request timeout, trying again...".format(self.name))
 
             # 从临时文件迁移，并删除临时文件
             if os.path.exists(self.path):
@@ -335,21 +340,27 @@ class BiliFileManager():
                     num_media_done = sum(
                         [media.status.done for media in mm.medias])
                     num_media = len(mm.medias)
-                    line = "{}({}/{}) qn:{} {} {}/{}".format(mm.name, num_media_done, num_media,
-                                                             mm.video.qn, center_placeholder, size_format(
-                                                                 mm.size),
-                                                             size_format(mm.total))
+                    line = "{}({}/{}) qn:{} {} {}/{}".format(
+                        mm.name,
+                        num_media_done,
+                        num_media,
+                        mm.video.qn,
+                        center_placeholder,
+                        size_format(mm.size),
+                        size_format(mm.total))
                     line = line.replace(center_placeholder, max(
-                        max_length-len(line)+len(center_placeholder), 0)*"-")
+                        max_length-get_string_width(line)+len(center_placeholder), 0)*"-")
                     log_string += line + "\n"
 
             # 下载进度
             len_done = bar_length * size // total_size
             len_undone = bar_length - len_done
-            log_string += '{}{} {}/{} {:12}'.format("#" * len_done, "_" * len_undone,
-                                                    size_format(size), size_format(
-                                                        total_size),
-                                                    size_format(speed)+"/s")
+            log_string += '{}{} {}/{} {:12}'.format(
+                "#" * len_done,
+                "_" * len_undone,
+                size_format(size),
+                size_format(total_size),
+                size_format(speed)+"/s")
 
             # 清空控制台并打印新的 log
             os.system('cls' if os.name == 'nt' else 'clear')

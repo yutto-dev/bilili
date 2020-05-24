@@ -97,3 +97,12 @@ def size_format(size, ndigits=2):
             break
         idx -= 1
     return "{}{:.{}f} {}".format(flag, size/unit_size, ndigits, unit)
+
+
+def get_string_width(string):
+    """ 计算包含中文的字符串宽度 """
+    try:
+        length = len(string.encode('gbk'))
+    except:
+        length = len(string)
+    return length

@@ -4,7 +4,7 @@ import time
 import math
 import requests
 
-from common.base import Task, size_format
+from common.base import Task, size_format, get_string_width
 from common.crawler import BililiCrawler
 from common.thread import ThreadPool
 
@@ -207,7 +207,8 @@ class BililiVideoBlock():
                             f.write(res.content)
                     downloaded = True
                 except requests.exceptions.RequestException:
-                    print("[warn] file {}, request timeout, trying again...".format(self.name))
+                    print(
+                        "[warn] file {}, request timeout, trying again...".format(self.name))
             # 从临时文件迁移，并删除临时文件
             if os.path.exists(self.path):
                 os.remove(self.path)
@@ -314,21 +315,27 @@ class BiliFileManager():
                     num_segment_done = sum(
                         [segment.status.done for segment in video.segments])
                     num_segment = len(video.segments)
-                    line = "{}({}/{}) qn:{} {} {}/{}".format(video.name, num_segment_done, num_segment,
-                                                             video.qn, center_placeholder, size_format(
-                                                                 video.size),
-                                                             size_format(video.total))
+                    line = "{}({}/{}) qn:{} {} {}/{}".format(
+                        video.name,
+                        num_segment_done,
+                        num_segment,
+                        video.qn,
+                        center_placeholder,
+                        size_format(video.size),
+                        size_format(video.total))
                     line = line.replace(center_placeholder, max(
-                        max_length-len(line)+len(center_placeholder), 0)*"-")
+                        max_length-get_string_width(line)+len(center_placeholder), 0)*"-")
                     log_string += line + "\n"
 
             # 下载进度
             len_done = bar_length * size // total_size
             len_undone = bar_length - len_done
-            log_string += '{}{} {}/{} {:12}'.format("#" * len_done, "_" * len_undone,
-                                                    size_format(size), size_format(
-                                                        total_size),
-                                                    size_format(speed)+"/s")
+            log_string += '{}{} {}/{} {:12}'.format(
+                "#" * len_done,
+                "_" * len_undone,
+                size_format(size),
+                size_format(total_size),
+                size_format(speed)+"/s")
 
             # 清空控制台并打印新的 log
             os.system('cls' if os.name == 'nt' else 'clear')
