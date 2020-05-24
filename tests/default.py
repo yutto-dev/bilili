@@ -6,7 +6,7 @@ config_default =  {
     "playlist_type": "dpl",
     "playlist_path_type": "RP",
     "overwrite": False,
-    "block_size": 64*1024*1024,
+    "block_size": 128*1024*1024,
     "cookies": {"SESSDATA": None},
-    "segmentation": True
+    "segmentation": False
 }
