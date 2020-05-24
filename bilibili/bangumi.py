@@ -2,8 +2,8 @@ import os
 import re
 import threading
 
-from utils.common import parse_episodes
-from utils.downloader import BililiVideo, BililiVideoSegment, Status
+from utils import parse_episodes
+from bilibili.downloader import BililiVideo, BililiVideoSegment, Status
 from common.base import repair_filename, touch_dir
 from common.crawler import BililiCrawler
 from common.playlist import Dpl, M3u

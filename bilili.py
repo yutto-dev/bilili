@@ -2,7 +2,7 @@ import re
 import sys
 import argparse
 
-from utils.common import convert_danmaku
+from utils import convert_danmaku, conf
 from common.base import Task
 from common.ffmpeg import FFmpeg
 from common.thread import ThreadPool
