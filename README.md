@@ -64,7 +64,7 @@ python bilili.py <url>
 -  `--playlist-type` 指定播放列表类型，支持 `dpl` 和 `m3u` ，默认为 `dpl`，设置为 `no` 即不生成播放列表
 -  `--path-type` 指定播放列表路径的类型（`rp`：相对路径，`ap`：绝对路径），默认为相对路径
 -  `--ass` 自动将 `XML` 弹幕转换为 `ASS` 弹幕
--  `--enable-block` 不使用分段下载器
+-  `--enable-block` 启用分段下载器
 -  `--block-size` 指定分段下载器分块的大小，默认为 128MB
 
 ## Tips
@@ -92,10 +92,6 @@ python bilili.py <url>
 ### Playlist
 
 默认生成**相对路径类型**的 **`PotPlayer`** 播放列表，如果你不想使用 `PotPlayer` 的话，可以通过参数来修改
-
-## Blog
-
-具体实现见[使用 Python 爬取 B 站视频](https://www.sigure.xyz/posts/2019/08/18/bilili.html)
 
 # Reference
 
