@@ -6,7 +6,7 @@
    <a href="LICENSE"><img alt="LICENSE" src="https://img.shields.io/badge/License-MIT-orange"></a>
 </p>
 
-使用 Python 下载 [B 站](https://www.bilibili.com/)视频，bilililili~
+使用 Python 下载 [B 站](https://www.bilibili.com/)视频，ビリリ~
 
 > 仅限个人学习和研究使用，切勿用于其他用途
 
