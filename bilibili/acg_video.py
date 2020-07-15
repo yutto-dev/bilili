@@ -34,11 +34,13 @@ def get_videos(url):
     videos = []
     CONFIG['avid'], CONFIG['bvid'] = '', ''
     if re.match(r"https?://www.bilibili.com/video/av(\d+)", url):
-        CONFIG['avid'] = re.match(r'https?://www.bilibili.com/video/av(\d+)', url).group(1)
+        CONFIG['avid'] = re.match(
+            r'https?://www.bilibili.com/video/av(\d+)', url).group(1)
     elif re.match(r"https?://b23.tv/av(\d+)", url):
         CONFIG['avid'] = re.match(r"https?://b23.tv/av(\d+)", url).group(1)
     elif re.match(r"https?://www.bilibili.com/video/BV(\w+)", url):
-        CONFIG['bvid'] = re.match(r"https?://www.bilibili.com/video/BV(\w+)", url).group(1)
+        CONFIG['bvid'] = re.match(
+            r"https?://www.bilibili.com/video/BV(\w+)", url).group(1)
     elif re.match(r"https?://b23.tv/BV(\w+)", url):
         CONFIG['bvid'] = re.match(r"https?://b23.tv/BV(\w+)", url).group(1)
 
@@ -51,16 +53,16 @@ def get_videos(url):
         if CONFIG['playlist'] is not None:
             CONFIG['playlist'].write_path(file_path)
         videos.append(BililiVideo(
-            id = i+1,
-            name = item["part"],
-            path = file_path,
-            meta = {
+            id=i+1,
+            name=item["part"],
+            path=file_path,
+            meta={
                 "cid": item["cid"]
             },
-            segmentation = CONFIG["segmentation"],
-            block_size = CONFIG["block_size"],
-            overwrite = CONFIG["overwrite"],
-            spider = spider
+            segmentation=CONFIG["segmentation"],
+            block_size=CONFIG["block_size"],
+            overwrite=CONFIG["overwrite"],
+            spider=spider
         ))
     return videos
 
@@ -73,12 +75,15 @@ def parse_segment_info(video):
     # 检查是否有字幕并下载
     subtitle_url = subtitle_api.format(avid=avid, cid=cid, bvid=bvid)
     res = spider.get(subtitle_url)
-    subtitles_info = json.loads(re.search(r"<subtitle>(.+)</subtitle>", res.text).group(1))
+    subtitles_info = json.loads(
+        re.search(r"<subtitle>(.+)</subtitle>", res.text).group(1))
     for sub_info in subtitles_info["subtitles"]:
-        sub_path = os.path.splitext(video.path)[0] + sub_info["lan_doc"] + ".srt"
+        sub_path = os.path.splitext(
+            video.path)[0] + sub_info["lan_doc"] + ".srt"
         subtitle = Subtitle(sub_path)
         for sub_line in spider.get("https:"+sub_info["subtitle_url"]).json()["body"]:
-            subtitle.write_line(sub_line["content"], sub_line["from"], sub_line["to"])
+            subtitle.write_line(
+                sub_line["content"], sub_line["from"], sub_line["to"])
 
     # 下载弹幕
     danmaku_url = danmaku_api.format(cid=cid)
@@ -108,14 +113,14 @@ def parse_segment_info(video):
     for i, segment in enumerate(res.json()['data']['durl']):
         id = i + 1
         file_path = os.path.join(CONFIG['video_dir'], repair_filename(
-                                '{}_{:02d}.flv'.format(video.name, id)))
+            '{}_{:02d}.flv'.format(video.name, id)))
         video.segments.append(BililiVideoSegment(
-            id = id,
-            path = file_path,
-            url = segment["url"],
-            size = segment["size"],
-            qn = qn,
-            video = video
+            id=id,
+            path=file_path,
+            url=segment["url"],
+            size=segment["size"],
+            qn=qn,
+            video=video
         ))
 
 
@@ -127,8 +132,8 @@ def parse(url, config):
     print(title)
 
     # 创建所需目录结构
-    CONFIG["base_dir"] = touch_dir(repair_filename(os.path.join(
-        CONFIG['dir'], title + " - bilibili")))
+    CONFIG["base_dir"] = touch_dir(os.path.join(CONFIG['dir'],
+                                                repair_filename(title + " - bilibili")))
     CONFIG["video_dir"] = touch_dir(os.path.join(CONFIG['base_dir'], "Videos"))
     if CONFIG["playlist_type"] == "dpl":
         CONFIG['playlist'] = Dpl(os.path.join(

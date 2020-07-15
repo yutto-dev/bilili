@@ -46,19 +46,19 @@ def get_videos(url):
         if CONFIG['playlist'] is not None:
             CONFIG['playlist'].write_path(file_path)
         videos.append(BililiMultiMedia(
-            id = i+1,
-            name = name,
-            path = file_path,
-            meta = {
+            id=i+1,
+            name=name,
+            path=file_path,
+            meta={
                 "aid": item["aid"],
                 "cid": item["cid"],
                 "epid": item["id"],
                 "bvid": ''
             },
-            segmentation = CONFIG["segmentation"],
-            block_size = CONFIG["block_size"],
-            overwrite = CONFIG["overwrite"],
-            spider = spider
+            segmentation=CONFIG["segmentation"],
+            block_size=CONFIG["block_size"],
+            overwrite=CONFIG["overwrite"],
+            spider=spider
         ))
     return videos
 
@@ -89,7 +89,8 @@ def parse_segment_info(mm):
         print("warn: {} 为预览版视频".format(mm.name))
 
     # accept_quality = play_info['result']['accept_quality']
-    accept_quality = set([video['id'] for video in play_info['result']['dash']['video']])
+    accept_quality = set([video['id']
+                          for video in play_info['result']['dash']['video']])
     for qn in CONFIG['qn_seq']:
         if qn in accept_quality:
             break
@@ -97,14 +98,14 @@ def parse_segment_info(mm):
     for video in play_info['result']['dash']['video']:
         if video['id'] == qn:
             mm.set_video(
-                url = video['base_url'],
-                qn = qn
+                url=video['base_url'],
+                qn=qn
             )
             break
     for audio in play_info['result']['dash']['audio']:
         mm.set_audio(
-            url = audio['base_url'],
-            qn = qn
+            url=audio['base_url'],
+            qn=qn
         )
         break
 
@@ -117,8 +118,8 @@ def parse(url, config):
     print(title)
 
     # 创建所需目录结构
-    CONFIG["base_dir"] = touch_dir(os.path.join(
-        CONFIG['dir'], title + " - bilibili"))
+    CONFIG["base_dir"] = touch_dir(os.path.join(CONFIG['dir'],
+                                                repair_filename(title + " - bilibili")))
     CONFIG["video_dir"] = touch_dir(os.path.join(CONFIG['base_dir'], "Videos"))
     if CONFIG["playlist_type"] == "dpl":
         CONFIG['playlist'] = Dpl(os.path.join(

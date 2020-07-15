@@ -46,18 +46,18 @@ def get_videos(url):
         if CONFIG['playlist'] is not None:
             CONFIG['playlist'].write_path(file_path)
         videos.append(BililiVideo(
-            id = i+1,
-            name = name,
-            path = file_path,
-            meta = {
+            id=i+1,
+            name=name,
+            path=file_path,
+            meta={
                 "aid": item["aid"],
                 "cid": item["cid"],
                 "epid": item["id"]
             },
-            segmentation = CONFIG["segmentation"],
-            block_size = CONFIG["block_size"],
-            overwrite = CONFIG["overwrite"],
-            spider = spider
+            segmentation=CONFIG["segmentation"],
+            block_size=CONFIG["block_size"],
+            overwrite=CONFIG["overwrite"],
+            spider=spider
         ))
     return videos
 
@@ -100,12 +100,12 @@ def parse_segment_info(video):
         file_path = os.path.join(CONFIG['video_dir'], repair_filename(
             '{}_{:02d}.flv'.format(video.name, id)))
         video.segments.append(BililiVideoSegment(
-            id = id,
-            path = file_path,
-            url = segment["url"],
-            size = segment["size"],
-            qn = qn,
-            video = video
+            id=id,
+            path=file_path,
+            url=segment["url"],
+            size=segment["size"],
+            qn=qn,
+            video=video
         ))
 
 
@@ -117,8 +117,8 @@ def parse(url, config):
     print(title)
 
     # 创建所需目录结构
-    CONFIG["base_dir"] = touch_dir(os.path.join(
-        CONFIG['dir'], title + " - bilibili"))
+    CONFIG["base_dir"] = touch_dir(os.path.join(CONFIG['dir'],
+                                                repair_filename(title + " - bilibili")))
     CONFIG["video_dir"] = touch_dir(os.path.join(CONFIG['base_dir'], "Videos"))
     if CONFIG["playlist_type"] == "dpl":
         CONFIG['playlist'] = Dpl(os.path.join(
