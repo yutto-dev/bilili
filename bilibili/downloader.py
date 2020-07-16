@@ -66,8 +66,8 @@ class BililiVideo():
 
     def __str__(self):
         """ 视频返回的字符串 """
-        num_block = sum([len(segment.blocks) for segment in self.segments])
-        return "{} qn:{} {},{}".format(self.name, self.qn, len(self.segments))
+        # num_block = sum([len(segment.blocks) for segment in self.segments])
+        return "{} qn:{} {}".format(self.name, self.qn, len(self.segments))
 
     @property
     def size(self):

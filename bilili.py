@@ -13,9 +13,10 @@ def main():
 
     parser = argparse.ArgumentParser(description="bilili B 站视频、弹幕下载器")
     parser.add_argument("url", help="视频主页地址")
-    parser.add_argument('-s', '--source', default='h5', choices=['flash', 'h5'], help="选择播放源（html5 or Flash）")
+    parser.add_argument('-s', '--source', default='h5',
+                        choices=['flash', 'h5'], help="选择播放源（html5 or Flash）")
     parser.add_argument("-d", "--dir", default=r"", help="下载目录")
-    parser.add_argument("-r", "--sharpness", default='120', choices=['120', '116', '112', '80', '74', '64', '32', '16'],
+    parser.add_argument("-q", "--quality", default='120', choices=['120', '116', '112', '80', '74', '64', '32', '16'],
                         help="视频清晰度 112:1080P+, 80:1080P, 64:720P, 32:480P, 16:360P")
     parser.add_argument("-t", "--num-thread", default=30,
                         type=int, help="最大下载线程数")
@@ -35,7 +36,7 @@ def main():
 
     args = parser.parse_args()
     # 超清 4K 高清 1080P60 高清 1080P+ 高清 1080P  高清 720P60 高清 720P  清晰 480P  流畅 360P
-    qns = [120, 116, 112, 80, 74, 64, 32, 16]
+    quality_lists = [120, 116, 112, 80, 74, 64, 32, 16]
     cookies = {
         "SESSDATA": args.sess_data
     }
@@ -43,7 +44,8 @@ def main():
     config = {
         "url": args.url,
         "dir": args.dir,
-        "qn_seq": qns[qns.index(int(args.sharpness)):] + list(reversed(qns[:qns.index(int(args.sharpness))])),
+        "quality_sequence": quality_lists[quality_lists.index(int(args.quality)):] +
+                            list(reversed(quality_lists[:quality_lists.index(int(args.quality))])),
         "episodes": args.episodes,
         "playlist_type": args.playlist_type,
         "playlist_path_type": args.path_type.upper(),

@@ -103,7 +103,7 @@ def parse_segment_info(video):
         return
 
     accept_quality = touch_message['data']['accept_quality']
-    for qn in CONFIG['qn_seq']:
+    for qn in CONFIG['quality_sequence']:
         if qn in accept_quality:
             break
 

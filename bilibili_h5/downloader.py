@@ -66,7 +66,7 @@ class BililiContainer():
     def __str__(self):
         """ 视频返回的字符串 """
         num_block = len(self.video.blocks) + len(self.audio.blocks)
-        return "{} qn:{} {},{}".format(self.name, self.video.qn, num_block)
+        return "{} qn:{} {}".format(self.name, self.video.qn, num_block)
 
     def set_video(self, **kwargs):
         self.video = BililiVideo(container=self, **kwargs)

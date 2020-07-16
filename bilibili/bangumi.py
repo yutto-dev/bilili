@@ -65,7 +65,6 @@ def get_videos(url):
 def parse_segment_info(video):
     """ 解析视频片段 url """
 
-    segments = []
     aid, cid, ep_id = video.meta["aid"], video.meta["cid"], video.meta["epid"]
 
     # 下载弹幕
@@ -88,7 +87,7 @@ def parse_segment_info(video):
         print("warn: {} 为预览版视频".format(video.name))
 
     accept_quality = touch_message['result']['accept_quality']
-    for qn in CONFIG['qn_seq']:
+    for qn in CONFIG['quality_sequence']:
         if qn in accept_quality:
             break
 

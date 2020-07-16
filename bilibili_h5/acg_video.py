@@ -107,7 +107,7 @@ def parse_segment_info(container):
     # accept_quality = play_info['data']['accept_quality']
     accept_quality = set([video['id']
                           for video in play_info['data']['dash']['video']])
-    for qn in CONFIG['qn_seq']:
+    for qn in CONFIG['quality_sequence']:
         if qn in accept_quality:
             break
 

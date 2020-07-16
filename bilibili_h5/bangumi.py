@@ -66,7 +66,6 @@ def get_videos(url):
 def parse_segment_info(container):
     """ 解析视频片段 url """
 
-    segments = []
     aid, cid, ep_id, bvid = container.meta["aid"], container.meta["cid"], container.meta["epid"], container.meta["bvid"]
 
     # 下载弹幕
@@ -91,7 +90,7 @@ def parse_segment_info(container):
     # accept_quality = play_info['result']['accept_quality']
     accept_quality = set([video['id']
                           for video in play_info['result']['dash']['video']])
-    for qn in CONFIG['qn_seq']:
+    for qn in CONFIG['quality_sequence']:
         if qn in accept_quality:
             break
 
