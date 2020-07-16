@@ -1,9 +1,9 @@
 # bilili
 
 <p align="center">
-   <a href="https://python.org/" target="_blank"><img alt="python" src="https://img.shields.io/badge/Python-3.6.7-green?logo=python"></a>
+   <a href="https://python.org/" target="_blank"><img alt="python" src="https://img.shields.io/badge/Python-3.6|3.7|3.8-green?logo=python"></a>
    <a href="https://github.com/SigureMo/bilili/actions?query=workflow%3A%22Test+Crawler%22" target="_blank"><img alt="Test Crawler" src="https://github.com/SigureMo/bilili/workflows/Test%20Crawler/badge.svg"></a>
-   <a href="LICENSE"><img alt="LICENSE" src="https://img.shields.io/badge/License-MIT-orange"></a>
+   <a href="LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/SigureMo/bilili"></a>
 </p>
 
 使用 Python 下载 [B 站](https://www.bilibili.com/)视频，ビリリ~
