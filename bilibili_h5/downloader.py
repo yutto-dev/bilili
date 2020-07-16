@@ -41,8 +41,9 @@ class Status():
         return self.value == Status.DONE
 
 
-class BililiMultiMedia():
-    """ bilibili 影音媒体类
+class BililiContainer():
+    """ bilibili 影音容器类
+    同时包含视频与音频
     """
 
     def __init__(self, id, name, path, meta, segmentation=True,
@@ -68,10 +69,10 @@ class BililiMultiMedia():
         return "{} qn:{} {},{}".format(self.name, self.video.qn, num_block)
 
     def set_video(self, **kwargs):
-        self.video = BililiVideo(mm=self, **kwargs)
+        self.video = BililiVideo(container=self, **kwargs)
 
     def set_audio(self, **kwargs):
-        self.audio = BililiAudio(mm=self, **kwargs)
+        self.audio = BililiAudio(container=self, **kwargs)
 
     @property
     def medias(self):
@@ -91,21 +92,21 @@ class BililiMultiMedia():
 
 
 class BililiMedia():
-    """ bilibili 媒体类
+    """ bilibili 媒体类（视频或音频）
     """
 
-    def __init__(self, type, url, qn, mm):
+    def __init__(self, type, url, qn, container):
 
         self.type = type
         self.qn = qn
         self.url = url
 
-        self.mm = mm
+        self.container = container
         self.path = '{}_{}.m4s'.format(
-            os.path.splitext(self.mm.path)[0], self.type)
+            os.path.splitext(self.container.path)[0], self.type)
         self.name = os.path.split(self.path)[-1]
         self._get_head()
-        self.mm.total += self.total
+        self.container.total += self.total
 
         self.status = Status()
         self.blocks = []
@@ -114,7 +115,7 @@ class BililiMedia():
     def _segmentation(self):
         """ 分段，将各个片段添加至 self.blocks """
         if self.segmentation:
-            for i in range(math.ceil(self.total/self.mm.block_size)):
+            for i in range(math.ceil(self.total/self.container.block_size)):
                 block = BililiBlock(self, i)
                 self.blocks.append(block)
         else:
@@ -122,10 +123,10 @@ class BililiMedia():
             self.blocks.append(block)
 
     def _get_head(self):
-        res = self.mm.spider.head(self.url, headers={'Range': 'bytes=0-4'})
+        res = self.container.spider.head(self.url, headers={'Range': 'bytes=0-4'})
         if res.headers.get('Content-Range'):
             self.total = int(res.headers['Content-Range'].split('/')[-1])
-            self.segmentation = self.mm.segmentation
+            self.segmentation = self.container.segmentation
         elif res.headers.get('Content-Length'):
             self.total = int(res.headers['Content-Length'])
             self.segmentation = False
@@ -180,7 +181,7 @@ class BililiBlock():
     def __init__(self, media, id):
 
         self.media = media
-        self.mm = self.media.mm
+        self.container = self.media.container
 
         self.path = "{}.{:06}".format(self.media.path, id)
         self.name = os.path.split(self.path)[-1]
@@ -193,31 +194,31 @@ class BililiBlock():
     def download(self, ffmpeg, stream=True, chunk_size=1024):
         # 更改状态
         self.status.switch()
-        if self.mm.status.initialized:
-            self.mm.status.switch()
+        if self.container.status.initialized:
+            self.container.status.switch()
         if self.media.status.initialized:
             self.media.status.switch()
 
         # 判断是否需要删除
-        if self.mm.overwrite:
+        if self.container.overwrite:
             self.remove()
         self.size = self.get_size()
         if not os.path.exists(self.path):
             downloaded = False
             while not downloaded:
                 # 设置 headers
-                headers = dict(self.mm.spider.headers)
+                headers = dict(self.container.spider.headers)
                 if self.media.segmentation:
                     headers["Range"] = "bytes={}-{}".format(
-                        self.id * self.mm.block_size + self.size,
-                        (self.id+1) * self.mm.block_size - 1)
+                        self.id * self.container.block_size + self.size,
+                        (self.id+1) * self.container.block_size - 1)
                 else:
                     headers["Range"] = "bytes={}-".format(
-                        self.id * self.mm.block_size + self.size)
+                        self.id * self.container.block_size + self.size)
 
                 try:
                     # 尝试建立连接
-                    res = self.mm.spider.get(
+                    res = self.container.spider.get(
                         self.media.url, stream=stream, headers=headers, timeout=(5, 10))
                     # 下载到临时路径
                     with open(self.tmp_path, 'ab') as f:
@@ -245,9 +246,9 @@ class BililiBlock():
             self.media.merge()
             self.media.status.switch()
 
-            if self.mm.audio.status.done and self.mm.video.status.done:
-                self.mm.merge(ffmpeg)
-                self.mm.status.switch()
+            if self.container.audio.status.done and self.container.video.status.done:
+                self.container.merge(ffmpeg)
+                self.container.status.switch()
 
     def remove(self):
         """ 删除文件及其临时文件 """
@@ -285,7 +286,7 @@ class BiliFileManager():
 
     def __init__(self, num_thread, block_size, ffmpeg, overwrite=False):
         self.ffmpeg = ffmpeg
-        self.mms = []
+        self.containers = []
         self.pool = ThreadPool(num_thread)
         self.overwrite = overwrite
         self.block_size = block_size
@@ -293,14 +294,14 @@ class BiliFileManager():
     def dispense_resources(self, resources, log=True):
         """ 资源分发，将资源切分为片段，并分发至线程池 """
 
-        for i, mm in enumerate(resources):
+        for i, container in enumerate(resources):
             print("dispenser resources {}/{}".format(i, len(resources)), end="\r")
-            if os.path.exists(mm.path) and not self.overwrite:
+            if os.path.exists(container.path) and not self.overwrite:
                 sign = "!"
             else:
                 sign = ">"
-                self.mms.append(mm)
-                for media in mm.medias:
+                self.containers.append(container)
+                for media in container.medias:
                     if os.path.exists(media.path) and not self.overwrite:
                         media.status.switch(Status.DONE)
                         continue
@@ -308,7 +309,7 @@ class BiliFileManager():
                         task = Task(block.download, args=(self.ffmpeg, ))
                         self.pool.add_task(task)
             if log:
-                print("------{} {}".format(sign, mm.name))
+                print("------{} {}".format(sign, container.name))
 
     def run(self):
         """ 启动任务 """
@@ -316,18 +317,18 @@ class BiliFileManager():
 
     def monitoring(self):
         """ 启动监控器 """
-        mms = self.mms
-        size, t = sum([mm.size for mm in mms]), time.time()
-        total_size = sum([mm.total for mm in mms])
+        containers = self.containers
+        size, t = sum([container.size for container in containers]), time.time()
+        total_size = sum([container.total for container in containers])
         center_placeholder = "%(center)s"
-        while len(mms):
+        while len(containers):
             bar_length = 50
             max_length = 80
             log_string = " Downloading... ".center(max_length, "=") + "\n"
 
             # 下载速度
             now_size, now_t = sum(
-                [mm.size for mm in mms]), time.time()
+                [container.size for container in containers]), time.time()
             delta_size, delta_t = now_size - size, now_t - t
             size, t = now_size, now_t
             if delta_t < 1e-6:
@@ -335,19 +336,19 @@ class BiliFileManager():
             speed = delta_size / delta_t
 
             # 单个下载进度
-            for mm in mms:
-                if mm.status.downloading:
+            for container in containers:
+                if container.status.downloading:
                     num_media_done = sum(
-                        [media.status.done for media in mm.medias])
-                    num_media = len(mm.medias)
+                        [media.status.done for media in container.medias])
+                    num_media = len(container.medias)
                     line = "{}({}/{}) qn:{} {} {}/{}".format(
-                        mm.name,
+                        container.name,
                         num_media_done,
                         num_media,
-                        mm.video.qn,
+                        container.video.qn,
                         center_placeholder,
-                        size_format(mm.size),
-                        size_format(mm.total))
+                        size_format(container.size),
+                        size_format(container.total))
                     line = line.replace(center_placeholder, max(
                         max_length-get_string_width(line)+len(center_placeholder), 0)*"-")
                     log_string += line + "\n"
@@ -367,7 +368,7 @@ class BiliFileManager():
             print(log_string)
 
             # 监控是否全部完成
-            if all([mm.status.done for mm in mms]):
+            if all([container.status.done for container in containers]):
                 break
 
             try:

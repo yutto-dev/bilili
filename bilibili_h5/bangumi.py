@@ -3,7 +3,7 @@ import re
 import threading
 
 from utils import parse_episodes
-from bilibili_h5.downloader import BililiMultiMedia, BililiVideo, BililiAudio, Status
+from bilibili_h5.downloader import BililiContainer, BililiVideo, BililiAudio, Status
 from common.base import repair_filename, touch_dir
 from common.crawler import BililiCrawler
 from common.playlist import Dpl, M3u
@@ -45,7 +45,7 @@ def get_videos(url):
             '{}.mp4'.format(name)))
         if CONFIG['playlist'] is not None:
             CONFIG['playlist'].write_path(file_path)
-        videos.append(BililiMultiMedia(
+        videos.append(BililiContainer(
             id=i+1,
             name=name,
             path=file_path,
@@ -63,17 +63,17 @@ def get_videos(url):
     return videos
 
 
-def parse_segment_info(mm):
+def parse_segment_info(container):
     """ 解析视频片段 url """
 
     segments = []
-    aid, cid, ep_id, bvid = mm.meta["aid"], mm.meta["cid"], mm.meta["epid"], mm.meta["bvid"]
+    aid, cid, ep_id, bvid = container.meta["aid"], container.meta["cid"], container.meta["epid"], container.meta["bvid"]
 
     # 下载弹幕
     danmaku_url = danmaku_api.format(cid=cid)
     res = spider.get(danmaku_url)
     res.encoding = "utf-8"
-    danmaku_path = os.path.splitext(mm.path)[0] + ".xml"
+    danmaku_path = os.path.splitext(container.path)[0] + ".xml"
     with open(danmaku_path, "w", encoding="utf-8") as f:
         f.write(res.text)
 
@@ -82,11 +82,11 @@ def parse_segment_info(mm):
         avid=aid, cid=cid, ep_id=ep_id, qn=80, bvid=bvid)).json()
     if play_info["code"] != 0:
         print("warn: 无法下载 {} ，原因： {}".format(
-            mm.name, play_info["message"]))
-        mm.status.switch(Status.DONE)
+            container.name, play_info["message"]))
+        container.status.switch(Status.DONE)
         return
     if play_info["result"]["is_preview"] == 1:
-        print("warn: {} 为预览版视频".format(mm.name))
+        print("warn: {} 为预览版视频".format(container.name))
 
     # accept_quality = play_info['result']['accept_quality']
     accept_quality = set([video['id']
@@ -97,13 +97,13 @@ def parse_segment_info(mm):
 
     for video in play_info['result']['dash']['video']:
         if video['id'] == qn:
-            mm.set_video(
+            container.set_video(
                 url=video['base_url'],
                 qn=qn
             )
             break
     for audio in play_info['result']['dash']['audio']:
-        mm.set_audio(
+        container.set_audio(
             url=audio['base_url'],
             qn=qn
         )
