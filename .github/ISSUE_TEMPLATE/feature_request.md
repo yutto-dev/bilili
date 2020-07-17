@@ -1,10 +1,12 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: '[Feature request]'
+title: '✨ '
 labels: ''
 assignees: ''
 
 ---
 
-## 请详细描述你所需要要的新特性
+## 特性描述
+
+<!-- 请在这里详述你所需要的特性 -->
