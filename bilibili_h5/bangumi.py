@@ -78,7 +78,7 @@ def parse_segment_info(container):
 
     # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
     play_info = spider.get(parse_api.format(
-        avid=aid, cid=cid, ep_id=ep_id, qn=80, bvid=bvid)).json()
+        avid=aid, cid=cid, ep_id=ep_id, qn=CONFIG['quality_sequence'][0], bvid=bvid)).json()
     if play_info["code"] != 0:
         print("warn: 无法下载 {} ，原因： {}".format(
             container.name, play_info["message"]))
