@@ -11,7 +11,7 @@ from common.subtitle import Subtitle
 
 
 info_api = "https://api.bilibili.com/pgc/web/season/section?season_id={season_id}"
-parse_api = "https://api.bilibili.com/pgc/player/web/playurl?avid={avid}&cid={cid}&bvid={bvid}&qn={qn}&ep_id={ep_id}&fnver=0&fnval=16"
+parse_api = "https://api.bilibili.com/pgc/player/web/playurl?avid={avid}&cid={cid}&bvid={bvid}&qn={qn}&ep_id={ep_id}&fnver=0&fnval=16&fourk=1"
 danmaku_api = "http://comment.bilibili.com/{cid}.xml"
 spider = BililiCrawler()
 CONFIG = dict()

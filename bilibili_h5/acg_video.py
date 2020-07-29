@@ -12,7 +12,7 @@ from common.subtitle import Subtitle
 
 
 info_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&bvid={bvid}&jsonp=jsonp"
-parse_api = "https://api.bilibili.com/x/player/playurl?avid={avid}&cid={cid}&bvid={bvid}&qn={qn}&type=&otype=json&fnver=0&fnval=16"
+parse_api = "https://api.bilibili.com/x/player/playurl?avid={avid}&cid={cid}&bvid={bvid}&qn={qn}&type=&otype=json&fnver=0&fnval=16&fourk=1"
 subtitle_api = "https://api.bilibili.com/x/player.so?id=cid:{cid}&aid={avid}&bvid={bvid}"
 danmaku_api = "http://comment.bilibili.com/{cid}.xml"
 spider = BililiCrawler()
@@ -94,7 +94,7 @@ def parse_segment_info(container):
 
     # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
     play_info = spider.get(parse_api.format(
-        avid=avid, cid=cid, bvid=bvid, qn=80)).json()
+        avid=avid, cid=cid, bvid=bvid, qn=CONFIG['quality_sequence'][0])).json()
     if play_info["code"] != 0:
         print("warn: 无法下载 {} ，原因： {}".format(
             container.name, play_info["message"]))
