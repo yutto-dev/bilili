@@ -14,7 +14,7 @@ def main():
     parser = argparse.ArgumentParser(description="bilili B 站视频、弹幕下载器")
     parser.add_argument("url", help="视频主页地址")
     parser.add_argument('-s', '--source', default='h5',
-                        choices=['flash', 'h5'], help="选择播放源（html5 or Flash）")
+                        choices=['flash', 'h5', 'mp4'], help="选择播放源（html5 or flash or mp4）")
     parser.add_argument("-d", "--dir", default=r"", help="下载目录")
     parser.add_argument("-q", "--quality", default='120', choices=['120', '116', '112', '80', '74', '64', '32', '16'],
                         help="视频清晰度 112:1080P+, 80:1080P, 64:720P, 32:480P, 16:360P")
@@ -35,8 +35,8 @@ def main():
                         help="分段下载器的块大小，默认为 128MB")
 
     args = parser.parse_args()
-    # 超清 4K 高清 1080P60 高清 1080P+ 高清 1080P  高清 720P60 高清 720P  清晰 480P  流畅 360P
-    quality_lists = [120, 116, 112, 80, 74, 64, 32, 16]
+    # 超清 4K 高清 1080P60 高清 1080P+ 高清 1080P  高清 720P60 高清 720P  清晰 480P  流畅 360P 极速 240P
+    quality_lists = [120, 116, 112, 80, 74, 64, 32, 16, 6]
     cookies = {
         "SESSDATA": args.sess_data
     }
@@ -57,6 +57,8 @@ def main():
 
     if args.source.lower() == 'h5':
         import bilibili_h5 as bili
+    elif args.source.lower() == 'mp4':
+        import bilibili_mp4 as bili
     else:
         import bilibili as bili
 
@@ -64,13 +66,18 @@ def main():
             re.match(r"https?://b23.tv/av(\d+)", args.url) or \
             re.match(r"https?://www.bilibili.com/video/BV(\w+)", args.url) or \
             re.match(r"https?://b23.tv/BV(\w+)", args.url):
-        if args.source == 'h5':
+        if args.source.lower() == 'h5':
             import bilibili_h5.acg_video as bilili
+        elif args.source.lower() == 'mp4':
+            import bilibili_mp4.acg_video as bilili
         else:
             import bilibili.acg_video as bilili
     elif re.match(r"https?://www.bilibili.com/bangumi/media/md(\d+)", args.url):
-        if args.source == 'h5':
+        if args.source.lower() == 'h5':
             import bilibili_h5.bangumi as bilili
+        elif args.source.lower() == 'mp4':
+            print("番剧不支持 MP4 解析哦")
+            sys.exit(0)
         else:
             import bilibili.bangumi as bilili
     else:

@@ -41,7 +41,7 @@ python bilili.py <url>
 
 `bilili` 还支持很多参数，具体如下
 
--  `-s`/`--source` 选择播放源（`flash` or `h5`），默认为 html5 播放源
+-  `-s`/`--source` 选择播放源（`flash` or `h5` or `mp4`），默认为 html5 播放源
 -  `-d`/`--dir` 指定存储目录，默认为项目根目录
 -  `-q`/`--quality` 指定清晰度，默认为 `120`，对应关系如下
    -  `120` # 超清 4K
@@ -77,7 +77,9 @@ python bilili.py <url>
 
 由于 HTML5 源下载速度更佳，因此默认使用 HTML5 播放源，但偶尔有些课程仍然不支持 HTML5 源（~~如 [操作系统\_清华大学(向勇、陈渝)](https://www.bilibili.com/video/BV1js411b7vg)~~，现已支持，但尚不能保证全部资源均已支持），遇到此类资源请手动切换至 Flash 源
 
-> 由于现在同时支持两种接口，所以……我暂时懒得继续改进代码，等以后 Flash 接口彻底被取缔的时候，可能会好好整理下代码（如果那时候我还维护的话）
+此外，还支持直接解析“高清晰度”的 mp4 视频（仅 acg video，而且最新的 4K 等清晰度是获取不到的），无需合并，但是速度很慢，所以事实上也没什么必要去尝试……不建议使用
+
+> 由于现在同时支持三种接口，所以……我暂时懒得继续改进代码，等以后 Flash 接口彻底被取缔的时候，可能会好好整理下代码（如果那时候我还维护的话）
 
 ### Danmaku
 
@@ -99,3 +101,4 @@ python bilili.py <url>
 
 1. [Bilibili - 1033020837](https://github.com/1033020837/Bilibili)
 2. [BilibiliVideoDownload - blogwy](https://github.com/blogwy/BilibiliVideoDownload)
+3. [BiliUtil](https://github.com/wolfbolin/BiliUtil)

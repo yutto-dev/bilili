@@ -1,7 +1,7 @@
 config_default =  {
     "url": "",
     "dir": "",
-    "quality_sequence": [120, 116, 112, 80, 74, 64, 32, 16],
+    "quality_sequence": [120, 116, 112, 80, 74, 64, 32, 16, 6],
     "episodes": "all",
     "playlist_type": "dpl",
     "playlist_path_type": "RP",
