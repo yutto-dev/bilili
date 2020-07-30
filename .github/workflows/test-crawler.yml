@@ -23,6 +23,11 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      - name: Install tools
+        run: |
+          apt install ffmpeg
+          apt install aria2
+
       - name: Test crawler
         run: |
           pip install pytest
