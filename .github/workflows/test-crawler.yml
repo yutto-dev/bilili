@@ -25,8 +25,8 @@ jobs:
 
       - name: Install tools
         run: |
-          apt install ffmpeg
-          apt install aria2
+          sudo apt install ffmpeg
+          sudo apt install aria2
 
       - name: Test crawler
         run: |
