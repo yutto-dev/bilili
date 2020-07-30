@@ -9,7 +9,8 @@ from bilili.common.base import repair_filename, touch_dir, remove
 from bilili.common.playlist import Dpl, M3u
 from bilili.api.subtitle import get_subtitle
 from bilili.api.danmaku import get_danmaku
-from bilili.tools import aria2, ffmpeg, spider
+from bilili.tools import (aria2, ffmpeg, spider, regex_acg_video_av, regex_acg_video_av_short,
+                            regex_acg_video_bv, regex_acg_video_bv_short, regex_bangumi)
 
 
 def main():
@@ -53,13 +54,13 @@ def main():
         "format": args.format.lower(),
     }
 
-    if re.match(r"https?://www.bilibili.com/video/av(\d+)", args.url) or \
-            re.match(r"https?://b23.tv/av(\d+)", args.url) or \
-            re.match(r"https?://www.bilibili.com/video/BV(\w+)", args.url) or \
-            re.match(r"https?://b23.tv/BV(\w+)", args.url):
+    if regex_acg_video_av.match(args.url) or \
+       regex_acg_video_av_short.match(args.url) or \
+       regex_acg_video_bv.match(args.url) or \
+       regex_acg_video_bv_short.match(args.url):
         bili_type = "acg_video"
         from bilili.api.acg_video import get_title, get_context, get_containers, parse_segments
-    elif re.match(r"https?://www.bilibili.com/bangumi/media/md(\d+)", args.url):
+    elif regex_bangumi.match(args.url):
         bili_type = "bangumi"
         from bilili.api.bangumi import get_title, get_context, get_containers, parse_segments
     else:

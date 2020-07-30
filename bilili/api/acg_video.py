@@ -1,7 +1,8 @@
 import re
 import os
 
-from bilili.tools import spider
+from bilili.tools import (spider, regex_acg_video_av, regex_acg_video_av_short,
+                            regex_acg_video_bv, regex_acg_video_bv_short)
 from bilili.downloader import BililiContainer
 from bilili.common.base import repair_filename, touch_dir
 
@@ -21,16 +22,14 @@ def get_context(home_url):
         'bvid': ''
     }
 
-    if re.match(r"https?://www.bilibili.com/video/av(\d+)", home_url):
-        context['avid'] = re.match(
-            r'https?://www.bilibili.com/video/av(\d+)', home_url).group(1)
-    elif re.match(r"https?://b23.tv/av(\d+)", home_url):
-        context['avid'] = re.match(r"https?://b23.tv/av(\d+)", home_url).group(1)
-    elif re.match(r"https?://www.bilibili.com/video/BV(\w+)", home_url):
-        context['bvid'] = re.match(
-            r"https?://www.bilibili.com/video/BV(\w+)", home_url).group(1)
-    elif re.match(r"https?://b23.tv/BV(\w+)", url):
-        context['bvid'] = re.match(r"https?://b23.tv/BV(\w+)", home_url).group(1)
+    if regex_acg_video_av.match(home_url):
+        context['avid'] = regex_acg_video_av.match(home_url).group('avid')
+    elif regex_acg_video_av_short.match(home_url):
+        context['avid'] = regex_acg_video_av_short.match(home_url).group('avid')
+    elif regex_acg_video_bv.match(home_url):
+        context['bvid'] = regex_acg_video_bv.match(home_url).group('bvid')
+    elif regex_acg_video_bv_short.match(home_url):
+        context['bvid'] = regex_acg_video_bv_short.match(home_url).group('bvid')
 
     return context
 
