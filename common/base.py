@@ -122,3 +122,13 @@ def get_string_width(string):
     except:
         length = len(string)
     return length
+
+
+def remove(path):
+    if os.path.isdir(path):
+        for filename in os.listdir(path):
+            remove(os.path.join(path, filename))
+    elif os.path.isfile(path):
+        os.remove(path)
+    else:
+        pass
