@@ -1,9 +1,9 @@
 import re
 import os
 
-from tools import spider
-from downloader import BililiContainer
-from common.base import repair_filename, touch_dir
+from bilili.tools import spider
+from bilili.downloader import BililiContainer
+from bilili.common.base import repair_filename, touch_dir
 
 info_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&bvid={bvid}&jsonp=jsonp"
 parse_api = "https://api.bilibili.com/x/player/playurl?avid={avid}&cid={cid}&bvid={bvid}&qn={qn}&type=&otype=json"

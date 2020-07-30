@@ -1,7 +1,8 @@
 import pytest
-from api.danmaku import get_danmaku
-from common.base import touch_dir
-from downloader import BililiContainer
+
+from bilili.api.danmaku import get_danmaku
+from bilili.common.base import touch_dir
+from bilili.downloader import BililiContainer
 
 
 def test_danmaku():

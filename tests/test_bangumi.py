@@ -1,7 +1,8 @@
 import pytest
-from api.bangumi import get_title, get_context, get_containers, parse_segments
-from common.base import touch_dir
-from downloader import BililiContainer
+
+from bilili.api.bangumi import get_title, get_context, get_containers, parse_segments
+from bilili.common.base import touch_dir
+from bilili.downloader import BililiContainer
 
 
 def test_get_title():

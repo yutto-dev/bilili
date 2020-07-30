@@ -1,13 +1,15 @@
 import json
 import re
 import os
-from common.subtitle import Subtitle
-from tools import spider
+
+from bilili.common.subtitle import Subtitle
+from bilili.tools import spider
+
+
 subtitle_api = "https://api.bilibili.com/x/player.so?id=cid:{cid}&aid={avid}&bvid={bvid}"
 
 
 def get_subtitle(container):
-    print(container.meta)
     cid, avid, bvid = container.meta["cid"], container.meta["avid"], container.meta["bvid"]
     # 检查是否有字幕并下载
     subtitle_url = subtitle_api.format(avid=avid, cid=cid, bvid=bvid)

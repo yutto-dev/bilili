@@ -2,8 +2,10 @@
 
 <p align="center">
    <a href="https://python.org/" target="_blank"><img alt="python" src="https://img.shields.io/badge/Python-3.6|3.7|3.8-green?logo=python"></a>
+   <a href="https://pypi.org/project/bilili/" target="_blank"><img src="https://img.shields.io/pypi/v/bilili" alt="pypi"></a>
    <a href="https://github.com/SigureMo/bilili/actions?query=workflow%3A%22Test+Crawler%22" target="_blank"><img alt="Test Crawler" src="https://github.com/SigureMo/bilili/workflows/Test%20Crawler/badge.svg"></a>
    <a href="LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/SigureMo/bilili"></a>
+   <a href="https://bilibili.com" target="_blank"><img src="https://img.shields.io/badge/bilibili-1eabc9.svg?logo=bilibili&logoColor=white" alt="Bilibili"></a>
 </p>
 
 使用 Python 下载 [B 站](https://www.bilibili.com/)视频，ビリリ~
@@ -21,27 +23,48 @@
    -  `https://b23.tv/BVxxxxxx`
 -  番剧视频： `https://www.bilibili.com/bangumi/media/mdxxxxxx`
 
-首先要**下载 `ffmpeg`**（[下载地址](https://ffmpeg.org/download.html)），存放到任意目录下，并将该目录**添加到环境变量**（如果是 `*nix`，可以很方便地通过包管理器一键完成）
+### 安装 FFmpeg
 
-之后**安装依赖**
+由于大多数格式需要合并，所以 bilili 需要使用 ffmpeg，你需要事先安装好它
 
-```bash
+Windows 请[手动下载](https://ffmpeg.org/download.html)后，存放到任意目录下，并将该目录**添加到环境变量**
+
+而如果是 `*nix`，可以很方便地通过包管理器一键完成
+
+### 安装 Bilili
+
+``` bash
+pip install bilili
+```
+
+此外你还可以在 Github 上下载最新的源码
+
+``` bash
+git clone git@github.com:SigureMo/bilili.git
 pip install -r requirements.txt
 ```
 
-下载的方式很简单，只需要在终端中运行如下命令即可
+### 运行
 
-```bash
-python bilili.py <url>
+如果你是通过 `pip` 直接安装程序，此时你可以直接使用命令 `bilili` 来进行下载
+
+```
+bilili <url>
 ```
 
-需要将 `<url>` 替换为前面的视频主页 url
+而如果你是通过源码运行，需要在项目根目录运行如下命令
+
+``` bash
+python -m bilili.bilili_dl <url>
+```
+
+当然，你需要将 `<url>` 替换为前面的视频主页 url
 
 ## Options
 
 `bilili` 还支持很多参数，具体如下
 
--  `-s`/`--source` 选择播放源（`flash` or `h5` or `mp4`），默认为 html5 播放源
+-  `-f`/`--format` 选择下载格式（`flv` or `m4s` or `mp4`），默认为 m4s 格式，注意该参数仅代表下载源格式，所有格式最后均会转为 mp4
 -  `-d`/`--dir` 指定存储目录，默认为项目根目录
 -  `-q`/`--quality` 指定清晰度，默认为 `120`，对应关系如下
    -  `120` # 超清 4K
@@ -64,8 +87,6 @@ python bilili.py <url>
 -  `--playlist-type` 指定播放列表类型，支持 `dpl` 和 `m3u` ，默认为 `dpl`，设置为 `no` 即不生成播放列表
 -  `--path-type` 指定播放列表路径的类型（`rp`：相对路径，`ap`：绝对路径），默认为相对路径
 -  `--ass` 自动将 `XML` 弹幕转换为 `ASS` 弹幕
--  `--enable-block` 启用分段下载器
--  `--block-size` 指定分段下载器分块的大小，默认为 128MB
 
 ## Note
 
@@ -75,7 +96,7 @@ python bilili.py <url>
 
 ### Source
 
-由于 HTML5 源下载速度更佳，因此默认使用 HTML5 播放源，但偶尔有些课程仍然不支持 HTML5 源（~~如 [操作系统\_清华大学(向勇、陈渝)](https://www.bilibili.com/video/BV1js411b7vg)~~，现已支持，但尚不能保证全部资源均已支持），遇到此类资源请手动切换至 Flash 源
+由于 m4s 格式下载速度更佳，因此默认使用 m4s 格式，但偶尔有些课程仍然不支持 m4s 格式（~~如 [操作系统\_清华大学(向勇、陈渝)](https://www.bilibili.com/video/BV1js411b7vg)~~，现已支持，但尚不能保证全部资源均已支持），遇到此类资源请手动切换至 flv 格式
 
 此外，还支持直接解析“高清晰度”的 mp4 视频（仅 acg video，而且最新的 4K 等清晰度是获取不到的），无需合并，但是速度很慢，所以事实上也没什么必要去尝试……不建议使用
 
@@ -86,12 +107,6 @@ python bilili.py <url>
 默认会下载 XML 格式的弹幕，如果想使用 ASS 格式的弹幕（大多数播放器都支持，可以自动加载），可以加参数 `--ass` 自动转换，或者手动在[us-danmaku](https://tiansh.github.io/us-danmaku/bilibili/)转换
 
 另外，程序内自动转换依赖 [danmaku2ass](https://github.com/m13253/danmaku2ass) ，但是并没有将它存放在我的代码里，而是根据需要动态从 github 上下载并加载的
-
-### Segmented download
-
-下载器内置了分段下载的机制，也即将大文件分成小块下载之后合并，充分利用多线程的优势。但该模块稳定性不高，可能在使用过程中出现一些问题，因此并未作为默认机制启用，如果需要更高的速度请手动开启
-
-未来可能会直接调用 aria2 下载
 
 ### Playlist
 

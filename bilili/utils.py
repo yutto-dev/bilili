@@ -4,8 +4,8 @@ import time
 import requests
 import cv2
 
-from common.base import get_size, size_format, touch_dir, touch_file, Task
-from common.thread import ThreadPool
+from bilili.common.base import get_size, size_format, touch_dir, touch_file, Task
+from bilili.common.thread import ThreadPool
 
 
 def parse_episodes(episodes_str, total):

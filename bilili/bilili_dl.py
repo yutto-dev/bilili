@@ -4,12 +4,12 @@ import argparse
 import os
 import json
 
-from utils import parse_episodes, convert_danmaku
-from common.base import repair_filename, touch_dir, remove
-from common.playlist import Dpl, M3u
-from api.subtitle import get_subtitle
-from api.danmaku import get_danmaku
-from tools import aria2, ffmpeg, spider
+from bilili.utils import parse_episodes, convert_danmaku
+from bilili.common.base import repair_filename, touch_dir, remove
+from bilili.common.playlist import Dpl, M3u
+from bilili.api.subtitle import get_subtitle
+from bilili.api.danmaku import get_danmaku
+from bilili.tools import aria2, ffmpeg, spider
 
 
 def main():
@@ -58,10 +58,10 @@ def main():
             re.match(r"https?://www.bilibili.com/video/BV(\w+)", args.url) or \
             re.match(r"https?://b23.tv/BV(\w+)", args.url):
         bili_type = "acg_video"
-        from api.acg_video import get_title, get_context, get_containers, parse_segments
+        from bilili.api.acg_video import get_title, get_context, get_containers, parse_segments
     elif re.match(r"https?://www.bilibili.com/bangumi/media/md(\d+)", args.url):
         bili_type = "bangumi"
-        from api.bangumi import get_title, get_context, get_containers, parse_segments
+        from bilili.api.bangumi import get_title, get_context, get_containers, parse_segments
     else:
         print("视频地址有误！")
         sys.exit(1)

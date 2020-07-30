@@ -1,9 +1,9 @@
 import re
 import os
 
-from tools import spider
-from downloader import BililiContainer
-from common.base import repair_filename, touch_dir
+from bilili.tools import spider
+from bilili.downloader import BililiContainer
+from bilili.common.base import repair_filename, touch_dir
 
 info_api = "https://api.bilibili.com/pgc/web/season/section?season_id={season_id}"
 parse_api = "https://api.bilibili.com/pgc/player/web/playurl?avid={avid}&cid={cid}&qn={qn}&ep_id={ep_id}"

@@ -1,5 +1,6 @@
 import os
-from tools import spider
+
+from bilili.tools import spider
 
 danmaku_api = "http://comment.bilibili.com/{cid}.xml"
 
