@@ -68,10 +68,10 @@ def parse_segments(container, quality_sequence):
             avid=aid, cid=cid, ep_id=ep_id, qn=80)).json()
         if touch_message["code"] != 0:
             print("warn: 无法下载 {} ，原因： {}".format(
-                video.name, touch_message["message"]))
+                container.name, touch_message["message"]))
             return
         if touch_message["result"]["is_preview"] == 1:
-            print("warn: {} 为预览版视频".format(video.name))
+            print("warn: {} 为预览版视频".format(container.name))
 
         accept_quality = touch_message['result']['accept_quality']
         for qn in quality_sequence:
