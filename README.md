@@ -1,6 +1,18 @@
 # bilili
 
+---
+
 ## WIP，大规模重构中，尚不如 master 分支稳定，由于 aria2 的下载速度不如直接用 python 下载快（很迷），所以将重新添加一个 Python 下载器
+
+**重构进度**
+
+- [x] 移除 aria2 下载器
+- [ ] 稳定 Python 下载器
+- [ ] 下载后即时合并
+- [ ] 即时弹幕转换
+- [ ] 好看的界面
+
+---
 
 <p align="center">
    <a href="https://python.org/" target="_blank"><img alt="python" src="https://img.shields.io/badge/Python-3.6|3.7|3.8-green?logo=python"></a>
@@ -101,7 +113,7 @@ python -m bilili.bilili_dl <url>
    |6|极速 240P|
    |208|未知，MP4 格式专属，无法作为参数指定|
    > 如果不存在指定的清晰度，会自动降低到最接近的清晰度
-<!-- -  `-t`/`--num-thread` 指定最大下载线程数，默认为 30 -->
+-  `-t`/`--num-thread` 指定最大下载线程数，默认为 30
 -  `-p`/`--episodes` 选集，可通过以下方式进行选择，默认为 all
    -  `<p1>` 单独下某一剧集
    -  `<p1>,<p2>,<p3>,...,<pn>` 即通过 `,` 分割，不要加空格

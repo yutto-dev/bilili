@@ -4,6 +4,8 @@ import time
 import math
 import subprocess
 
+from bilili.downloader.middleware import DownloaderMiddleware
+
 
 class BililiContainer():
     """ bilibili 单个视频类
@@ -20,9 +22,9 @@ class BililiContainer():
 
         self.medias = []
         self.qn = None
-        self.size = 0
         self.height = None
         self.width = None
+        self._ = DownloaderMiddleware()
 
     def merge(self, ffmpeg):
         if self.format == 'mp4':
@@ -43,15 +45,6 @@ class BililiContainer():
     def append_media(self, *args, **kwargs):
         self.medias.append(BililiMedia(*args, **kwargs, container = self))
 
-    def download_check(self, overwrite):
-        if os.path.exists(self.path) and overwrite:
-            os.remove(self.path)
-            return True
-        elif os.path.exists(self.path) and not overwrite:
-            return False
-        else:
-            return True
-
 
 class BililiMedia():
 
@@ -59,7 +52,6 @@ class BililiMedia():
 
         self.id = id
         self.qn = qn
-        self.size = size
         self.height = height
         self.width = width
         self.url = url
@@ -74,6 +66,8 @@ class BililiMedia():
         self.tmp_path = self.path + ".dl"
         self.name = os.path.split(self.path)[-1]
         self.tmp_name = os.path.split(self.tmp_path)[-1]
+        self._ = DownloaderMiddleware(parent=self.container._)
+        self._.total_size = size
 
         if self.container.qn is None:
             self.container.qn = qn
@@ -81,21 +75,11 @@ class BililiMedia():
             self.container.width = width
         if self.container.height is None:
             self.container.height = height
-        if self.size is None:
+        if self._.total_size is None:
             print("[warn] {} 无法获取 size".format(self.name))
-            self.size = 0
-        self.container.size += self.size
+            self._.total_size = 0
 
     def rename(self):
         if os.path.exists(self.path):
             os.remove(self.path)
         os.rename(self.tmp_path, self.path)
-
-    def download_check(self, overwrite):
-        if os.path.exists(self.path) and overwrite:
-            os.remove(self.path)
-            return True
-        elif os.path.exists(self.path) and not overwrite:
-            return False
-        else:
-            return True

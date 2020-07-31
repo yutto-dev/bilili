@@ -3,14 +3,18 @@ import sys
 import argparse
 import os
 import json
+import time
 
-from bilili.utils.base import repair_filename, touch_dir, touch_file, remove
+from bilili.utils.base import Task, repair_filename, touch_dir, touch_file, remove, size_format
 from bilili.utils.quality import quality_sequence_default, quality_map
 from bilili.utils.playlist import Dpl, M3u
+from bilili.utils.thread import ThreadPool
 from bilili.api.subtitle import get_subtitle
 from bilili.api.danmaku import get_danmaku
 from bilili.tools import (aria2, ffmpeg, spider, regex_acg_video_av, regex_acg_video_av_short,
                           regex_acg_video_bv, regex_acg_video_bv_short, regex_bangumi)
+from bilili.downloader.remote_file import RemoteFile
+from bilili.downloader.middleware import DownloaderMiddleware
 
 
 def parse_episodes(episodes_str, total):
@@ -89,6 +93,8 @@ def main():
     parser.add_argument("-d", "--dir", default=r"", help="下载目录")
     parser.add_argument("-q", "--quality", default='120', choices=['120', '116', '112', '80', '74', '64', '32', '16', '6'],
                         help="视频清晰度 120:4K, 116:1080P60, 112:1080P+, 80:1080P, 74:720P60, 64:720P, 32:480P, 16:360P, 6:240P")
+    parser.add_argument("-t", "--num-threads", default=30,
+                        type=int, help="最大下载线程数")
     parser.add_argument("-p", "--episodes", default="all", help="选集")
     parser.add_argument("-w", "--overwrite",
                         action="store_true", help="强制覆盖已下载视频")
@@ -175,36 +181,36 @@ def main():
         parse_segments(container, config['quality_sequence'])
 
     if containers:
-        containers_need_download = []
-        medias_need_download = []
+        global_middleware = DownloaderMiddleware()
+        pool = ThreadPool(args.num_threads)
+        containers_need_merge = []
         for i, container in enumerate(containers):
-            if container.download_check(overwrite=args.overwrite):
-                containers_need_download.append(container)
-                sign = "✓"
-                print("{} {} {}".format(sign, container.name, quality_map[container.qn]['description']))
-                for media in container.medias:
-                    if media.download_check(overwrite=args.overwrite):
-                        medias_need_download.append(media)
-                        sign = "✓"
-                        print("    {} {}".format(sign, media.name))
-                    else:
-                        sign = "✖"
-                        print("    {} {}".format(sign, media.name))
-            else:
-                sign = "✖"
-                print("{} {}".format(sign, container.name))
-
-        aria2.download_video_list(map(lambda media: {
-            "url": media.url,
-            "filename": media.tmp_name
-        }, medias_need_download), video_dir)
-        for i, media in enumerate(medias_need_download):
-            print("renaming {} {}/{}".format(media.name, i +
-                                             1, len(medias_need_download)), end="\r")
-            media.rename()
-        for i, container in enumerate(containers_need_download):
+            global_middleware.add_child(container._)
+            container_downloaded = os.path.exists(container.path)
+            sign = "✓" if container_downloaded else "✖"
+            if not container_downloaded:
+                containers_need_merge.append(container)
+            print("{} {} {}".format(sign, container.name, quality_map[container.qn]['description']))
+            for media in container.medias:
+                remote_file = RemoteFile(media.url, media.path, middleware=media._)
+                task = Task(remote_file.download, args=(spider, ))
+                pool.add_task(task)
+                media_downloaded = os.path.exists(media.path)
+                sign = "✓" if media_downloaded else "✖"
+                media._.downloaded = media_downloaded or container_downloaded
+                print("    {} {}".format(sign, media.name))
+        pool.run()
+        while True:
+            time.sleep(1)
+            print("> {} / {}".format(
+                size_format(global_middleware.size),
+                size_format(global_middleware.total_size)
+            ))
+            if global_middleware.downloaded:
+                break
+        for i, container in enumerate(containers_need_merge):
             print("merging {} {}/{}".format(container.name, i +
-                                            1, len(containers_need_download)), end="\r")
+                                            1, len(containers_need_merge)), end="\r")
             container.merge(ffmpeg)
         print("已全部下载完成！")
     else:
