@@ -20,6 +20,9 @@ class BililiContainer():
 
         self.medias = []
         self.qn = None
+        self.size = 0
+        self.height = None
+        self.width = None
 
     def merge(self, ffmpeg):
         if self.format == 'mp4':
@@ -37,14 +40,8 @@ class BililiContainer():
         for media in self.medias:
             os.remove(media.path)
 
-    def append_media(self, id, url, qn, type):
-        self.medias.append(BililiMedia(
-            id = id,
-            url = url,
-            qn = qn,
-            container = self,
-            type = type,
-        ))
+    def append_media(self, *args, **kwargs):
+        self.medias.append(BililiMedia(*args, **kwargs, container = self))
 
     def download_check(self, overwrite):
         if os.path.exists(self.path) and overwrite:
@@ -58,10 +55,16 @@ class BililiContainer():
 
 class BililiMedia():
 
-    def __init__(self, id, url, qn, container, type="segment"):
+    def __init__(self, id, url, qn, size, height, width, container, type="segment"):
 
         self.id = id
         self.qn = qn
+        self.size = size
+        if self.size is None:
+            self.size = 0
+            # TODO: 修改
+        self.height = height
+        self.width = width
         self.url = url
         self.container = container
         self.path = os.path.splitext(self.container.path)[0]
@@ -77,6 +80,11 @@ class BililiMedia():
 
         if self.container.qn is None:
             self.container.qn = qn
+        if self.container.width is None:
+            self.container.width = width
+        if self.container.height is None:
+            self.container.height = height
+        self.container.size += self.size
 
     def rename(self):
         if os.path.exists(self.path):

@@ -75,7 +75,6 @@ setup(
     ],
     install_requires=[
         'requests',
-        'opencv-python'
     ],
     entry_points={
         'console_scripts':[

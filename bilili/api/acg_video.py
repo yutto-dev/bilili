@@ -3,6 +3,7 @@ import os
 
 from bilili.tools import (spider, regex_acg_video_av, regex_acg_video_av_short,
                             regex_acg_video_bv, regex_acg_video_bv_short)
+from bilili.utils.quality import quality_map
 from bilili.video import BililiContainer
 from bilili.utils.base import repair_filename, touch_dir
 
@@ -84,6 +85,9 @@ def parse_segments(container, quality_sequence):
                 id=i+1,
                 url=segment["url"],
                 qn=qn,
+                height=quality_map[qn]['height'],
+                width=quality_map[qn]['width'],
+                size=segment["size"],
                 type="segment",
             )
     elif container.format == "m4s":
@@ -97,7 +101,7 @@ def parse_segments(container, quality_sequence):
             return
 
         if play_info['data'].get('dash') is None:
-            raise Exception('该视频尚不支持 H5 source 哦~')
+            raise Exception('该视频尚不支持 M4S format 哦~')
 
         # accept_quality = play_info['data']['accept_quality']
         accept_quality = set([video['id']
@@ -115,6 +119,9 @@ def parse_segments(container, quality_sequence):
                     id=1,
                     url=video['base_url'],
                     qn=qn,
+                    height=video['height'],
+                    width=video['width'],
+                    size=None,
                     type="video"
                 )
                 break
@@ -122,6 +129,9 @@ def parse_segments(container, quality_sequence):
             container.append_media(
                 id=2,
                 url=audio['base_url'],
+                height=None,
+                width=None,
+                size=None,
                 qn=qn,
                 type="audio"
             )
@@ -141,6 +151,9 @@ def parse_segments(container, quality_sequence):
             id=1,
             url=play_info['data']['durl'][0]['url'],
             qn=play_info['data']['quality'],
+            height=quality_map[play_info['data']['quality']]['height'],
+            width=quality_map[play_info['data']['quality']]['width'],
+            size=play_info['data']['durl'][0]['size'],
             type="audio"
         )
     else:

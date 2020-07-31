@@ -2,6 +2,7 @@ import re
 import os
 
 from bilili.tools import spider
+from bilili.utils.quality import quality_map
 from bilili.video import BililiContainer
 from bilili.utils.base import repair_filename, touch_dir
 
@@ -86,6 +87,9 @@ def parse_segments(container, quality_sequence):
                 id=i+1,
                 url=segment["url"],
                 qn=qn,
+                height=quality_map[qn]['height'],
+                width=quality_map[qn]['width'],
+                size=segment["size"],
                 type="segment",
             )
     elif container.format == "m4s":
@@ -113,6 +117,9 @@ def parse_segments(container, quality_sequence):
                     id=1,
                     url=video['base_url'],
                     qn=qn,
+                    height=video['height'],
+                    width=video['width'],
+                    size=None,
                     type="video"
                 )
                 break
@@ -120,6 +127,9 @@ def parse_segments(container, quality_sequence):
             container.append_media(
                 id=2,
                 url=audio['base_url'],
+                height=None,
+                width=None,
+                size=None,
                 qn=qn,
                 type="audio"
             )

@@ -2,6 +2,7 @@ import pytest
 
 from bilili.api.acg_video import get_title, get_context, get_containers, parse_segments
 from bilili.utils.base import touch_dir
+from bilili.utils.quality import quality_sequence_default
 from bilili.video import BililiContainer
 
 
@@ -40,4 +41,4 @@ def test_parse_segments(format):
         },
         format=format,
     )
-    parse_segments(container, [120, 116, 112, 80, 74, 64, 32, 16, 6])
+    parse_segments(container, quality_sequence_default)

@@ -3,9 +3,9 @@ import sys
 import argparse
 import os
 import json
-import cv2
 
 from bilili.utils.base import repair_filename, touch_dir, touch_file, remove
+from bilili.utils.quality import quality_sequence_default, quality_map
 from bilili.utils.playlist import Dpl, M3u
 from bilili.api.subtitle import get_subtitle
 from bilili.api.danmaku import get_danmaku
@@ -48,7 +48,7 @@ def parse_episodes(episodes_str, total):
     return episodes
 
 
-def convert_danmaku(video_path_list):
+def convert_danmaku(containers):
     """ 将视频文件夹下的 xml 弹幕转换为 ass 弹幕 """
     # 检测插件是否已经就绪
     plugin_url = "https://raw.githubusercontent.com/m13253/danmaku2ass/master/danmaku2ass.py"
@@ -63,20 +63,17 @@ def convert_danmaku(video_path_list):
 
     # 使用插件进行转换
     from plugins.danmaku2ass import Danmaku2ASS
-    for video_path in video_path_list:
-        name = os.path.splitext(video_path)[0]
+    for container in containers:
+        name = os.path.splitext(container.path)[0]
         print("convert {} ".format(os.path.split(name)[-1]), end="\r")
         if not os.path.exists(name+".mp4") or \
                 not os.path.exists(name+".xml"):
             continue
-        cap = cv2.VideoCapture(name+".mp4")
-        __, frame = cap.read()
-        h, w, __ = frame.shape
         Danmaku2ASS(
             name+".xml", "autodetect", name+".ass",
-            w, h, reserve_blank=0,
+            container.width, container.height, reserve_blank=0,
             font_face=_('(FONT) sans-serif')[7:],
-            font_size=w/40, text_opacity=0.8, duration_marquee=15.0,
+            font_size=container.width/40, text_opacity=0.8, duration_marquee=15.0,
             duration_still=10.0, comment_filter=None, is_reduce_comments=False,
             progress_callback=None)
         os.remove(name + '.xml')
@@ -106,8 +103,6 @@ def main():
                         choices=["xml", "ass", "no"], help="弹幕类型，支持 xml 和 ass，如果设置为 no 则不下载弹幕")
 
     args = parser.parse_args()
-    # 超清 4K 高清 1080P60 高清 1080P+ 高清 1080P  高清 720P60 高清 720P  清晰 480P  流畅 360P 极速 240P
-    quality_lists = [120, 116, 112, 80, 74, 64, 32, 16, 6]
     cookies = {
         "SESSDATA": args.sess_data
     }
@@ -115,8 +110,8 @@ def main():
     config = {
         "url": args.url,
         "dir": args.dir,
-        "quality_sequence": quality_lists[quality_lists.index(int(args.quality)):] +
-        list(reversed(quality_lists[:quality_lists.index(int(args.quality))])),
+        "quality_sequence": quality_sequence_default[quality_sequence_default.index(int(args.quality)):] +
+        list(reversed(quality_sequence_default[:quality_sequence_default.index(int(args.quality))])),
         "episodes": args.episodes,
         "playlist_type": args.playlist_type,
         "playlist_path_type": args.path_type.upper(),
@@ -186,7 +181,7 @@ def main():
             if container.download_check(overwrite=args.overwrite):
                 containers_need_download.append(container)
                 sign = "✓"
-                print("{} {} qn: {}".format(sign, container.name, container.qn))
+                print("{} {} {}".format(sign, container.name, quality_map[container.qn]['description']))
                 for media in container.medias:
                     if media.download_check(overwrite=args.overwrite):
                         medias_need_download.append(media)
@@ -217,9 +212,7 @@ def main():
 
     # 弹幕转换为 ass 格式
     if args.danmaku == 'ass':
-        convert_danmaku([
-            container.path for container in containers
-        ])
+        convert_danmaku(containers)
         print("转换完成")
 
 
