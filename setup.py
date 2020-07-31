@@ -1,6 +1,47 @@
-from setuptools import setup, find_packages
+import os
+import sys
+from shutil import rmtree
 
-VERSION = '0.0.11'
+from bilili.__version__ import __version__
+from setuptools import setup, find_packages, Command
+
+here = os.path.abspath(os.path.dirname(__file__))
+
+class UploadCommand(Command):
+    """Support setup.py upload."""
+
+    description = 'Build and publish the package.'
+    user_options = []
+
+    @staticmethod
+    def status(s):
+        """Prints things in bold."""
+        print('\033[1m{0}\033[0m'.format(s))
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        try:
+            self.status('Removing previous builds…')
+            rmtree(os.path.join(here, 'dist'))
+        except OSError:
+            pass
+
+        self.status('Building Source and Wheel (universal) distribution…')
+        os.system('{0} setup.py sdist bdist_wheel --universal'.format(sys.executable))
+
+        self.status('Uploading the package to PyPI via Twine…')
+        os.system('twine upload dist/*')
+
+        self.status('Pushing git tags…')
+        os.system('git tag v{0}'.format(__version__))
+        os.system('git push --tags')
+
+        sys.exit()
 
 def get_long_description():
     with open('README.md', 'r', encoding='utf-8') as f:
@@ -9,7 +50,7 @@ def get_long_description():
 
 setup(
     name='bilili',
-    version=VERSION,
+    version=__version__,
     description="🍻 bilibili video and danmaku downloader | B站视频、弹幕下载器",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
@@ -28,6 +69,10 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=True,
+    python_requires='>=3.6.0',
+    setup_requires=[
+        'wheel'
+    ],
     install_requires=[
         'requests',
         'opencv-python'
@@ -36,5 +81,8 @@ setup(
         'console_scripts':[
             'bilili = bilili.bilili_dl:main'
         ]
+    },
+    cmdclass={
+        'upload': UploadCommand,
     },
 )
