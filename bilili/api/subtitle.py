@@ -2,7 +2,7 @@ import json
 import re
 import os
 
-from bilili.common.subtitle import Subtitle
+from bilili.utils.subtitle import Subtitle
 from bilili.tools import spider
 
 

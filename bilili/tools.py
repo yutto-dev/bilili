@@ -1,8 +1,8 @@
 import re
 
-from bilili.common.aria2 import Aria2
-from bilili.common.ffmpeg import FFmpeg
-from bilili.common.crawler import BililiCrawler
+from bilili.utils.aria2 import Aria2
+from bilili.utils.ffmpeg import FFmpeg
+from bilili.utils.crawler import BililiCrawler
 
 aria2 = Aria2(show_progress=True)
 ffmpeg = FFmpeg()

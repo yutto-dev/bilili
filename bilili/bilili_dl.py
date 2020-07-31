@@ -3,14 +3,83 @@ import sys
 import argparse
 import os
 import json
+import cv2
 
-from bilili.utils import parse_episodes, convert_danmaku
-from bilili.common.base import repair_filename, touch_dir, remove
-from bilili.common.playlist import Dpl, M3u
+from bilili.utils.base import repair_filename, touch_dir, touch_file, remove
+from bilili.utils.playlist import Dpl, M3u
 from bilili.api.subtitle import get_subtitle
 from bilili.api.danmaku import get_danmaku
 from bilili.tools import (aria2, ffmpeg, spider, regex_acg_video_av, regex_acg_video_av_short,
-                            regex_acg_video_bv, regex_acg_video_bv_short, regex_bangumi)
+                          regex_acg_video_bv, regex_acg_video_bv_short, regex_bangumi)
+
+
+def parse_episodes(episodes_str, total):
+    """ 将选集字符串转为列表 """
+
+    # 解析字符串为列表
+    print("全 {} 话".format(total))
+    if episodes_str == "all":
+        episode_list = list(range(1, total+1))
+    elif re.match(r"\d+~\d+", episodes_str):
+        start, end = episodes_str.split("~")
+        start, end = int(start), int(end)
+        assert end > start, "终点值应大于起点值"
+        episode_list = list(range(start, end+1))
+    elif re.match(r"\d+(,\d+)*", episodes_str):
+        episode_list = episodes_str.split(",")
+        episode_list = list(map(int, episode_list))
+    else:
+        episode_list = []
+
+    # 筛选满足条件的剧集
+    out_of_range = []
+    episodes = []
+    for episode in episode_list:
+        if episode in range(1, total+1):
+            if episode not in episodes:
+                episodes.append(episode)
+        else:
+            out_of_range.append(episode)
+    if out_of_range:
+        print("warn: 剧集 {} 不存在".format(",".join(list(map(str, out_of_range)))))
+
+    print("已选择第 {} 话".format(",".join(list(map(str, episodes)))))
+    assert episodes, "没有选中任何剧集"
+    return episodes
+
+
+def convert_danmaku(video_path_list):
+    """ 将视频文件夹下的 xml 弹幕转换为 ass 弹幕 """
+    # 检测插件是否已经就绪
+    plugin_url = "https://raw.githubusercontent.com/m13253/danmaku2ass/master/danmaku2ass.py"
+    plugin_path = "plugins/danmaku2ass.py"
+    touch_dir(os.path.dirname(plugin_path))
+    touch_file(os.path.join(os.path.dirname(plugin_path), "__init__.py"))
+    if not os.path.exists(plugin_path):
+        print("下载插件中……")
+        res = requests.get(plugin_url)
+        with open(plugin_path, "w", encoding="utf8") as f:
+            f.write(res.text)
+
+    # 使用插件进行转换
+    from plugins.danmaku2ass import Danmaku2ASS
+    for video_path in video_path_list:
+        name = os.path.splitext(video_path)[0]
+        print("convert {} ".format(os.path.split(name)[-1]), end="\r")
+        if not os.path.exists(name+".mp4") or \
+                not os.path.exists(name+".xml"):
+            continue
+        cap = cv2.VideoCapture(name+".mp4")
+        __, frame = cap.read()
+        h, w, __ = frame.shape
+        Danmaku2ASS(
+            name+".xml", "autodetect", name+".ass",
+            w, h, reserve_blank=0,
+            font_face=_('(FONT) sans-serif')[7:],
+            font_size=w/40, text_opacity=0.8, duration_marquee=15.0,
+            duration_still=10.0, comment_filter=None, is_reduce_comments=False,
+            progress_callback=None)
+        os.remove(name + '.xml')
 
 
 def main():
@@ -19,10 +88,10 @@ def main():
     parser = argparse.ArgumentParser(description="bilili B 站视频、弹幕下载器")
     parser.add_argument("url", help="视频主页地址")
     parser.add_argument('-f', '--format', default='m4s',
-                        choices=['flv', 'm4s', 'mp4'], help="选择播放源（html5 or flash or mp4）")
+                        choices=['flv', 'm4s', 'mp4'], help="选择下载源格式（m4s 或 flv 或 mp4）")
     parser.add_argument("-d", "--dir", default=r"", help="下载目录")
     parser.add_argument("-q", "--quality", default='120', choices=['120', '116', '112', '80', '74', '64', '32', '16', '6'],
-                        help="视频清晰度 112:1080P+, 80:1080P, 64:720P, 32:480P, 16:360P")
+                        help="视频清晰度 120:4K, 116:1080P60, 112:1080P+, 80:1080P, 74:720P60, 64:720P, 32:480P, 16:360P, 6:240P")
     parser.add_argument("-p", "--episodes", default="all", help="选集")
     parser.add_argument("-w", "--overwrite",
                         action="store_true", help="强制覆盖已下载视频")
@@ -131,12 +200,12 @@ def main():
                 print("{} {}".format(sign, container.name))
 
         aria2.download_video_list(map(lambda media: {
-                "url": media.url,
-                "filename": media.tmp_name
-            }, medias_need_download), video_dir)
+            "url": media.url,
+            "filename": media.tmp_name
+        }, medias_need_download), video_dir)
         for i, media in enumerate(medias_need_download):
             print("renaming {} {}/{}".format(media.name, i +
-                                            1, len(medias_need_download)), end="\r")
+                                             1, len(medias_need_download)), end="\r")
             media.rename()
         for i, container in enumerate(containers_need_download):
             print("merging {} {}/{}".format(container.name, i +

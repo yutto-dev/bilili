@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.0.10'
+VERSION = '0.0.11'
 
 def get_long_description():
     with open('README.md', 'r', encoding='utf-8') as f:
@@ -10,7 +10,7 @@ def get_long_description():
 setup(
     name='bilili',
     version=VERSION,
-    description=":beers: bilibili video and danmaku downloader | B站视频、弹幕下载器",
+    description="🍻 bilibili video and danmaku downloader | B站视频、弹幕下载器",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
     classifiers=[
