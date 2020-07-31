@@ -5,7 +5,7 @@ from bilili.tools import (spider, regex_acg_video_av, regex_acg_video_av_short,
                             regex_acg_video_bv, regex_acg_video_bv_short)
 from bilili.utils.quality import quality_map
 from bilili.video import BililiContainer
-from bilili.utils.base import repair_filename, touch_dir
+from bilili.utils.base import repair_filename, touch_dir, touch_url
 
 info_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&bvid={bvid}&jsonp=jsonp"
 parse_api = "https://api.bilibili.com/x/player/playurl?avid={avid}&cid={cid}&bvid={bvid}&qn={qn}&type=&otype=json"
@@ -121,7 +121,7 @@ def parse_segments(container, quality_sequence):
                     qn=qn,
                     height=video['height'],
                     width=video['width'],
-                    size=None,
+                    size=touch_url(video['base_url'], spider)[0],
                     type="video"
                 )
                 break
@@ -131,7 +131,7 @@ def parse_segments(container, quality_sequence):
                 url=audio['base_url'],
                 height=None,
                 width=None,
-                size=None,
+                size=touch_url(audio['base_url'], spider)[0],
                 qn=qn,
                 type="audio"
             )

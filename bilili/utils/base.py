@@ -63,6 +63,22 @@ def touch_file(path):
     return os.path.normpath(path)
 
 
+def touch_url(url, spider):
+    """ 与资源进行测试连接，并获取该资源的 size 与 是否可以断点续传 """
+    res = spider.head(url, headers={'Range': 'bytes=0-4'})
+    size, resumable = None, False
+    if res.headers.get('Content-Range'):
+        size = int(res.headers['Content-Range'].split('/')[-1])
+        resumable = True
+    elif res.headers.get('Content-Length'):
+        size = int(res.headers['Content-Length'])
+        resumable = False
+    else:
+        size = None
+        resumable = False
+    return size, resumable
+
+
 def repair_filename(filename):
     """ 修复不合法的文件名 """
     def to_full_width_chr(matchobj):

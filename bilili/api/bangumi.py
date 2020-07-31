@@ -4,7 +4,7 @@ import os
 from bilili.tools import spider
 from bilili.utils.quality import quality_map
 from bilili.video import BililiContainer
-from bilili.utils.base import repair_filename, touch_dir
+from bilili.utils.base import repair_filename, touch_dir, touch_url
 
 info_api = "https://api.bilibili.com/pgc/web/season/section?season_id={season_id}"
 parse_api = "https://api.bilibili.com/pgc/player/web/playurl?avid={avid}&cid={cid}&qn={qn}&ep_id={ep_id}"
@@ -119,7 +119,7 @@ def parse_segments(container, quality_sequence):
                     qn=qn,
                     height=video['height'],
                     width=video['width'],
-                    size=None,
+                    size=touch_url(video['base_url'], spider)[0],
                     type="video"
                 )
                 break
@@ -129,7 +129,7 @@ def parse_segments(container, quality_sequence):
                 url=audio['base_url'],
                 height=None,
                 width=None,
-                size=None,
+                size=touch_url(audio['base_url'], spider)[0],
                 qn=qn,
                 type="audio"
             )

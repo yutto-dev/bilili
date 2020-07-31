@@ -60,9 +60,6 @@ class BililiMedia():
         self.id = id
         self.qn = qn
         self.size = size
-        if self.size is None:
-            self.size = 0
-            # TODO: 修改
         self.height = height
         self.width = width
         self.url = url
@@ -84,6 +81,9 @@ class BililiMedia():
             self.container.width = width
         if self.container.height is None:
             self.container.height = height
+        if self.size is None:
+            print("[warn] {} 无法获取 size".format(self.name))
+            self.size = 0
         self.container.size += self.size
 
     def rename(self):

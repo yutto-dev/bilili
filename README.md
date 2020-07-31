@@ -5,7 +5,7 @@
 <p align="center">
    <a href="https://python.org/" target="_blank"><img alt="python" src="https://img.shields.io/badge/Python-3.6|3.7|3.8-green?logo=python"></a>
    <a href="https://pypi.org/project/bilili/" target="_blank"><img src="https://img.shields.io/pypi/v/bilili" alt="pypi"></a>
-   <a href="https://github.com/SigureMo/bilili/actions?query=workflow%3A%22Test+Crawler%22" target="_blank"><img alt="Test Crawler" src="https://github.com/SigureMo/bilili/workflows/API%20Test/badge.svg"></a>
+   <a href="https://github.com/SigureMo/bilili/actions?query=workflow%3A%22API+Test%22" target="_blank"><img alt="Test Crawler" src="https://github.com/SigureMo/bilili/workflows/API%20Test/badge.svg"></a>
    <a href="LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/SigureMo/bilili"></a>
    <a href="https://bilibili.com" target="_blank"><img src="https://img.shields.io/badge/bilibili-1eabc9.svg?logo=bilibili&logoColor=white" alt="Bilibili"></a>
 </p>
@@ -33,34 +33,53 @@ Windows 请[手动下载](https://ffmpeg.org/download.html)后，存放到任意
 
 而如果是 `*nix`，可以很方便地通过包管理器一键完成
 
+你可以通过直接在终端运行 `ffmpeg -version` 测试是否安装成功
+
 ### 安装 Bilili
+
+#### pip 安装
+
+现在 bilili 支持通过 pip 一键安装
 
 ``` bash
 pip install bilili
 ```
 
-此外你还可以在 Github 上下载最新的源码
+#### 源码安装
+
+此外你还可以从 Github 上下载最新的源码进行安装
 
 ``` bash
 git clone git@github.com:SigureMo/bilili.git
-pip install -r requirements.txt
+cd bilili/
+python setup.py build
+python setup.py install # 可能需要 sudo
 ```
 
 ### 运行
 
-如果你是通过 `pip` 直接安装程序，此时你可以直接使用命令 `bilili` 来进行下载
+运行非常简单～
 
-```
+``` bash
 bilili <url>
 ```
 
-而如果你是通过源码运行，需要在项目根目录运行如下命令
+当然，你需要将 `<url>` 替换为前面的视频主页 url
+
+### 调试
+
+<details>
+
+<summary> 本地调试 </summary>
 
 ``` bash
+git clone git@github.com:SigureMo/bilili.git
+cd bilili/
+pip install -r requirements.txt
 python -m bilili.bilili_dl <url>
 ```
 
-当然，你需要将 `<url>` 替换为前面的视频主页 url
+</details>
 
 ## 参数
 
@@ -82,7 +101,7 @@ python -m bilili.bilili_dl <url>
    |6|极速 240P|
    |208|未知，MP4 格式专属，无法作为参数指定|
    > 如果不存在指定的清晰度，会自动降低到最接近的清晰度
--  `-t`/`--num-thread` 指定最大下载线程数，默认为 30
+<!-- -  `-t`/`--num-thread` 指定最大下载线程数，默认为 30 -->
 -  `-p`/`--episodes` 选集，可通过以下方式进行选择，默认为 all
    -  `<p1>` 单独下某一剧集
    -  `<p1>,<p2>,<p3>,...,<pn>` 即通过 `,` 分割，不要加空格
@@ -93,6 +112,29 @@ python -m bilili.bilili_dl <url>
 -  `--playlist-type` 指定播放列表类型，支持 `dpl` 和 `m3u` ，默认为 `dpl`，设置为 `no` 即不生成播放列表
 -  `--path-type` 指定播放列表路径的类型（`rp`：相对路径，`ap`：绝对路径），默认为相对路径
 -  `--danmaku` 指定弹幕类型，支持 `xml` 和 `ass`，如果设置为 `no` 则不下载弹幕，默认为 `xml` 弹幕
+
+
+<details>
+
+<summary>参数的使用</summary>
+
+参数的使用很简单，比如修改格式为 `flv`，只需要
+
+``` bash
+bilili <url> --format=flv
+# 或者
+bilili <url> -f flv
+```
+
+不需要指定具体值，只切换 `True` or `False` 的参数也不需要在命令中指定值，比如开启强制覆盖已下载视频选项
+
+``` bash
+bilili <url> --overwrite
+# 或者
+bilili <url> -w
+```
+
+</details>
 
 ## 注意事项
 
