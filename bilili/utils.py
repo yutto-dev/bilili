@@ -74,3 +74,4 @@ def convert_danmaku(video_path_list):
             font_size=w/40, text_opacity=0.8, duration_marquee=15.0,
             duration_still=10.0, comment_filter=None, is_reduce_comments=False,
             progress_callback=None)
+        os.remove(name + '.xml')

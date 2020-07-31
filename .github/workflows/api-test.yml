@@ -1,4 +1,4 @@
-name: Test Crawler
+name: API Test
 
 on: [push, pull_request]
 

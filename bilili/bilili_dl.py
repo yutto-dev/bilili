@@ -33,6 +33,8 @@ def main():
                         choices=["dpl", "m3u", "no"], help="播放列表类型，支持 dpl 和 m3u，输入 no 不生成播放列表")
     parser.add_argument("--path-type", default="rp",
                         help="播放列表路径类型（rp：相对路径，ap：绝对路径）")
+    parser.add_argument("--danmaku", default="xml",
+                        choices=["xml", "ass", "no"], help="弹幕类型，支持 xml 和 ass，如果设置为 no 则不下载弹幕")
 
     args = parser.parse_args()
     # 超清 4K 高清 1080P60 高清 1080P+ 高清 1080P  高清 720P60 高清 720P  清晰 480P  流畅 360P 极速 240P
@@ -104,7 +106,8 @@ def main():
                                                             len(containers)), end="\r")
         if bili_type == 'acg_video':
             get_subtitle(container)
-        get_danmaku(container)
+        if args.danmaku != 'no':
+            get_danmaku(container)
         parse_segments(container, config['quality_sequence'])
 
     if containers:
@@ -144,7 +147,7 @@ def main():
         print("没有需要下载的视频！")
 
     # 弹幕转换为 ass 格式
-    if args.ass:
+    if args.danmaku == 'ass':
         convert_danmaku([
             container.path for container in containers
         ])

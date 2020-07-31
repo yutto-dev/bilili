@@ -5,7 +5,7 @@
 <p align="center">
    <a href="https://python.org/" target="_blank"><img alt="python" src="https://img.shields.io/badge/Python-3.6|3.7|3.8-green?logo=python"></a>
    <a href="https://pypi.org/project/bilili/" target="_blank"><img src="https://img.shields.io/pypi/v/bilili" alt="pypi"></a>
-   <a href="https://github.com/SigureMo/bilili/actions?query=workflow%3A%22Test+Crawler%22" target="_blank"><img alt="Test Crawler" src="https://github.com/SigureMo/bilili/workflows/Test%20Crawler/badge.svg"></a>
+   <a href="https://github.com/SigureMo/bilili/actions?query=workflow%3A%22Test+Crawler%22" target="_blank"><img alt="Test Crawler" src="https://github.com/SigureMo/bilili/workflows/API%20Test/badge.svg"></a>
    <a href="LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/SigureMo/bilili"></a>
    <a href="https://bilibili.com" target="_blank"><img src="https://img.shields.io/badge/bilibili-1eabc9.svg?logo=bilibili&logoColor=white" alt="Bilibili"></a>
 </p>
@@ -88,7 +88,7 @@ python -m bilili.bilili_dl <url>
 -  `-c`/`--sess-data` 传入 `cookies` 中的 `SESSDATA`
 -  `--playlist-type` 指定播放列表类型，支持 `dpl` 和 `m3u` ，默认为 `dpl`，设置为 `no` 即不生成播放列表
 -  `--path-type` 指定播放列表路径的类型（`rp`：相对路径，`ap`：绝对路径），默认为相对路径
--  `--ass` 自动将 `XML` 弹幕转换为 `ASS` 弹幕
+-  `--danmaku` 指定弹幕类型，支持 `xml` 和 `ass`，如果设置为 `no` 则不下载弹幕，默认为 `xml` 弹幕
 
 ## Note
 
