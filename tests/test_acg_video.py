@@ -2,7 +2,7 @@ import pytest
 
 from bilili.api.acg_video import get_title, get_context, get_containers, parse_segments
 from bilili.common.base import touch_dir
-from bilili.downloader import BililiContainer
+from bilili.video import BililiContainer
 
 
 def test_get_title():

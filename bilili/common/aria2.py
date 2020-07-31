@@ -29,7 +29,7 @@ class Aria2():
     def download_video_list(self, video_list, dirname):
         input_file = os.path.join(self.tmp_dir, "aria2.in")
 
-        with open(input_file, "w") as f:
+        with open(input_file, "w", encoding="utf-8") as f:
             for video in video_list:
                 f.write(
 f'''{video["url"]}

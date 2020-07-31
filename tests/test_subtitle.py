@@ -2,7 +2,7 @@ import pytest
 
 from bilili.api.danmaku import get_danmaku
 from bilili.common.base import touch_dir
-from bilili.downloader import BililiContainer
+from bilili.video import BililiContainer
 
 
 def test_danmaku():

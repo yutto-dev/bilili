@@ -2,7 +2,7 @@ import re
 import os
 
 from bilili.tools import spider
-from bilili.downloader import BililiContainer
+from bilili.video import BililiContainer
 from bilili.common.base import repair_filename, touch_dir
 
 info_api = "https://api.bilibili.com/pgc/web/season/section?season_id={season_id}"

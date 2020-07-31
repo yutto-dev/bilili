@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.0.5'
+VERSION = '0.0.9'
 
 def get_long_description():
-    with open('README.md', 'r') as f:
+    with open('README.md', 'r', encoding='utf-8') as f:
         desc = f.read()
     return desc
 

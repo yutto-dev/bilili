@@ -1,5 +1,7 @@
 # bilili
 
+## WIP，大规模重构中，尚不如 master 分支稳定，由于 aria2 的下载速度不如直接用 python 下载快（很迷），所以将重新添加一个 Python 下载器
+
 <p align="center">
    <a href="https://python.org/" target="_blank"><img alt="python" src="https://img.shields.io/badge/Python-3.6|3.7|3.8-green?logo=python"></a>
    <a href="https://pypi.org/project/bilili/" target="_blank"><img src="https://img.shields.io/pypi/v/bilili" alt="pypi"></a>
@@ -25,9 +27,9 @@
 
 ### 安装 FFmpeg
 
-由于大多数格式需要合并，所以 bilili 需要使用 ffmpeg，你需要事先安装好它
+由于大多数格式需要合并，所以 bilili 依赖于 ffmpeg，你需要事先安装好它
 
-Windows 请[手动下载](https://ffmpeg.org/download.html)后，存放到任意目录下，并将该目录**添加到环境变量**
+Windows 请[手动下载](https://ffmpeg.org/download.html)后，存放到任意目录下，并将 `ffmpeg.exe` 所在目录**添加到环境变量**
 
 而如果是 `*nix`，可以很方便地通过包管理器一键完成
 

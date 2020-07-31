@@ -3,7 +3,7 @@ import os
 
 from bilili.tools import (spider, regex_acg_video_av, regex_acg_video_av_short,
                             regex_acg_video_bv, regex_acg_video_bv_short)
-from bilili.downloader import BililiContainer
+from bilili.video import BililiContainer
 from bilili.common.base import repair_filename, touch_dir
 
 info_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&bvid={bvid}&jsonp=jsonp"
