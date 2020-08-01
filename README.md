@@ -1,19 +1,5 @@
 # bilili
 
----
-
-## WIP，大规模重构中，尚不如 master 分支稳定，由于 aria2 的下载速度不如直接用 python 下载快（很迷），所以将重新添加一个 Python 下载器
-
-**重构进度**
-
-- [x] 移除 aria2 下载器
-- [x] 即时 ass 弹幕转换
-- [ ] 稳定 Python 下载器
-- [x] 边下载边合并
-- [x] 好看的界面
-
----
-
 <p align="center">
    <a href="https://python.org/" target="_blank"><img alt="python" src="https://img.shields.io/badge/Python-3.6|3.7|3.8-green?logo=python"></a>
    <a href="https://pypi.org/project/bilili/" target="_blank"><img src="https://img.shields.io/pypi/v/bilili" alt="pypi"></a>
@@ -31,12 +17,12 @@
 
 `bilili` 可以从以下两种视频主页获取视频
 
--  普通视频：
+-  普通视频主页：
    -  `https://www.bilibili.com/video/avxxxxxx`
    -  `https://b23.tv/avxxxxxx`
    -  `https://www.bilibili.com/video/BVxxxxxx`
    -  `https://b23.tv/BVxxxxxx`
--  番剧视频： `https://www.bilibili.com/bangumi/media/mdxxxxxx`
+-  番剧视频主页（非播放页面，在播放页面点一下封面即可跳转）： `https://www.bilibili.com/bangumi/media/mdxxxxxx`
 
 ### 安装 FFmpeg
 
