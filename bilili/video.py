@@ -5,6 +5,7 @@ import math
 import subprocess
 
 from bilili.downloader.middleware import DownloaderMiddleware
+from bilili.utils.quality import quality_map
 from bilili.tools import ffmpeg
 
 
@@ -54,6 +55,9 @@ class BililiContainer():
 
     def append_media(self, *args, **kwargs):
         self.medias.append(BililiMedia(*args, **kwargs, container = self))
+
+    def __str__(self):
+        return '{} 「{}」'.format(self.name, quality_map[self.qn]['description'])
 
 
 class BililiMedia():

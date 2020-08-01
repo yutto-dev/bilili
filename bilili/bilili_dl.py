@@ -6,9 +6,10 @@ import json
 import time
 
 from bilili.utils.base import Task, repair_filename, touch_dir, touch_file, remove, size_format
-from bilili.utils.quality import quality_sequence_default, quality_map
+from bilili.utils.quality import quality_sequence_default
 from bilili.utils.playlist import Dpl, M3u
 from bilili.utils.thread import ThreadPool
+from bilili.utils.console import Console, Font, Line, String, ProgressBar, List, DynamicSign
 from bilili.api.subtitle import get_subtitle
 from bilili.api.danmaku import get_danmaku
 from bilili.tools import (spider, ass, regex_acg_video_av, regex_acg_video_av_short,
@@ -137,7 +138,13 @@ def main():
 
     # 解析并过滤不需要的选集
     episodes = parse_episodes(config["episodes"], len(containers))
-    containers = list(filter(lambda video: video.id in episodes, containers))
+    containers, containers_need_filter = [], containers
+    for container in containers_need_filter:
+        if container.id not in episodes:
+            container._.downloaded = True
+            container._.merged = True
+        else:
+            containers.append(container)
 
     # 解析片段信息及视频 url
     for i, container in enumerate(containers):
@@ -163,9 +170,10 @@ def main():
             sign = "✓" if container_downloaded else "✖"
             if container_downloaded:
                 container._.merged = True
-            print("{} {} [{}]".format(sign, container.name, quality_map[container.qn]['description']))
+            print("{} {}".format(sign, str(container)))
             for media in container.medias:
-                remote_file = RemoteFile(media.url, media.path, middleware=media._)
+                remote_file = RemoteFile(
+                    media.url, media.path, middleware=media._)
                 task = Task(remote_file.download, args=(spider, ))
                 pool.add_task(task)
                 media_downloaded = os.path.exists(media.path)
@@ -177,26 +185,79 @@ def main():
         merge_pool.run()
         pool.run()
         size, t = global_middleware.size, time.time()
+
+        # 初始化界面
+        console = Console()
+        console.add_component(
+            Line(center=Font(char_a='𝓪', char_A='𝓐'), fillchar='='))
+        console.add_component(Line(left=String(), fillchar=' '))
+        console.add_component(
+            List(Line(left=String(), right=String(), fillchar='-')))
+        console.add_component(Line(left=ProgressBar(
+            width=65), right=String(), fillchar=' '))
+        console.add_component(Line(left=String(), fillchar=' '))
+        console.add_component(
+            List(Line(left=String(), right=DynamicSign(), fillchar=' ')))
+        console.add_component(Line(left=ProgressBar(
+            width=65), right=String(), fillchar=' '))
+
         while True:
             now_size, now_t = global_middleware.size, time.time()
-            delta_size, delta_t = now_size - size, (now_t - t) if now_t - t > 1e-6 else 1e-6
+            delta_size, delta_t = max(
+                now_size - size, 0), (now_t - t) if now_t - t > 1e-6 else 1e-6
             speed = delta_size / delta_t
             size, t = now_size, now_t
-            print()
-            print("downloading:", [container._.downloading for container in containers])
-            print("downloaded:", [container._.downloaded for container in containers])
-            print("merging:", [container._.merging for container in containers])
-            print("merged:", [container._.merged for container in containers])
-            print("> {} / {} {}/s".format(
-                size_format(global_middleware.size),
-                size_format(global_middleware.total_size),
-                size_format(speed)
-            ))
-            print()
+
+            # 数据传入，界面渲染
+            console.refresh([
+                {
+                    'center': ' 🍻 bilili ',
+                },
+                {
+                    'left': '🌠 Downloading videos: '
+                } if global_middleware.downloading else None,
+                [
+                    {
+                        'left': '{} '.format(str(container)),
+                        'right': ' {}/{}'.format(
+                            size_format(container._.size),
+                            size_format(container._.total_size)
+                        )
+                    } if container._.downloading else None for container in containers
+                ] if global_middleware.downloading else None,
+                {
+                    'left': global_middleware.size / global_middleware.total_size,
+                    'right': " {}/{} {}/s ⚡".format(
+                        size_format(global_middleware.size),
+                        size_format(global_middleware.total_size),
+                        size_format(speed)
+                    )
+                } if global_middleware.downloading else None,
+                {
+                    'left': '🍰 Merging videos: '
+                } if global_middleware.merging else None,
+                [
+                    {
+                        'left': '{} '.format(str(container)),
+                        'right': True
+                    } if container._.merging else None for container in containers
+                ] if global_middleware.merging else None,
+                {
+                    'left': sum([container._.merged for container in containers]) / len(containers),
+                    'right': " {}/{} ⚡".format(
+                        sum([container._.merged for container in containers]),
+                        len(containers)
+                    )
+                } if global_middleware.merging else None,
+            ])
+
+            # 检查是否有需要合并的
             for container in containers:
                 if container._.downloaded and not container._.merged and not container._.merging:
                     task = Task(container.merge, args=())
                     merge_pool.add_task(task)
+
+            # 检查是否已经全部完成
             if global_middleware.downloaded and global_middleware.merged:
                 merge_pool.resume()
                 break

@@ -10,7 +10,7 @@
 - [x] 即时 ass 弹幕转换
 - [ ] 稳定 Python 下载器
 - [x] 边下载边合并
-- [ ] 好看的界面
+- [x] 好看的界面
 
 ---
 
@@ -20,6 +20,7 @@
    <a href="https://github.com/SigureMo/bilili/actions?query=workflow%3A%22API+Test%22" target="_blank"><img alt="Test Crawler" src="https://github.com/SigureMo/bilili/workflows/API%20Test/badge.svg"></a>
    <a href="LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/SigureMo/bilili"></a>
    <a href="https://bilibili.com" target="_blank"><img src="https://img.shields.io/badge/bilibili-1eabc9.svg?logo=bilibili&logoColor=white" alt="Bilibili"></a>
+   <a href="https://gitmoji.carloscuesta.me"><img src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square" alt="Gitmoji"></a>
 </p>
 
 使用 Python 下载 [B 站](https://www.bilibili.com/)视频，ビリリ~
