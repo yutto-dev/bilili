@@ -80,7 +80,11 @@ class DownloaderMiddleware(Middleware):
         if self.is_leaf:
             self.__downloading = value
         else:
-            print("[warn] 无法设定非叶子结点的 downloading")
+            if value:
+                print("[warn] 无法设定非叶子结点的 downloading 为 True")
+            else:
+                for child in self.children:
+                    child.downloading = False
 
     @property
     def downloaded(self):
@@ -94,7 +98,11 @@ class DownloaderMiddleware(Middleware):
         if self.is_leaf:
             self.__downloaded = value
         else:
-            print("[warn] 无法设定非叶子结点的 downloaded")
+            if value:
+                for child in self.children:
+                    child.downloaded = True
+            else:
+                print("[warn] 无法设定非叶子结点的 downloaded 为 False")
 
     @property
     def merging(self):
@@ -108,7 +116,11 @@ class DownloaderMiddleware(Middleware):
         if self.is_leaf:
             self.__merging = value
         else:
-            print("[warn] 无法设定非叶子结点的 merging")
+            if value:
+                print("[warn] 无法设定非叶子结点的 merging 为 True")
+            else:
+                for child in self.children:
+                    child.merging = False
 
     @property
     def merged(self):
@@ -122,4 +134,8 @@ class DownloaderMiddleware(Middleware):
         if self.is_leaf:
             self.__merged = value
         else:
-            print("[warn] 无法设定非叶子结点的 merged")
+            if value:
+                for child in self.children:
+                    child.merged = True
+            else:
+                print("[warn] 无法设定非叶子结点的 merged 为 False")

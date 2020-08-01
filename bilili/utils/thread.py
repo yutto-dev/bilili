@@ -1,3 +1,4 @@
+import time
 import queue
 import threading
 
@@ -10,6 +11,7 @@ class ThreadPool():
         self.num = num
         self._taskQ = queue.Queue()
         self.threads = []
+        self.__flag = True
 
     def add_task(self, task):
         """ 添加任务　"""
@@ -22,8 +24,16 @@ class ThreadPool():
                 task = self._taskQ.get(block = True, timeout = 1)
                 task()
                 self._taskQ.task_done()
+            elif not self.__flag:
+                time.sleep(1)
             else:
                 break
+
+    def wait(self):
+        self.__flag = False
+
+    def resume(self):
+        self.__flag = True
 
     def run(self):
         """ 启动线程池　"""

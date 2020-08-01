@@ -11,7 +11,7 @@ from bilili.utils.playlist import Dpl, M3u
 from bilili.utils.thread import ThreadPool
 from bilili.api.subtitle import get_subtitle
 from bilili.api.danmaku import get_danmaku
-from bilili.tools import (aria2, ffmpeg, spider, ass, regex_acg_video_av, regex_acg_video_av_short,
+from bilili.tools import (spider, ass, regex_acg_video_av, regex_acg_video_av_short,
                           regex_acg_video_bv, regex_acg_video_bv_short, regex_bangumi)
 from bilili.video import global_middleware
 from bilili.downloader.remote_file import RemoteFile
@@ -154,14 +154,15 @@ def main():
             ass.convert_danmaku_from_xml(
                 os.path.splitext(container.path)[0]+'.xml', container.height, container.width)
 
+    # 准备下载
     if containers:
+        merge_pool = ThreadPool(1)
         pool = ThreadPool(args.num_threads)
-        containers_need_merge = []
         for i, container in enumerate(containers):
             container_downloaded = os.path.exists(container.path)
             sign = "✓" if container_downloaded else "✖"
-            if not container_downloaded:
-                containers_need_merge.append(container)
+            if container_downloaded:
+                container._.merged = True
             print("{} {} [{}]".format(sign, container.name, quality_map[container.qn]['description']))
             for media in container.medias:
                 remote_file = RemoteFile(media.url, media.path, middleware=media._)
@@ -172,19 +173,37 @@ def main():
                 media._.downloaded = media_downloaded or container_downloaded
                 if not container_downloaded:
                     print("    {} {}".format(sign, media.name))
+        merge_pool.wait()
+        merge_pool.run()
         pool.run()
+        size, t = global_middleware.size, time.time()
         while True:
-            time.sleep(1)
-            print("> {} / {}".format(
+            now_size, now_t = global_middleware.size, time.time()
+            delta_size, delta_t = now_size - size, (now_t - t) if now_t - t > 1e-6 else 1e-6
+            speed = delta_size / delta_t
+            size, t = now_size, now_t
+            print()
+            print("downloading:", [container._.downloading for container in containers])
+            print("downloaded:", [container._.downloaded for container in containers])
+            print("merging:", [container._.merging for container in containers])
+            print("merged:", [container._.merged for container in containers])
+            print("> {} / {} {}/s".format(
                 size_format(global_middleware.size),
-                size_format(global_middleware.total_size)
+                size_format(global_middleware.total_size),
+                size_format(speed)
             ))
-            if global_middleware.downloaded:
+            print()
+            for container in containers:
+                if container._.downloaded and not container._.merged and not container._.merging:
+                    task = Task(container.merge, args=())
+                    merge_pool.add_task(task)
+            if global_middleware.downloaded and global_middleware.merged:
+                merge_pool.resume()
                 break
-        for i, container in enumerate(containers_need_merge):
-            print("merging {} {}/{}".format(container.name, i +
-                                            1, len(containers_need_merge)), end="\r")
-            container.merge(ffmpeg)
+            try:
+                time.sleep(max(1-(time.time()-now_t), 0.01))
+            except (SystemExit, KeyboardInterrupt):
+                raise
         print("已全部下载完成！")
     else:
         print("没有需要下载的视频！")
