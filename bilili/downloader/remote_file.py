@@ -2,6 +2,7 @@ import os
 import requests
 
 from bilili.downloader.middleware import DownloaderMiddleware
+from bilili.utils.base import touch_url
 
 class RemoteFile():
 
@@ -27,6 +28,9 @@ class RemoteFile():
 
     def download(self, spider, stream=True, chunk_size=1024):
         self._.size = self.get_local_size()
+        if self._.total_size == 0:
+            total_size, _ = touch_url(self.url, spider)
+            self._.total_size = total_size
         if self._.downloaded:
             return
         self._.downloading = True

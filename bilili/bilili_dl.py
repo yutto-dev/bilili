@@ -11,10 +11,10 @@ from bilili.utils.playlist import Dpl, M3u
 from bilili.utils.thread import ThreadPool
 from bilili.api.subtitle import get_subtitle
 from bilili.api.danmaku import get_danmaku
-from bilili.tools import (aria2, ffmpeg, spider, regex_acg_video_av, regex_acg_video_av_short,
+from bilili.tools import (aria2, ffmpeg, spider, ass, regex_acg_video_av, regex_acg_video_av_short,
                           regex_acg_video_bv, regex_acg_video_bv_short, regex_bangumi)
+from bilili.video import global_middleware
 from bilili.downloader.remote_file import RemoteFile
-from bilili.downloader.middleware import DownloaderMiddleware
 
 
 def parse_episodes(episodes_str, total):
@@ -50,37 +50,6 @@ def parse_episodes(episodes_str, total):
     print("已选择第 {} 话".format(",".join(list(map(str, episodes)))))
     assert episodes, "没有选中任何剧集"
     return episodes
-
-
-def convert_danmaku(containers):
-    """ 将视频文件夹下的 xml 弹幕转换为 ass 弹幕 """
-    # 检测插件是否已经就绪
-    plugin_url = "https://raw.githubusercontent.com/m13253/danmaku2ass/master/danmaku2ass.py"
-    plugin_path = "plugins/danmaku2ass.py"
-    touch_dir(os.path.dirname(plugin_path))
-    touch_file(os.path.join(os.path.dirname(plugin_path), "__init__.py"))
-    if not os.path.exists(plugin_path):
-        print("下载插件中……")
-        res = requests.get(plugin_url)
-        with open(plugin_path, "w", encoding="utf8") as f:
-            f.write(res.text)
-
-    # 使用插件进行转换
-    from plugins.danmaku2ass import Danmaku2ASS
-    for container in containers:
-        name = os.path.splitext(container.path)[0]
-        print("convert {} ".format(os.path.split(name)[-1]), end="\r")
-        if not os.path.exists(name+".mp4") or \
-                not os.path.exists(name+".xml"):
-            continue
-        Danmaku2ASS(
-            name+".xml", "autodetect", name+".ass",
-            container.width, container.height, reserve_blank=0,
-            font_face=_('(FONT) sans-serif')[7:],
-            font_size=container.width/40, text_opacity=0.8, duration_marquee=15.0,
-            duration_still=10.0, comment_filter=None, is_reduce_comments=False,
-            progress_callback=None)
-        os.remove(name + '.xml')
 
 
 def main():
@@ -178,19 +147,22 @@ def main():
             get_subtitle(container)
         if args.danmaku != 'no':
             get_danmaku(container)
+
         parse_segments(container, config['quality_sequence'])
 
+        if args.danmaku == 'ass':
+            ass.convert_danmaku_from_xml(
+                os.path.splitext(container.path)[0]+'.xml', container.height, container.width)
+
     if containers:
-        global_middleware = DownloaderMiddleware()
         pool = ThreadPool(args.num_threads)
         containers_need_merge = []
         for i, container in enumerate(containers):
-            global_middleware.add_child(container._)
             container_downloaded = os.path.exists(container.path)
             sign = "✓" if container_downloaded else "✖"
             if not container_downloaded:
                 containers_need_merge.append(container)
-            print("{} {} {}".format(sign, container.name, quality_map[container.qn]['description']))
+            print("{} {} [{}]".format(sign, container.name, quality_map[container.qn]['description']))
             for media in container.medias:
                 remote_file = RemoteFile(media.url, media.path, middleware=media._)
                 task = Task(remote_file.download, args=(spider, ))
@@ -198,7 +170,8 @@ def main():
                 media_downloaded = os.path.exists(media.path)
                 sign = "✓" if media_downloaded else "✖"
                 media._.downloaded = media_downloaded or container_downloaded
-                print("    {} {}".format(sign, media.name))
+                if not container_downloaded:
+                    print("    {} {}".format(sign, media.name))
         pool.run()
         while True:
             time.sleep(1)
@@ -215,11 +188,6 @@ def main():
         print("已全部下载完成！")
     else:
         print("没有需要下载的视频！")
-
-    # 弹幕转换为 ass 格式
-    if args.danmaku == 'ass':
-        convert_danmaku(containers)
-        print("转换完成")
 
 
 if __name__ == "__main__":

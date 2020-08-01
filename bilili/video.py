@@ -7,6 +7,8 @@ import subprocess
 from bilili.downloader.middleware import DownloaderMiddleware
 
 
+global_middleware = DownloaderMiddleware()
+
 class BililiContainer():
     """ bilibili 单个视频类
     包括多个 B 站视频已经分好的段
@@ -24,7 +26,7 @@ class BililiContainer():
         self.qn = None
         self.height = None
         self.width = None
-        self._ = DownloaderMiddleware()
+        self._ = DownloaderMiddleware(parent=global_middleware)
 
     def merge(self, ffmpeg):
         if self.format == 'mp4':
