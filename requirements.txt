@@ -1,2 +1,1 @@
 requests==2.24.0
-opencv-python==4.3.0.36

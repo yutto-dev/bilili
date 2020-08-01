@@ -1,6 +1,6 @@
 import os
 
-from common.base import Text
+from bilili.utils.base import Text
 
 
 class Playlist(Text):

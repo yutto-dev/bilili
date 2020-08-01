@@ -1,4 +1,4 @@
-name: Test Crawler
+name: API Test
 
 on: [push, pull_request]
 
@@ -22,6 +22,11 @@ jobs:
       - name: Install packages
         run: |
           pip install -r requirements.txt
+
+      - name: Install tools
+        run: |
+          sudo apt install ffmpeg
+          sudo apt install aria2
 
       - name: Test crawler
         run: |
