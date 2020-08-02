@@ -65,21 +65,6 @@ bilili <url>
 
 当然，你需要将 `<url>` 替换为前面的视频主页 url
 
-### 调试
-
-<details>
-
-<summary> 本地调试 </summary>
-
-``` bash
-git clone git@github.com:SigureMo/bilili.git
-cd bilili/
-pip install -r requirements.txt
-python -m bilili.bilili_dl <url>
-```
-
-</details>
-
 ## 参数
 
 `bilili` 还支持很多参数，具体如下
@@ -165,6 +150,10 @@ bilili <url> -w
 ### 播放列表
 
 默认生成**相对路径类型**的 **`PotPlayer`** 播放列表，如果你不想使用 `PotPlayer` 的话，可以通过参数来修改
+
+## 参与贡献
+
+请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)
 
 # 参考项目
 
