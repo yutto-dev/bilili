@@ -47,8 +47,13 @@ quality_map = {
         "height": 240,
     },
     208: {
-        "description": "未知",
+        "description": "高清 1080P",
         "width": 1920,
         "height": 1080,
+    },
+    192: {
+        "description": "高清 720P",
+        "width": 1280,
+        "height": 720,
     }
 }

@@ -154,7 +154,7 @@ def parse_segments(container, quality_sequence):
             height=quality_map[play_info['data']['quality']]['height'],
             width=quality_map[play_info['data']['quality']]['width'],
             size=play_info['data']['durl'][0]['size'],
-            type="audio"
+            type="container"
         )
     else:
         print("Unknown format {}".format(container.format))

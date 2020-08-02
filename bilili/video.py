@@ -12,8 +12,11 @@ from bilili.tools import ffmpeg
 global_middleware = DownloaderMiddleware()
 
 class BililiContainer():
-    """ bilibili 单个视频类
-    包括多个 B 站视频已经分好的段
+    """ bilibili 媒体容器类
+    即 B 站上的单个视频，其中可能包含多个媒体单元
+    * 包含多个 flv 片段
+    * 包含 m4s 的视频与音频流
+    * 包含完整的一个 mp4
     """
 
     def __init__(self, id, name, path, meta, format="flv"):
@@ -61,6 +64,9 @@ class BililiContainer():
 
 
 class BililiMedia():
+    """ bilibili 媒体单元类
+    从 B 站直接获取的可下载的媒体单元，可能是 flv、mp4、m4s
+    """
 
     def __init__(self, id, url, qn, size, height, width, container, type="segment"):
 

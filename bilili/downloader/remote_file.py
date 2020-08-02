@@ -5,6 +5,12 @@ from bilili.downloader.middleware import DownloaderMiddleware
 from bilili.utils.base import touch_url
 
 class RemoteFile():
+    """ 远程文件类
+
+    网络 url 与本地文件的绑定，可调用 download 进行下载
+    download 支持断点续传
+    通过中间件与外部监控程序通讯
+    """
 
     def __init__(self, url, local_path, middleware=DownloaderMiddleware()):
         self.url = url
