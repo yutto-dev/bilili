@@ -17,7 +17,7 @@ python -m bilili.bilili_dl <url>
 
 ## 测试
 
-bilili 有一些已经编写好的测试，虽然Github Actions 会帮忙自动测试，但最好你在本地预先测试一遍
+bilili 有一些已经编写好的测试，虽然 GitHub Action 会帮忙自动测试，但最好你在本地预先测试一遍
 
 ``` bash
 pip install pytest                                          # 安装 pytest
@@ -28,7 +28,7 @@ pytest                                                      # 测试
 
 ## 提交 PR
 
-提交 PR 的最佳实践是 fork 一个新的 repo 到你的账户下，并创建一个新的分支，在该分支下进行改动后提交到 Github 上，并发起 PR
+提交 PR 的最佳实践是 fork 一个新的 repo 到你的账户下，并创建一个新的分支，在该分支下进行改动后提交到 GitHub 上，并发起 PR
 
 ``` bash
 # 首先 fork
@@ -38,10 +38,10 @@ git remote add upstream git@github.com:SigureMo/bilili.git  # 将原分支绑定
 git checkout -b <NEW_BRANCH>                                # 新建一个分支，名称随意，最好含有你本次改动的语义
 git push origin <NEW_BRANCH>                                # 将该分支推送到 origin （也就是你 fork 后的 repo）
 # 对源码进行修改、并通过测试
-# 此时可以在 Github 发起 PR
+# 此时可以在 GitHub 发起 PR
 ```
 
-如果你的贡献需要继续修改，直接继续向该分支提交新的 commit 即可，并推送到 Github，PR 也会随之更新
+如果你的贡献需要继续修改，直接继续向该分支提交新的 commit 即可，并推送到 GitHub，PR 也会随之更新
 
 如果你的 PR 已经被合并，就可以放心地删除这个分支了
 

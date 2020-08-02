@@ -46,13 +46,13 @@ pip install bilili
 
 #### 源码安装
 
-此外你还可以从 Github 上下载最新的源码进行安装
+此外你还可以从 GitHub 上下载最新的源码进行安装
 
 ``` bash
 git clone git@github.com:SigureMo/bilili.git
 cd bilili/
 python setup.py build
-python setup.py install # 可能需要 sudo
+python setup.py install
 ```
 
 ### 运行
@@ -133,7 +133,7 @@ bilili <url> -w
 |下载速度|高|低|中|
 |需要 FFmpeg 合并|是|是|否|
 |清晰度支持|全面|中（部分较新的 4K 等清晰度无法获取）|极少（仅支持 1080P 及更低的清晰度，且无法选择）|
-|总结|B 站当前使用的格式，拥有齐全的清晰度和最佳的下载速度|当 M4S 无法下载时的备用选项|除了不需要合并，一无是处|
+|我该怎么选|B 站当前使用的格式，拥有齐全的清晰度和最佳的下载速度|当 M4S 无法下载时的备用选项|除了不需要合并，一无是处|
 
 ### 高清晰度下载
 
