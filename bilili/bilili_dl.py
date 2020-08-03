@@ -6,10 +6,10 @@ import json
 import time
 import shutil
 
-from bilili.utils.base import Task, repair_filename, touch_dir, touch_file, size_format
+from bilili.utils.base import repair_filename, touch_dir, touch_file, size_format
 from bilili.utils.quality import quality_sequence_default
 from bilili.utils.playlist import Dpl, M3u
-from bilili.utils.thread import ThreadPool
+from bilili.utils.thread import ThreadPool, Flag
 from bilili.utils.console import Console, Font, Line, String, ProgressBar, List, DynamicSign
 from bilili.api.subtitle import get_subtitle
 from bilili.api.danmaku import get_danmaku
@@ -178,15 +178,17 @@ def main():
                 if not container_downloaded:
                     print("    {} {}".format(sign, media.name))
 
-        # 部署下载任务
-        merge_pool = ThreadPool(3)
-        pool = ThreadPool(args.num_threads)
+        # 部署下载与合并任务
+        merge_wait_flag = Flag(False)                       # 合并线程池不能因为没有任务就结束
+        merge_pool = ThreadPool(3, wait=merge_wait_flag)    # 因此要设定一个 flag，待最后合并结束后改变其值
+        download_pool = ThreadPool(args.num_threads)
         for container in containers:
             merging_file = MergingFile(container.format,
                             [media.path for media in container.medias], container.path)
             for media in container.medias:
                 remote_file = RemoteFile(media.url, media.path)
 
+                # 为下载挂载各种钩子，以修改状态
                 @remote_file.on('before_download')
                 def before_download(file, middleware=media._):
                     middleware.downloading = True
@@ -200,7 +202,10 @@ def main():
                     middleware.downloaded = True
                     middleware.downloading = False
 
+                    # 下载完的，部署合并任务
                     if middleware.parent.downloaded and not middleware.parent.merged:
+
+                        # 为合并挂载各种钩子
                         @merging_file.on('before_merge', middleware=middleware.parent)
                         def before_merge(file, middleware=None):
                             for child in middleware.children:
@@ -211,15 +216,16 @@ def main():
                             middleware.merging = False
                             middleware.merged = True
 
-                        merge_pool.add_task(Task(merging_file.merge, args=()))
+                        merge_pool.add_task(merging_file.merge, args=())
+
+                # 下载过的不应继续部署任务
                 if media._.downloaded:
                     continue
-                task = Task(remote_file.download, args=(spider, ))
-                pool.add_task(task)
-        merge_pool.wait()
+                download_pool.add_task(remote_file.download, args=(spider, ))
+
+        # 启动线程池
         merge_pool.run()
-        pool.run()
-        size, t = global_middleware.size, time.time()
+        download_pool.run()
 
         # 初始化界面
         console = Console(debug=args.debug)
@@ -236,6 +242,8 @@ def main():
         console.add_component(Line(left=ProgressBar(
             width=65), right=String(), fillchar=' '))
 
+        # 准备监控
+        size, t = global_middleware.size, time.time()
         while True:
             now_size, now_t = global_middleware.size, time.time()
             delta_size, delta_t = max(
@@ -288,7 +296,7 @@ def main():
 
             # 检查是否已经全部完成
             if global_middleware.downloaded and global_middleware.merged:
-                merge_pool.resume()
+                merge_wait_flag.value = True
                 break
             try:
                 time.sleep(max(1-(time.time()-now_t), 0.01))

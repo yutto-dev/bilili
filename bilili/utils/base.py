@@ -2,23 +2,13 @@ import os
 import re
 
 
-class Task():
-    """任务对象"""
+class Ref():
+    """ 引用类
 
-    def __init__(self, func, args=(), kwargs={}):
-        """接受函数与参数以初始化对象"""
-
-        self.func = func
-        self.args = args
-        self.kwargs = kwargs
-
-    def __call__(self):
-        """执行函数
-        同步函数直接执行并返回结果，异步函数返回该函数
-        """
-
-        result = self.func(*self.args, **self.kwargs)
-        return result
+    用于包裹基本数据类型，将其封装为对象，其值通过 var.value 来访问
+    """
+    def __init__(self, value):
+        self.value = value
 
 
 class Writer():
