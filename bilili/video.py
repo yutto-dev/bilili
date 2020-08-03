@@ -4,12 +4,10 @@ import time
 import math
 import subprocess
 
-from bilili.downloader.middleware import DownloaderMiddleware
+from bilili.events.middleware import DownloaderMiddleware
 from bilili.utils.quality import quality_map
-from bilili.tools import ffmpeg
+from bilili.tools import ffmpeg, global_middleware
 
-
-global_middleware = DownloaderMiddleware()
 
 class BililiContainer():
     """ bilibili 媒体容器类
@@ -32,29 +30,6 @@ class BililiContainer():
         self.height = None
         self.width = None
         self._ = DownloaderMiddleware(parent=global_middleware)
-
-    def merge(self):
-        if self._.merged or self._.merging:
-            return
-        for media in self.medias:
-            media._.merging = True
-        if self.format == 'mp4':
-            with open(self.medias[0].path, 'rb') as fr:
-                with open(self.path, 'wb') as fw:
-                    fw.write(fr.read())
-        elif self.format == 'flv':
-            video_path_list = [media.path for media in self.medias]
-            ffmpeg.join_videos(video_path_list, self.path)
-        elif self.format == 'm4s':
-            ffmpeg.join_video_audio(self.medias[0].path, self.medias[1].path, self.path)
-        else:
-            print("Unknown format {}".format(self.format))
-        # 清除合并完成的视频片段
-        for media in self.medias:
-            os.remove(media.path)
-        self._.merged = True
-        for media in self.medias:
-            media._.merging = False
 
     def append_media(self, *args, **kwargs):
         self.medias.append(BililiMedia(*args, **kwargs, container = self))

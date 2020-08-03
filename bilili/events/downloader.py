@@ -1,8 +1,9 @@
 import os
 import requests
 
-from bilili.downloader.middleware import DownloaderMiddleware
-from bilili.utils.base import touch_url
+
+noop = lambda *args, **kwargs: None
+
 
 class RemoteFile():
     """ 远程文件类
@@ -12,12 +13,18 @@ class RemoteFile():
     通过中间件与外部监控程序通讯
     """
 
-    def __init__(self, url, local_path, middleware=DownloaderMiddleware()):
+    def __init__(self, url, local_path):
         self.url = url
         self.path = local_path
         self.name = os.path.split(self.path)[-1]
         self.tmp_path = self.path + '.dl'
-        self._ = middleware
+        self.size = self.get_local_size()
+        self.events = [
+            'before_download', 'before_update',
+            'updated', 'downloaded'
+        ]
+        for event in self.events:
+            setattr(self, event, noop)
 
     def get_local_size(self):
         """ 通过 os.path.getsize 获取本地文件大小 """
@@ -33,20 +40,14 @@ class RemoteFile():
         return size
 
     def download(self, spider, stream=True, chunk_size=1024):
-        self._.size = self.get_local_size()
-        if self._.total_size == 0:
-            total_size, _ = touch_url(self.url, spider)
-            self._.total_size = total_size
-        if self._.downloaded:
-            return
-        self._.downloading = True
 
+        self.before_download(self)
         if not os.path.exists(self.path):
             downloaded = False
             while not downloaded:
                 # 设置 headers
                 headers = dict(spider.headers)
-                headers["Range"] = "bytes={}-".format(self._.size)
+                headers["Range"] = "bytes={}-".format(self.size)
 
                 try:
                     # 尝试建立连接
@@ -57,8 +58,10 @@ class RemoteFile():
                             for chunk in res.iter_content(chunk_size=chunk_size):
                                 if not chunk:
                                     break
+                                self.before_update(self)
                                 f.write(chunk)
-                                self._.size += len(chunk)
+                                self.size += len(chunk)
+                                self.updated(self)
                         else:
                             f.write(res.content)
                     downloaded = True
@@ -71,6 +74,12 @@ class RemoteFile():
                 os.remove(self.path)
             os.rename(self.tmp_path, self.path)
 
-        # 切换状态
-        self._.downloading = False
-        self._.downloaded = True
+        self.downloaded(self)
+
+    def on(self, event, **params):
+        assert event in self.events
+        def on_event(func):
+            def new_func(*args, **kwargs):
+                return func(*args, **kwargs, **params)
+            setattr(self, event, new_func)
+        return on_event

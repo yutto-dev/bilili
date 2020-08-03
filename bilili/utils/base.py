@@ -5,28 +5,28 @@ import re
 class Task():
     """任务对象"""
 
-    def __init__(self, func, args=(), kw={}):
+    def __init__(self, func, args=(), kwargs={}):
         """接受函数与参数以初始化对象"""
 
         self.func = func
         self.args = args
-        self.kw = kw
+        self.kwargs = kwargs
 
     def __call__(self):
         """执行函数
         同步函数直接执行并返回结果，异步函数返回该函数
         """
 
-        result = self.func(*self.args, **self.kw)
+        result = self.func(*self.args, **self.kwargs)
         return result
 
 
 class Writer():
     """ 文件写入器，持续打开文件对象，直到使用完毕后才关闭 """
 
-    def __init__(self, path, mode='wb', **kw):
+    def __init__(self, path, mode='wb', **kwargs):
         self.path = path
-        self._f = open(path, mode, **kw)
+        self._f = open(path, mode, **kwargs)
 
     def __del__(self):
         self._f.close()
@@ -41,9 +41,9 @@ class Writer():
 class Text(Writer):
     """ 文本写入器 """
 
-    def __init__(self, path, **kw):
-        kw['encoding'] = kw.get('encoding', 'utf-8')
-        super().__init__(path, 'w', **kw)
+    def __init__(self, path, **kwargs):
+        kwargs['encoding'] = kwargs.get('encoding', 'utf-8')
+        super().__init__(path, 'w', **kwargs)
 
     def write_string(self, string):
         self.write(string + '\n')
@@ -138,13 +138,3 @@ def get_string_width(string):
     except:
         length = len(string)
     return length
-
-
-def remove(path):
-    if os.path.isdir(path):
-        for filename in os.listdir(path):
-            remove(os.path.join(path, filename))
-    elif os.path.isfile(path):
-        os.remove(path)
-    else:
-        pass

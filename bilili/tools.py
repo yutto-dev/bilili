@@ -4,11 +4,15 @@ from bilili.utils.aria2 import Aria2
 from bilili.utils.ffmpeg import FFmpeg
 from bilili.utils.crawler import BililiCrawler
 from bilili.utils.danmaku import ASS
+from bilili.events.middleware import DownloaderMiddleware
+
 
 aria2 = Aria2(show_progress=True)
 ffmpeg = FFmpeg()
 spider = BililiCrawler()
 ass = ASS()
+global_middleware = DownloaderMiddleware()
+
 
 regex_acg_video_av = re.compile(r"https?://www.bilibili.com/video/av(?P<avid>\d+)")
 regex_acg_video_av_short = re.compile(r"https?://b23.tv/av(?P<avid>\d+)")

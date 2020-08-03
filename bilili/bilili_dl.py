@@ -4,8 +4,9 @@ import argparse
 import os
 import json
 import time
+import shutil
 
-from bilili.utils.base import Task, repair_filename, touch_dir, touch_file, remove, size_format
+from bilili.utils.base import Task, repair_filename, touch_dir, touch_file, size_format
 from bilili.utils.quality import quality_sequence_default
 from bilili.utils.playlist import Dpl, M3u
 from bilili.utils.thread import ThreadPool
@@ -15,7 +16,8 @@ from bilili.api.danmaku import get_danmaku
 from bilili.tools import (spider, ass, regex_acg_video_av, regex_acg_video_av_short,
                           regex_acg_video_bv, regex_acg_video_bv_short, regex_bangumi)
 from bilili.video import global_middleware
-from bilili.downloader.remote_file import RemoteFile
+from bilili.events.downloader import RemoteFile
+from bilili.events.merger import MergingFile
 
 
 def parse_episodes(episodes_str, total):
@@ -75,6 +77,7 @@ def main():
                         help="播放列表路径类型（rp：相对路径，ap：绝对路径）")
     parser.add_argument("--danmaku", default="xml",
                         choices=["xml", "ass", "no"], help="弹幕类型，支持 xml 和 ass，如果设置为 no 则不下载弹幕")
+    parser.add_argument("--debug", action="store_true", help="debug 模式")
 
     args = parser.parse_args()
     cookies = {
@@ -119,7 +122,7 @@ def main():
         config['dir'], repair_filename(title + " - bilibili")))
     video_dir = touch_dir(os.path.join(base_dir, "Videos"))
     if args.overwrite:
-        remove(video_dir)
+        shutil.rmtree(video_dir)
         touch_dir(video_dir)
     if config['playlist_type'] == 'dpl':
         playlist = Dpl(os.path.join(base_dir, 'Playlist.dpl'),
@@ -161,8 +164,7 @@ def main():
 
     # 准备下载
     if containers:
-        merge_pool = ThreadPool(1)
-        pool = ThreadPool(args.num_threads)
+        # 状态检查与校正
         for i, container in enumerate(containers):
             container_downloaded = os.path.exists(container.path)
             sign = "✓" if container_downloaded else "✖"
@@ -170,22 +172,57 @@ def main():
                 container._.merged = True
             print("{} {}".format(sign, str(container)))
             for media in container.medias:
-                remote_file = RemoteFile(
-                    media.url, media.path, middleware=media._)
-                task = Task(remote_file.download, args=(spider, ))
-                pool.add_task(task)
                 media_downloaded = os.path.exists(media.path)
                 sign = "✓" if media_downloaded else "✖"
                 media._.downloaded = media_downloaded or container_downloaded
                 if not container_downloaded:
                     print("    {} {}".format(sign, media.name))
+
+        # 部署下载任务
+        merge_pool = ThreadPool(3)
+        pool = ThreadPool(args.num_threads)
+        for container in containers:
+            merging_file = MergingFile(container.format,
+                            [media.path for media in container.medias], container.path)
+            for media in container.medias:
+                remote_file = RemoteFile(media.url, media.path)
+
+                @remote_file.on('before_download')
+                def before_download(file, middleware=media._):
+                    middleware.downloading = True
+
+                @remote_file.on('updated', middleware=media._)
+                def updated(file, middleware=None):
+                    middleware.size = file.size
+
+                @remote_file.on('downloaded', middleware=media._, merging_file=merging_file)
+                def downloaded(file, middleware=None, merging_file=None):
+                    middleware.downloaded = True
+                    middleware.downloading = False
+
+                    if middleware.parent.downloaded and not middleware.parent.merged:
+                        @merging_file.on('before_merge', middleware=middleware.parent)
+                        def before_merge(file, middleware=None):
+                            for child in middleware.children:
+                                child.merging = True
+
+                        @merging_file.on('merged', middleware=middleware.parent)
+                        def merged(file, middleware=None):
+                            middleware.merging = False
+                            middleware.merged = True
+
+                        merge_pool.add_task(Task(merging_file.merge, args=()))
+                if media._.downloaded:
+                    continue
+                task = Task(remote_file.download, args=(spider, ))
+                pool.add_task(task)
         merge_pool.wait()
         merge_pool.run()
         pool.run()
         size, t = global_middleware.size, time.time()
 
         # 初始化界面
-        console = Console()
+        console = Console(debug=args.debug)
         console.add_component(
             Line(center=Font(char_a='𝓪', char_A='𝓐'), fillchar='='))
         console.add_component(Line(left=String(), fillchar=' '))
@@ -248,12 +285,6 @@ def main():
                     )
                 } if global_middleware.merging else None,
             ])
-
-            # 检查是否有需要合并的
-            for container in containers:
-                if container._.downloaded and not container._.merged and not container._.merging:
-                    task = Task(container.merge, args=())
-                    merge_pool.add_task(task)
 
             # 检查是否已经全部完成
             if global_middleware.downloaded and global_middleware.merged:
