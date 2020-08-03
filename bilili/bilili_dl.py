@@ -78,6 +78,7 @@ def main():
     parser.add_argument("--danmaku", default="xml",
                         choices=["xml", "ass", "no"], help="弹幕类型，支持 xml 和 ass，如果设置为 no 则不下载弹幕")
     parser.add_argument("--debug", action="store_true", help="debug 模式")
+    parser.add_argument("-y", "--yes", action="store_true", help="跳过下载询问")
 
     args = parser.parse_args()
     cookies = {
@@ -177,6 +178,20 @@ def main():
                 media._.downloaded = media_downloaded or container_downloaded
                 if not container_downloaded:
                     print("    {} {}".format(sign, media.name))
+
+        # 询问是否下载，通过参数 -y 可以跳过
+        if not args.yes:
+            answer = None
+            while answer is None:
+                result = input("以上标 ✖ 为需要进行下载的视频，是否立刻进行下载？[Y/n]")
+                if result == '' or result[0].lower() == 'y':
+                    answer = True
+                elif result[0].lower() == 'n':
+                    answer = False
+                else:
+                    answer = None
+            if not answer:
+                sys.exit(0)
 
         # 部署下载与合并任务
         merge_wait_flag = Flag(False)                       # 合并线程池不能因为没有任务就结束
