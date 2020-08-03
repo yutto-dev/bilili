@@ -10,7 +10,7 @@ from bilili.utils.base import repair_filename, touch_dir, touch_file, size_forma
 from bilili.utils.quality import quality_sequence_default
 from bilili.utils.playlist import Dpl, M3u
 from bilili.utils.thread import ThreadPool, Flag
-from bilili.utils.console import Console, Font, Line, String, ProgressBar, List, DynamicSign
+from bilili.utils.console import Console, Font, Line, String, ProgressBar, List, DynamicSymbol
 from bilili.api.subtitle import get_subtitle
 from bilili.api.danmaku import get_danmaku
 from bilili.tools import (spider, ass, regex_acg_video_av, regex_acg_video_av_short,
@@ -253,7 +253,7 @@ def main():
             width=65), right=String(), fillchar=' '))
         console.add_component(Line(left=String(), fillchar=' '))
         console.add_component(
-            List(Line(left=String(), right=DynamicSign(), fillchar=' ')))
+            List(Line(left=String(), right=DynamicSymbol(), fillchar=' ')))
         console.add_component(Line(left=ProgressBar(
             width=65), right=String(), fillchar=' '))
 
@@ -314,8 +314,9 @@ def main():
                 merge_wait_flag.value = True
                 break
             try:
-                # 将刷新率稳定在 1fps
-                time.sleep(max(1-(time.time()-now_t), 0.01))
+                # 将刷新率稳定在 5fps
+                refresh_rate = 5
+                time.sleep(max(1 / refresh_rate - (time.time()-now_t), 0.01))
             except (SystemExit, KeyboardInterrupt):
                 raise
         print("已全部下载完成！")

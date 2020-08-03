@@ -135,22 +135,28 @@ class Center(Component):
 
 class ProgressBar(Component):
 
-    def __init__(self, undone_char='_', done_char='#', width=Console.max_width):
+    def __init__(self, symbols='░▏▎▍▌▋▊▉█', width=Console.max_width):
         super().__init__()
         self.width = width
-        self.undone_char = undone_char
-        self.done_char = done_char
+        self.symbols = symbols
+        assert len(symbols) >= 2, "symbols 至少为 2 个"
+        self.num_symbol = len(symbols)
 
     def render(self, data):
         if data is None:
             return ''
-        num_done = math.ceil(self.width * data)
-        num_undone = self.width - num_done
+        if data == 1:
+            return self.symbols[-1] * self.width
+        length = self.width * data
+        length_int = int(length)
+        length_float = length - length_int
 
-        return num_done * self.done_char + num_undone * self.undone_char
+        return length_int * self.symbols[-1] + \
+                self.symbols[math.floor(length_float * (self.num_symbol-1))] + \
+                (self.width - length_int - 1) * self.symbols[0]
 
 
-class DynamicSign(Component):
+class DynamicSymbol(Component):
 
     def __init__(self, charset='⠁⠂⠄⡀⢀⠠⠐⠈'):
         super().__init__()
@@ -217,4 +223,4 @@ if __name__ == '__main__':
                 'right': "100MB/123MB 11.2 MB/s ⚡"
             }
         ])
-        time.sleep(1)
+        time.sleep(0.1)
