@@ -17,7 +17,7 @@ class Console():
     def render(self, data):
         if data is None:
             return ''
-        assert len(self.components) == len(data)
+        assert len(self.components) == len(data), '数据个数与组件个数不匹配'
         result = ''
         for component, component_data in zip(self.components, data):
             result += component.render(component_data)
@@ -52,6 +52,17 @@ class String(Component):
         return data
 
 
+class EndLine(Component):
+
+    def __init__(self):
+        super().__init__()
+
+    def render(self, data):
+        if data is None:
+            return ''
+        return '\n'
+
+
 class Font(Component):
 
     def __init__(self, char_a='ａ', char_A=None):
@@ -73,6 +84,63 @@ class Font(Component):
                     result += chr(ord(char) + ord(self.char_A) - ord('A'))
             else:
                 result += char
+        return result
+
+
+class ColorString(Component):
+
+    code_map = {
+        'fore': {
+            'black': 30,
+            'red': 31,
+            'green': 32,
+            'yellow': 33,
+            'blue': 34,
+            'magenta': 35,
+            'cyan': 36,
+            'white': 37,
+        },
+        'back': {
+            'black': 40,
+            'red': 41,
+            'green': 42,
+            'yellow': 43,
+            'blue': 44,
+            'magenta': 45,
+            'cyan': 46,
+            'white': 47,
+        },
+        'style': {
+            'reset': 0,
+            'bold': 1,
+            'italic': 3,
+            'underline': 4,
+            'defaultfg': 39,
+            'defaultbg': 49,
+        }
+    }
+
+    template = '\033[{code}m'
+
+    def __init__(self, fore=None, back=None, style=None, subcomponent=None):
+        super().__init__()
+        self.fore = fore
+        self.back = back
+        self.style = style
+        self.subcomponent = subcomponent
+
+    def render(self, data):
+        if data is None:
+            return ''
+        result = ''
+        if self.fore is not None:
+            result += ColorString.template.format(code=ColorString.code_map['fore'][self.fore])
+        if self.back is not None:
+            result += ColorString.template.format(code=ColorString.code_map['back'][self.back])
+        if self.style is not None:
+            result += ColorString.template.format(code=ColorString.code_map['style'][self.style])
+        result += self.subcomponent.render(data) if self.subcomponent is not None else data
+        result += ColorString.template.format(code=ColorString.code_map['style']['reset'])
         return result
 
 
@@ -191,14 +259,14 @@ if __name__ == '__main__':
     console = Console()
     console.add_component(
         Line(center=Font(char_a='𝓪', char_A='𝓐'), fillchar='='))
-    console.add_component(Line(left=String(), fillchar=' '))
+    console.add_component(Line(left=ColorString(fore='cyan', style='italic'), fillchar=' '))
     console.add_component(
         List(Line(left=String(), right=String(), fillchar='-')))
-    console.add_component(Line(left=String(), fillchar=' '))
+    console.add_component(Line(left=ColorString(fore='blue', style='italic'), fillchar=' '))
     console.add_component(
         List(Line(left=String(), right=String(), fillchar='-')))
-    console.add_component(Line(left=ProgressBar(
-        width=70), right=String(), fillchar=' '))
+    console.add_component(Line(left=ColorString(fore='green', back='white', subcomponent=ProgressBar(
+        symbols=' ▏▎▍▌▋▊▉█', width=70)), right=String(), fillchar=' '))
     for i in range(100):
         console.refresh([
             {

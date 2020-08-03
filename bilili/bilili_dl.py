@@ -10,7 +10,7 @@ from bilili.utils.base import repair_filename, touch_dir, touch_file, size_forma
 from bilili.utils.quality import quality_sequence_default
 from bilili.utils.playlist import Dpl, M3u
 from bilili.utils.thread import ThreadPool, Flag
-from bilili.utils.console import Console, Font, Line, String, ProgressBar, List, DynamicSymbol
+from bilili.utils.console import Console, Font, Line, String, ProgressBar, List, DynamicSymbol, ColorString
 from bilili.api.subtitle import get_subtitle
 from bilili.api.danmaku import get_danmaku
 from bilili.tools import (spider, ass, regex_acg_video_av, regex_acg_video_av_short,
@@ -245,17 +245,17 @@ def main():
         # 初始化界面
         console = Console(debug=args.debug)
         console.add_component(
-            Line(center=Font(char_a='𝓪', char_A='𝓐'), fillchar='='))
-        console.add_component(Line(left=String(), fillchar=' '))
+            Line(center=Font(char_a='𝓪', char_A='𝓐'), fillchar=' '))
+        console.add_component(Line(left=ColorString(fore='cyan'), fillchar=' '))
         console.add_component(
             List(Line(left=String(), right=String(), fillchar='-')))
-        console.add_component(Line(left=ProgressBar(
-            width=65), right=String(), fillchar=' '))
-        console.add_component(Line(left=String(), fillchar=' '))
+        console.add_component(Line(left=ColorString(fore='green', back='white', subcomponent=ProgressBar(
+            symbols=' ▏▎▍▌▋▊▉█', width=65)), right=String(), fillchar=' '))
+        console.add_component(Line(left=ColorString(fore='blue'), fillchar=' '))
         console.add_component(
             List(Line(left=String(), right=DynamicSymbol(), fillchar=' ')))
-        console.add_component(Line(left=ProgressBar(
-            width=65), right=String(), fillchar=' '))
+        console.add_component(Line(left=ColorString(fore='green', back='white', subcomponent=ProgressBar(
+            symbols=' ▏▎▍▌▋▊▉█', width=65)), right=String(), fillchar=' '))
 
         # 准备监控
         size, t = global_middleware.size, time.time()
@@ -314,8 +314,8 @@ def main():
                 merge_wait_flag.value = True
                 break
             try:
-                # 将刷新率稳定在 5fps
-                refresh_rate = 5
+                # 将刷新率稳定在 2fps
+                refresh_rate = 2
                 time.sleep(max(1 / refresh_rate - (time.time()-now_t), 0.01))
             except (SystemExit, KeyboardInterrupt):
                 raise

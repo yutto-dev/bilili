@@ -146,6 +146,9 @@ def get_char_width(char):
 
 def get_string_width(string):
     """ 计算包含中文的字符串宽度 """
+    # 去除颜色码
+    regex_color = re.compile(r'\033\[\d+m')
+    string = regex_color.sub('', string)
     try:
         length = sum([get_char_width(c) for c in string])
     except:
