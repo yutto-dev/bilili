@@ -1,13 +1,11 @@
 import re
 
-from bilili.utils.aria2 import Aria2
 from bilili.utils.ffmpeg import FFmpeg
 from bilili.utils.crawler import BililiCrawler
 from bilili.utils.danmaku import ASS
 from bilili.events.middleware import DownloaderMiddleware
 
 
-aria2 = Aria2(show_progress=True)
 ffmpeg = FFmpeg()
 spider = BililiCrawler()
 ass = ASS()
