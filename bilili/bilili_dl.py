@@ -299,6 +299,7 @@ def main():
                 merge_wait_flag.value = True
                 break
             try:
+                # 将刷新率稳定在 1fps
                 time.sleep(max(1-(time.time()-now_t), 0.01))
             except (SystemExit, KeyboardInterrupt):
                 raise
