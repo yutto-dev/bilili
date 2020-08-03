@@ -94,6 +94,7 @@ bilili <url>
    -  `all` 全部下载
 -  `-w`/`--overwrite` 强制覆盖已下载视频
 -  `-c`/`--sess-data` 传入 `cookies` 中的 `SESSDATA`
+-  `-y`/`--yes` 跳过下载询问
 -  `--playlist-type` 指定播放列表类型，支持 `dpl` 和 `m3u` ，默认为 `dpl`，设置为 `no` 即不生成播放列表
 -  `--path-type` 指定播放列表路径的类型（`rp`：相对路径，`ap`：绝对路径），默认为相对路径
 -  `--danmaku` 指定弹幕类型，支持 `xml` 和 `ass`，如果设置为 `no` 则不下载弹幕，默认为 `xml` 弹幕

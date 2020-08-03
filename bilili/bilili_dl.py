@@ -71,6 +71,7 @@ def main():
     parser.add_argument("-w", "--overwrite",
                         action="store_true", help="强制覆盖已下载视频")
     parser.add_argument("-c", "--sess-data", default=None, help="输入 cookies")
+    parser.add_argument("-y", "--yes", action="store_true", help="跳过下载询问")
     parser.add_argument("--playlist-type", default="dpl",
                         choices=["dpl", "m3u", "no"], help="播放列表类型，支持 dpl 和 m3u，输入 no 不生成播放列表")
     parser.add_argument("--path-type", default="rp",
@@ -78,7 +79,6 @@ def main():
     parser.add_argument("--danmaku", default="xml",
                         choices=["xml", "ass", "no"], help="弹幕类型，支持 xml 和 ass，如果设置为 no 则不下载弹幕")
     parser.add_argument("--debug", action="store_true", help="debug 模式")
-    parser.add_argument("-y", "--yes", action="store_true", help="跳过下载询问")
 
     args = parser.parse_args()
     cookies = {
