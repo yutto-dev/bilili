@@ -7,7 +7,8 @@ from bilili.utils.base import get_string_width
 class Console():
     max_width = 100
 
-    def __init__(self):
+    def __init__(self, debug=False):
+        self.debug = debug
         self.components = []
 
     def add_component(self, component):
@@ -23,7 +24,8 @@ class Console():
         return result
 
     def refresh(self, data):
-        self.clear()
+        if not self.debug:
+            self.clear()
         print(self.render(data))
 
     def clear(self):

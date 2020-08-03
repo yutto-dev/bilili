@@ -4,18 +4,20 @@ import argparse
 import os
 import json
 import time
+import shutil
 
-from bilili.utils.base import Task, repair_filename, touch_dir, touch_file, remove, size_format
+from bilili.utils.base import repair_filename, touch_dir, touch_file, size_format
 from bilili.utils.quality import quality_sequence_default
 from bilili.utils.playlist import Dpl, M3u
-from bilili.utils.thread import ThreadPool
+from bilili.utils.thread import ThreadPool, Flag
 from bilili.utils.console import Console, Font, Line, String, ProgressBar, List, DynamicSign
 from bilili.api.subtitle import get_subtitle
 from bilili.api.danmaku import get_danmaku
 from bilili.tools import (spider, ass, regex_acg_video_av, regex_acg_video_av_short,
                           regex_acg_video_bv, regex_acg_video_bv_short, regex_bangumi)
 from bilili.video import global_middleware
-from bilili.downloader.remote_file import RemoteFile
+from bilili.events.downloader import RemoteFile
+from bilili.events.merger import MergingFile
 
 
 def parse_episodes(episodes_str, total):
@@ -69,14 +71,14 @@ def main():
     parser.add_argument("-w", "--overwrite",
                         action="store_true", help="强制覆盖已下载视频")
     parser.add_argument("-c", "--sess-data", default=None, help="输入 cookies")
-    parser.add_argument("--ass", action="store_true",
-                        help="自动将 xml 弹幕转换为 ass 弹幕")
     parser.add_argument("--playlist-type", default="dpl",
                         choices=["dpl", "m3u", "no"], help="播放列表类型，支持 dpl 和 m3u，输入 no 不生成播放列表")
     parser.add_argument("--path-type", default="rp",
                         help="播放列表路径类型（rp：相对路径，ap：绝对路径）")
     parser.add_argument("--danmaku", default="xml",
                         choices=["xml", "ass", "no"], help="弹幕类型，支持 xml 和 ass，如果设置为 no 则不下载弹幕")
+    parser.add_argument("--debug", action="store_true", help="debug 模式")
+    parser.add_argument("-y", "--yes", action="store_true", help="跳过下载询问")
 
     args = parser.parse_args()
     cookies = {
@@ -121,7 +123,7 @@ def main():
         config['dir'], repair_filename(title + " - bilibili")))
     video_dir = touch_dir(os.path.join(base_dir, "Videos"))
     if args.overwrite:
-        remove(video_dir)
+        shutil.rmtree(video_dir)
         touch_dir(video_dir)
     if config['playlist_type'] == 'dpl':
         playlist = Dpl(os.path.join(base_dir, 'Playlist.dpl'),
@@ -163,8 +165,7 @@ def main():
 
     # 准备下载
     if containers:
-        merge_pool = ThreadPool(1)
-        pool = ThreadPool(args.num_threads)
+        # 状态检查与校正
         for i, container in enumerate(containers):
             container_downloaded = os.path.exists(container.path)
             sign = "✓" if container_downloaded else "✖"
@@ -172,22 +173,77 @@ def main():
                 container._.merged = True
             print("{} {}".format(sign, str(container)))
             for media in container.medias:
-                remote_file = RemoteFile(
-                    media.url, media.path, middleware=media._)
-                task = Task(remote_file.download, args=(spider, ))
-                pool.add_task(task)
                 media_downloaded = os.path.exists(media.path)
                 sign = "✓" if media_downloaded else "✖"
                 media._.downloaded = media_downloaded or container_downloaded
                 if not container_downloaded:
                     print("    {} {}".format(sign, media.name))
-        merge_pool.wait()
+
+        # 询问是否下载，通过参数 -y 可以跳过
+        if not args.yes:
+            answer = None
+            while answer is None:
+                result = input("以上标 ✖ 为需要进行下载的视频，是否立刻进行下载？[Y/n]")
+                if result == '' or result[0].lower() == 'y':
+                    answer = True
+                elif result[0].lower() == 'n':
+                    answer = False
+                else:
+                    answer = None
+            if not answer:
+                sys.exit(0)
+
+        # 部署下载与合并任务
+        merge_wait_flag = Flag(False)                       # 合并线程池不能因为没有任务就结束
+        merge_pool = ThreadPool(3, wait=merge_wait_flag)    # 因此要设定一个 flag，待最后合并结束后改变其值
+        download_pool = ThreadPool(args.num_threads)
+        for container in containers:
+            merging_file = MergingFile(container.format,
+                            [media.path for media in container.medias], container.path)
+            for media in container.medias:
+                remote_file = RemoteFile(media.url, media.path)
+
+                # 为下载挂载各种钩子，以修改状态
+                @remote_file.on('before_download')
+                def before_download(file, middleware=media._):
+                    middleware.downloading = True
+
+                @remote_file.on('updated', middleware=media._)
+                def updated(file, middleware=None):
+                    middleware.size = file.size
+
+                @remote_file.on('downloaded', middleware=media._, merging_file=merging_file)
+                def downloaded(file, middleware=None, merging_file=None):
+                    middleware.downloaded = True
+                    middleware.downloading = False
+
+                    # 下载完的，部署合并任务
+                    if middleware.parent.downloaded and not middleware.parent.merged:
+
+                        # 为合并挂载各种钩子
+                        @merging_file.on('before_merge', middleware=middleware.parent)
+                        def before_merge(file, middleware=None):
+                            for child in middleware.children:
+                                child.merging = True
+
+                        @merging_file.on('merged', middleware=middleware.parent)
+                        def merged(file, middleware=None):
+                            middleware.merging = False
+                            middleware.merged = True
+
+                        merge_pool.add_task(merging_file.merge, args=())
+
+                # 下载过的不应继续部署任务
+                if media._.downloaded:
+                    continue
+                download_pool.add_task(remote_file.download, args=(spider, ))
+
+        # 启动线程池
         merge_pool.run()
-        pool.run()
-        size, t = global_middleware.size, time.time()
+        download_pool.run()
 
         # 初始化界面
-        console = Console()
+        console = Console(debug=args.debug)
         console.add_component(
             Line(center=Font(char_a='𝓪', char_A='𝓐'), fillchar='='))
         console.add_component(Line(left=String(), fillchar=' '))
@@ -201,6 +257,8 @@ def main():
         console.add_component(Line(left=ProgressBar(
             width=65), right=String(), fillchar=' '))
 
+        # 准备监控
+        size, t = global_middleware.size, time.time()
         while True:
             now_size, now_t = global_middleware.size, time.time()
             delta_size, delta_t = max(
@@ -244,24 +302,19 @@ def main():
                 ] if global_middleware.merging else None,
                 {
                     'left': sum([container._.merged for container in containers]) / len(containers),
-                    'right': " {}/{} ⚡".format(
+                    'right': " {}/{} 🚀".format(
                         sum([container._.merged for container in containers]),
                         len(containers)
                     )
                 } if global_middleware.merging else None,
             ])
 
-            # 检查是否有需要合并的
-            for container in containers:
-                if container._.downloaded and not container._.merged and not container._.merging:
-                    task = Task(container.merge, args=())
-                    merge_pool.add_task(task)
-
             # 检查是否已经全部完成
             if global_middleware.downloaded and global_middleware.merged:
-                merge_pool.resume()
+                merge_wait_flag.value = True
                 break
             try:
+                # 将刷新率稳定在 1fps
                 time.sleep(max(1-(time.time()-now_t), 0.01))
             except (SystemExit, KeyboardInterrupt):
                 raise
