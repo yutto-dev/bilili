@@ -150,7 +150,7 @@ def main():
 
     # 解析片段信息及视频 url
     for i, container in enumerate(containers):
-        print("{:02}/{:02} parsing segments info...".format(i,
+        print("{:02}/{:02} parsing segments info...".format(i+1,
                                                             len(containers)), end="\r")
         if bili_type == 'acg_video':
             get_subtitle(container)
@@ -168,16 +168,16 @@ def main():
         # 状态检查与校正
         for i, container in enumerate(containers):
             container_downloaded = os.path.exists(container.path)
-            sign = "✓" if container_downloaded else "✖"
+            symbol = "✓" if container_downloaded else "✖"
             if container_downloaded:
                 container._.merged = True
-            print("{} {}".format(sign, str(container)))
+            print("{} {}".format(symbol, str(container)))
             for media in container.medias:
                 media_downloaded = os.path.exists(media.path)
-                sign = "✓" if media_downloaded else "✖"
+                symbol = "✓" if media_downloaded else "✖"
                 media._.downloaded = media_downloaded or container_downloaded
                 if not container_downloaded:
-                    print("    {} {}".format(sign, media.name))
+                    print("    {} {}".format(symbol, media.name))
 
         # 询问是否下载，通过参数 -y 可以跳过
         if not args.yes:
@@ -253,7 +253,7 @@ def main():
             symbols=' ▏▎▍▌▋▊▉█', width=65)), right=String(), fillchar=' '))
         console.add_component(Line(left=ColorString(fore='blue'), fillchar=' '))
         console.add_component(
-            List(Line(left=String(), right=DynamicSymbol(), fillchar=' ')))
+            List(Line(left=String(), right=DynamicSymbol(symbols="🌑🌒🌓🌔🌕🌖🌗🌘"), fillchar=' ')))
         console.add_component(Line(left=ColorString(fore='green', back='white', subcomponent=ProgressBar(
             symbols=' ▏▎▍▌▋▊▉█', width=65)), right=String(), fillchar=' '))
 

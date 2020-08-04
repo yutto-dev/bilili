@@ -6,7 +6,7 @@ import subprocess
 
 from bilili.events.middleware import DownloaderMiddleware
 from bilili.utils.quality import quality_map
-from bilili.tools import ffmpeg, global_middleware
+from bilili.tools import global_middleware
 
 
 class BililiContainer():

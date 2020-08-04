@@ -226,17 +226,17 @@ class ProgressBar(Component):
 
 class DynamicSymbol(Component):
 
-    def __init__(self, charset='⠁⠂⠄⡀⢀⠠⠐⠈'):
+    def __init__(self, symbols='⠁⠂⠄⡀⢀⠠⠐⠈'):
         super().__init__()
-        self.charset = charset
+        self.symbols = symbols
         self.index = 0
 
     def render(self, data):
         if data is None:
             return ''
         self.index += 1
-        self.index %= len(self.charset)
-        return self.charset[self.index]
+        self.index %= len(self.symbols)
+        return self.symbols[self.index]
 
 
 class List(Component):
