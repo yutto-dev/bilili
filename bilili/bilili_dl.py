@@ -5,7 +5,6 @@ import os
 import json
 import time
 import shutil
-import math
 
 from bilili.utils.base import repair_filename, touch_dir, touch_file, size_format
 from bilili.utils.quality import quality_sequence_default
@@ -19,7 +18,6 @@ from bilili.tools import (spider, ass, regex_acg_video_av, regex_acg_video_av_sh
 from bilili.video import global_middleware
 from bilili.events.downloader import RemoteFile
 from bilili.events.merger import MergingFile
-from bilili.events.middleware import DownloaderMiddleware
 
 
 def parse_episodes(episodes_str, total):

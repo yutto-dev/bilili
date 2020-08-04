@@ -34,13 +34,13 @@ class DownloaderMiddleware(Middleware):
     """
 
     def __init__(self, parent=None, children=[]):
+        super().__init__(parent=parent, children=children)
         self.__total_size = 0
         self.__size = 0
         self.__downloading = False
-        self.__downloaded = True if parent is not None and parent.downloaded else False
+        self.__downloaded = False
         self.__merging = False
-        self.__merged = True if parent is not None and parent.merged else False
-        super().__init__(parent=parent, children=children)
+        self.__merged = False
 
     @property
     def total_size(self):
