@@ -43,7 +43,7 @@ class BililiMedia():
     从 B 站直接获取的可下载的媒体单元，可能是 flv、mp4、m4s
     """
 
-    def __init__(self, id, url, qn, size, height, width, container, type="segment"):
+    def __init__(self, id, url, qn, size, height, width, container, type="segment", block_size=0):
 
         self.id = id
         self.qn = qn
@@ -51,6 +51,7 @@ class BililiMedia():
         self.width = width
         self.url = url
         self.container = container
+        self.block_size = block_size
         self.path = os.path.splitext(self.container.path)[0]
         if self.container.format == "flv":
             self.path += "_{:02d}.flv".format(id)
@@ -71,3 +72,47 @@ class BililiMedia():
         if self._.total_size is None:
             print("[warn] {} 无法获取 size".format(self.name))
             self._.total_size = 0
+
+        self.blocks = self.chunking()
+
+    def chunking(self):
+        block_size = self.block_size
+        blocks = []
+        total_size = self._.total_size
+        if block_size:
+            block_range_list = [(i, i+block_size-1)
+                                for i in range(0, total_size, block_size)]
+            if total_size % block_size != 0:
+                block_range_list[-1] = (total_size // block_size * block_size,
+                                        total_size - 1)
+        else:
+            block_range_list = [(0, total_size-1)]
+        for i, block_range in enumerate(block_range_list):
+            blocks.append(BililiBlock(
+                id=i,
+                url=self.url,
+                media=self,
+                block_size=block_size,
+                range=block_range
+            ))
+        assert self._.total_size == total_size, "重新设置的 total size 与原来值不匹配"
+        return blocks
+
+
+class BililiBlock():
+    """ bilibili 媒体块类
+    """
+
+    def __init__(self, id, url, media, block_size, range):
+
+        self.id = id
+        self.url = url
+        self.block_size = block_size
+        self.media = media
+        self.range = range
+        # 假设最大 10 GB 时所需的位数
+        ndigits = 1 if block_size == 0 else len(str(10 * 1024 * 1024 * 1024 // self.block_size))
+        self.path = '_{:0{}}'.format(self.id, ndigits).join(os.path.splitext(self.media.path))
+        self.name = os.path.split(self.path)[-1]
+        self._ = DownloaderMiddleware(parent=self.media._)
+        self._.total_size = self.range[1] - self.range[0] + 1

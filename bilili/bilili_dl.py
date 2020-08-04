@@ -5,6 +5,7 @@ import os
 import json
 import time
 import shutil
+import math
 
 from bilili.utils.base import repair_filename, touch_dir, touch_file, size_format
 from bilili.utils.quality import quality_sequence_default
@@ -18,6 +19,7 @@ from bilili.tools import (spider, ass, regex_acg_video_av, regex_acg_video_av_sh
 from bilili.video import global_middleware
 from bilili.events.downloader import RemoteFile
 from bilili.events.merger import MergingFile
+from bilili.events.middleware import DownloaderMiddleware
 
 
 def parse_episodes(episodes_str, total):
@@ -78,6 +80,8 @@ def main():
                         help="播放列表路径类型（rp：相对路径，ap：绝对路径）")
     parser.add_argument("--danmaku", default="xml",
                         choices=["xml", "ass", "no"], help="弹幕类型，支持 xml 和 ass，如果设置为 no 则不下载弹幕")
+    parser.add_argument("--block-size", default=128, type=int,
+                        help="分块下载器的块大小，单位为 MB，默认为 128MB，设置为 0 时禁用分块下载")
     parser.add_argument("--debug", action="store_true", help="debug 模式")
 
     args = parser.parse_args()
@@ -96,6 +100,7 @@ def main():
         "overwrite": args.overwrite,
         "cookies": cookies,
         "format": args.format.lower(),
+        "block_size": int(args.block_size * 1024 * 1024),
     }
 
     if regex_acg_video_av.match(args.url) or \
@@ -157,7 +162,7 @@ def main():
         if args.danmaku != 'no':
             get_danmaku(container)
 
-        parse_segments(container, config['quality_sequence'])
+        parse_segments(container, config['quality_sequence'], config['block_size'])
 
         if args.danmaku == 'ass':
             ass.convert_danmaku_from_xml(
@@ -173,11 +178,16 @@ def main():
                 container._.merged = True
             print("{} {}".format(symbol, str(container)))
             for media in container.medias:
-                media_downloaded = os.path.exists(media.path)
+                media_downloaded = os.path.exists(media.path) or container_downloaded
                 symbol = "✓" if media_downloaded else "✖"
-                media._.downloaded = media_downloaded or container_downloaded
                 if not container_downloaded:
                     print("    {} {}".format(symbol, media.name))
+                for block in media.blocks:
+                    block_downloaded = os.path.exists(block.path) or media_downloaded
+                    symbol = "✓" if block_downloaded else "✖"
+                    block._.downloaded = block_downloaded
+                    if not media_downloaded:
+                        print("        {} {}".format(symbol, block.name))
 
         # 询问是否下载，通过参数 -y 可以跳过
         if not args.yes:
@@ -201,42 +211,52 @@ def main():
             merging_file = MergingFile(container.format,
                             [media.path for media in container.medias], container.path)
             for media in container.medias:
-                remote_file = RemoteFile(media.url, media.path)
 
-                # 为下载挂载各种钩子，以修改状态
-                @remote_file.on('before_download')
-                def before_download(file, middleware=media._):
-                    middleware.downloading = True
+                block_merging_file = MergingFile(None,
+                                                [block.path for block in media.blocks], media.path)
+                for block in media.blocks:
 
-                @remote_file.on('updated', middleware=media._)
-                def updated(file, middleware=None):
-                    middleware.size = file.size
+                    remote_file = RemoteFile(block.url, block.path, range=block.range)
 
-                @remote_file.on('downloaded', middleware=media._, merging_file=merging_file)
-                def downloaded(file, middleware=None, merging_file=None):
-                    middleware.downloaded = True
-                    middleware.downloading = False
+                    # 为下载挂载各种钩子，以修改状态
+                    @remote_file.on('before_download', middleware=block._)
+                    def before_download(file, middleware=None):
+                        middleware.downloading = True
 
-                    # 下载完的，部署合并任务
-                    if middleware.parent.downloaded and not middleware.parent.merged:
+                    @remote_file.on('updated', middleware=block._)
+                    def updated(file, middleware=None):
+                        middleware.size = file.size
 
-                        # 为合并挂载各种钩子
-                        @merging_file.on('before_merge', middleware=middleware.parent)
-                        def before_merge(file, middleware=None):
-                            for child in middleware.children:
-                                child.merging = True
+                    @remote_file.on('downloaded', middleware=block._, merging_file=merging_file,
+                                        block_merging_file=block_merging_file)
+                    def downloaded(file, middleware=None, merging_file=None, block_merging_file=None):
+                        middleware.downloaded = True
+                        middleware.downloading = False
 
-                        @merging_file.on('merged', middleware=middleware.parent)
-                        def merged(file, middleware=None):
-                            middleware.merging = False
-                            middleware.merged = True
+                        if middleware.parent.downloaded:
+                            # 当前 media 的最后一个 block 所在线程进行合并（直接执行，不放线程池）
+                            middleware.downloaded = False
+                            block_merging_file.merge()
+                            middleware.downloaded = True
 
-                        merge_pool.add_task(merging_file.merge, args=())
+                            # 如果该线程同时也是当前 container 的最后一个 block，就部署合并任务（放到线程池）
+                            if middleware.parent.parent.downloaded and not middleware.parent.parent.merged:
+                                # 为合并挂载各种钩子
+                                @merging_file.on('before_merge', middleware=middleware.parent.parent)
+                                def before_merge(file, middleware=None):
+                                    middleware.merging = True
 
-                # 下载过的不应继续部署任务
-                if media._.downloaded:
-                    continue
-                download_pool.add_task(remote_file.download, args=(spider, ))
+                                @merging_file.on('merged', middleware=middleware.parent.parent)
+                                def merged(file, middleware=None):
+                                    middleware.merging = False
+                                    middleware.merged = True
+
+                                merge_pool.add_task(merging_file.merge, args=())
+
+                    # 下载过的不应继续部署任务
+                    if block._.downloaded:
+                        continue
+                    download_pool.add_task(remote_file.download, args=(spider, ))
 
         # 启动线程池
         merge_pool.run()
@@ -254,7 +274,7 @@ def main():
         console.add_component(Line(left=ColorString(fore='blue'), fillchar=' '))
         console.add_component(
             List(Line(left=String(), right=DynamicSymbol(symbols="🌑🌒🌓🌔🌕🌖🌗🌘"), fillchar=' ')))
-        console.add_component(Line(left=ColorString(fore='green', back='white', subcomponent=ProgressBar(
+        console.add_component(Line(left=ColorString(fore='yellow', back='white', subcomponent=ProgressBar(
             symbols=' ▏▎▍▌▋▊▉█', width=65)), right=String(), fillchar=' '))
 
         # 准备监控

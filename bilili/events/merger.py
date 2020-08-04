@@ -19,10 +19,11 @@ class MergingFile():
 
     def merge(self):
         self.before_merge(self)
-        if self.format == 'mp4':
-            with open(self.src_path_list[0].path, 'rb') as fr:
-                with open(self.dst_path, 'wb') as fw:
-                    fw.write(fr.read())
+        if self.format == 'mp4' or self.format is None:
+            with open(self.dst_path, 'wb') as fw:
+                for src_path in self.src_path_list:
+                    with open(src_path, 'rb') as fr:
+                        fw.write(fr.read())
         elif self.format == 'flv':
             ffmpeg.join_videos(self.src_path_list, self.dst_path)
         elif self.format == 'm4s':

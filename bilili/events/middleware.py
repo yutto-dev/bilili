@@ -34,13 +34,13 @@ class DownloaderMiddleware(Middleware):
     """
 
     def __init__(self, parent=None, children=[]):
-        super().__init__(parent=parent, children=children)
         self.__total_size = 0
         self.__size = 0
         self.__downloading = False
-        self.__downloaded = False
+        self.__downloaded = True if parent is not None and parent.downloaded else False
         self.__merging = False
-        self.__merged = False
+        self.__merged = True if parent is not None and parent.merged else False
+        super().__init__(parent=parent, children=children)
 
     @property
     def total_size(self):
@@ -121,7 +121,9 @@ class DownloaderMiddleware(Middleware):
             self.__merging = value
         else:
             if value:
-                print("[warn] 无法设定非叶子结点的 merging 为 True")
+                # 由于合并是共同进行的，所以可以由父结点来设置
+                for child in self.children:
+                    child.merging = True
             else:
                 for child in self.children:
                     child.merging = False

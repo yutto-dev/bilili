@@ -13,12 +13,13 @@ class RemoteFile():
     通过中间件与外部监控程序通讯
     """
 
-    def __init__(self, url, local_path):
+    def __init__(self, url, local_path, range=(0, '')):
         self.url = url
         self.path = local_path
         self.name = os.path.split(self.path)[-1]
         self.tmp_path = self.path + '.dl'
         self.size = self.get_local_size()
+        self.range = range
         self.events = [
             'before_download', 'before_update',
             'updated', 'downloaded'
@@ -47,7 +48,7 @@ class RemoteFile():
             while not downloaded:
                 # 设置 headers
                 headers = dict(spider.headers)
-                headers["Range"] = "bytes={}-".format(self.size)
+                headers["Range"] = "bytes={}-{}".format(self.size + self.range[0], self.range[1])
 
                 try:
                     # 尝试建立连接
