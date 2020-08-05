@@ -28,6 +28,7 @@ class ASS():
                 f.write(res.content)
             plugin_zip = zipfile.ZipFile(ASS.plugin_zip_path, 'r')
             plugin_content = plugin_zip.read('danmaku2ass-master/danmaku2ass.py').decode('utf-8')
+            plugin_zip.close()
             os.remove(ASS.plugin_zip_path)
 
         with open(ASS.plugin_path, "w", encoding="utf-8") as f:
