@@ -229,7 +229,6 @@ def main():
                                         block_merging_file=block_merging_file)
                     def downloaded(file, middleware=None, merging_file=None, block_merging_file=None):
                         middleware.downloaded = True
-                        middleware.downloading = False
 
                         if middleware.parent.downloaded:
                             # 当前 media 的最后一个 block 所在线程进行合并（直接执行，不放线程池）
@@ -250,6 +249,8 @@ def main():
                                     middleware.merged = True
 
                                 merge_pool.add_task(merging_file.merge, args=())
+
+                        middleware.downloading = False
 
                     # 下载过的不应继续部署任务
                     if block._.downloaded:
