@@ -121,7 +121,9 @@ class DownloaderMiddleware(Middleware):
             self.__merging = value
         else:
             if value:
-                print("[warn] 无法设定非叶子结点的 merging 为 True")
+                # 由于合并是共同进行的，所以可以由父结点来设置
+                for child in self.children:
+                    child.merging = True
             else:
                 for child in self.children:
                     child.merging = False

@@ -60,7 +60,7 @@ def get_containers(context, video_dir, format, playlist=None):
 
     return containers
 
-def parse_segments(container, quality_sequence):
+def parse_segments(container, quality_sequence, block_size):
     aid, cid, ep_id, bvid = container.meta["aid"], container.meta["cid"], container.meta["epid"], container.meta["bvid"]
 
     if container.format == "flv":
@@ -91,6 +91,7 @@ def parse_segments(container, quality_sequence):
                 width=quality_map[qn]['width'],
                 size=segment["size"],
                 type="segment",
+                block_size=block_size,
             )
     elif container.format == "m4s":
         # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
@@ -120,7 +121,8 @@ def parse_segments(container, quality_sequence):
                     height=video['height'],
                     width=video['width'],
                     size=touch_url(video['base_url'], spider)[0],
-                    type="video"
+                    type="video",
+                    block_size=block_size,
                 )
                 break
         for audio in play_info['result']['dash']['audio']:
@@ -131,7 +133,8 @@ def parse_segments(container, quality_sequence):
                 width=None,
                 size=touch_url(audio['base_url'], spider)[0],
                 qn=qn,
-                type="audio"
+                type="audio",
+                block_size=block_size,
             )
             break
 

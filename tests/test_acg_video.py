@@ -41,4 +41,4 @@ def test_parse_segments(format):
         },
         format=format,
     )
-    parse_segments(container, quality_sequence_default)
+    parse_segments(container, quality_sequence_default, block_size=0)
