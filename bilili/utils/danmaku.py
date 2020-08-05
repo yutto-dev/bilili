@@ -1,4 +1,7 @@
 import os
+import requests
+
+from bilili.utils.base import touch_dir, touch_file
 
 
 class ASS():
@@ -13,8 +16,8 @@ class ASS():
         touch_dir(os.path.dirname(ASS.plugin_path))
         touch_file(os.path.join(os.path.dirname(ASS.plugin_path), "__init__.py"))
         print("下载弹幕转换插件中……")
-        res = requests.get(plugin_url)
-        with open(plugin_path, "w", encoding="utf8") as f:
+        res = requests.get(ASS.plugin_url)
+        with open(ASS.plugin_path, "w", encoding="utf8") as f:
             f.write(res.text)
         self.has_plugin = True
 
