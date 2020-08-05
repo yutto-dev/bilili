@@ -80,7 +80,7 @@ setup(
     ],
     entry_points={
         'console_scripts':[
-            'bilili = bilili:main'
+            'bilili = bilili.__main__:main'
         ]
     },
     cmdclass={

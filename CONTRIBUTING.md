@@ -10,7 +10,7 @@
 git clone git@github.com:SigureMo/bilili.git
 cd bilili/
 pip install -r requirements.txt
-python -m bilili.bilili_dl <url>
+python -m bilili <url>
 ```
 
 注意本地调试请不要直接使用 `bilili` 命令
