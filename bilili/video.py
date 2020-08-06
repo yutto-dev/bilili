@@ -32,7 +32,7 @@ class BililiContainer():
         self._ = DownloaderMiddleware(parent=global_middleware)
 
     def append_media(self, *args, **kwargs):
-        self.medias.append(BililiMedia(*args, **kwargs, container = self))
+        self.medias.append(BililiMedia(*args, **kwargs, container=self))
 
     def __str__(self):
         return '{} 「{}」'.format(self.name, quality_map[self.qn]['description'])
@@ -111,8 +111,10 @@ class BililiBlock():
         self.media = media
         self.range = range
         # 假设最大 10 GB 时所需的位数
-        ndigits = 1 if block_size == 0 else len(str(10 * 1024 * 1024 * 1024 // self.block_size))
-        self.path = '_{:0{}}'.format(self.id, ndigits).join(os.path.splitext(self.media.path))
+        ndigits = 1 if block_size == 0 else len(
+            str(10 * 1024 * 1024 * 1024 // self.block_size))
+        self.path = '_{:0{}}'.format(self.id, ndigits).join(
+            os.path.splitext(self.media.path))
         self.name = os.path.split(self.path)[-1]
         self._ = DownloaderMiddleware(parent=self.media._)
         self._.total_size = self.range[1] - self.range[0] + 1

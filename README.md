@@ -15,11 +15,11 @@
 
 ## 特性
 
-- 支持 ACG 视频（也即原 AV 号视频）和番剧下载
-- 多线程 + 分块下载，轻松跑满你的带宽
-- 断点续传，即便一次没下完也可以接着下载
-- 弹幕支持，自动下载弹幕并转换为 ass 弹幕，本地播放器也可以体验 B 站的看视频体验
-- 全清晰度支持，本地可以看任意在线看到的清晰度，而且本地播放不受限于带宽
+-  支持 ACG 视频（也即原 AV 号视频）和番剧下载
+-  多线程 + 分块下载，轻松跑满你的带宽
+-  断点续传，即便一次没下完也可以接着下载
+-  弹幕支持，自动下载弹幕并转换为 ass 弹幕，本地播放器也可以体验 B 站的看视频体验
+-  全清晰度支持，本地可以看任意在线看到的清晰度，而且本地播放不受限于带宽
 
 ## 快速开始
 
@@ -48,7 +48,7 @@ Windows 请[手动下载](https://ffmpeg.org/download.html)后，存放到任意
 
 现在 bilili 支持通过 pip 一键安装
 
-``` bash
+```bash
 pip install bilili
 ```
 
@@ -56,7 +56,7 @@ pip install bilili
 
 此外你还可以从 GitHub 上下载最新的源码进行安装
 
-``` bash
+```bash
 git clone git@github.com:SigureMo/bilili.git
 cd bilili/
 python setup.py build
@@ -67,7 +67,7 @@ python setup.py install
 
 运行非常简单～
 
-``` bash
+```bash
 bilili <url>
 ```
 
@@ -109,14 +109,13 @@ bilili <url>
 -  `--block-size` 分块下载器的块大小，单位为 MB，默认为 128MB，设置为 0 时禁用分块下载
 -  `--debug` 开启 `debug` 模式
 
-
 <details>
 
 <summary>参数的使用</summary>
 
 参数的使用很简单，比如修改格式为 `flv`，只需要
 
-``` bash
+```bash
 bilili <url> --format=flv
 # 或者
 bilili <url> -f flv
@@ -124,7 +123,7 @@ bilili <url> -f flv
 
 不需要指定具体值，只切换 `True` or `False` 的参数也不需要在命令中指定值，比如开启强制覆盖已下载视频选项
 
-``` bash
+```bash
 bilili <url> --overwrite
 # 或者
 bilili <url> -w
@@ -138,6 +137,7 @@ bilili <url> -w
 
 视频格式是指 bilibili 直接提供的资源格式，本程序最终都会转换成通用的 mp4 格式方便观看，不同格式在通用性、下载速度等方面的比较如下
 
+<!-- prettier-ignore -->
 ||M4S|FLV|MP4|
 |:-:|:-:|:-:|:-:|
 |支持程度|中（少数视频不支持）|高|低（仅支持 acg_video）|

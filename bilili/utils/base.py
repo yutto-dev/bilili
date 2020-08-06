@@ -8,6 +8,7 @@ class Ref():
 
     用于包裹基本数据类型，将其封装为对象，其值通过 var.value 来访问
     """
+
     def __init__(self, value):
         self.value = value
 

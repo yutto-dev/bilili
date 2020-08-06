@@ -2,7 +2,7 @@ import re
 import os
 
 from bilili.tools import (spider, regex_acg_video_av, regex_acg_video_av_short,
-                            regex_acg_video_bv, regex_acg_video_bv_short)
+                          regex_acg_video_bv, regex_acg_video_bv_short)
 from bilili.utils.quality import quality_map
 from bilili.video import BililiContainer
 from bilili.utils.base import repair_filename, touch_dir, touch_url
@@ -17,6 +17,7 @@ def get_title(home_url):
         r'<title .*>(.*)_哔哩哔哩 \(゜-゜\)つロ 干杯~-bilibili</title>', res.text).group(1)
     return title
 
+
 def get_context(home_url):
     context = {
         'avid': '',
@@ -26,13 +27,16 @@ def get_context(home_url):
     if regex_acg_video_av.match(home_url):
         context['avid'] = regex_acg_video_av.match(home_url).group('avid')
     elif regex_acg_video_av_short.match(home_url):
-        context['avid'] = regex_acg_video_av_short.match(home_url).group('avid')
+        context['avid'] = regex_acg_video_av_short.match(
+            home_url).group('avid')
     elif regex_acg_video_bv.match(home_url):
         context['bvid'] = regex_acg_video_bv.match(home_url).group('bvid')
     elif regex_acg_video_bv_short.match(home_url):
-        context['bvid'] = regex_acg_video_bv_short.match(home_url).group('bvid')
+        context['bvid'] = regex_acg_video_bv_short.match(
+            home_url).group('bvid')
 
     return context
+
 
 def get_containers(context, video_dir, format, playlist=None):
     avid, bvid = context['avid'], context['bvid']
@@ -59,6 +63,7 @@ def get_containers(context, video_dir, format, playlist=None):
     if playlist is not None:
         playlist.flush()
     return containers
+
 
 def parse_segments(container, quality_sequence, block_size):
     cid, avid, bvid = container.meta["cid"], container.meta["avid"], container.meta["bvid"]
@@ -106,7 +111,7 @@ def parse_segments(container, quality_sequence, block_size):
 
         # accept_quality = play_info['data']['accept_quality']
         accept_quality = set([video['id']
-                            for video in play_info['data']['dash']['video']])
+                              for video in play_info['data']['dash']['video']])
         for qn in quality_sequence:
             if qn in accept_quality:
                 break

@@ -36,6 +36,7 @@ class ThreadPool():
     """ 线程池类
     快速创建多个相同任务的线程池
     """
+
     def __init__(self, num, wait=Flag(True)):
         self.num = num
         self._taskQ = queue.Queue()
@@ -50,7 +51,7 @@ class ThreadPool():
         """ 启动任务线程　"""
         while True:
             if not self._taskQ.empty():
-                task = self._taskQ.get(block = True, timeout = 1)
+                task = self._taskQ.get(block=True, timeout=1)
                 task()
                 self._taskQ.task_done()
             elif not self.__wait_flag.value:

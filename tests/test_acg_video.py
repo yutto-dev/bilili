@@ -10,11 +10,13 @@ def test_get_title():
     url = "https://www.bilibili.com/video/BV1Y441167U2/"
     assert get_title(url) == "慕课课程下载工具 Course Crawler 使用方法简介"
 
+
 def test_get_context():
     url = "https://www.bilibili.com/video/BV1Y441167U2/"
     context = get_context(url)
     assert context["avid"] == ''
     assert context["bvid"] == '1Y441167U2'
+
 
 def test_get_containers():
     context = {
@@ -24,6 +26,7 @@ def test_get_containers():
     video_dir = touch_dir("tmp/MOOC/Videos/")
     containers = get_containers(context, video_dir, 'flv', None)
     assert len(containers) == 3
+
 
 @pytest.mark.parametrize(
     'format', [

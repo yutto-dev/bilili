@@ -17,6 +17,7 @@ def get_title(home_url):
         r'<span class="media-info-title-t">(.*?)</span>', res.text).group(1)
     return title
 
+
 def get_context(home_url):
     context = {
         'season_id': '',
@@ -27,6 +28,7 @@ def get_context(home_url):
     context['season_id'] = season_id
 
     return context
+
 
 def get_containers(context, video_dir, format, playlist=None):
     season_id = context['season_id']
@@ -60,8 +62,10 @@ def get_containers(context, video_dir, format, playlist=None):
 
     return containers
 
+
 def parse_segments(container, quality_sequence, block_size):
-    aid, cid, ep_id, bvid = container.meta["aid"], container.meta["cid"], container.meta["epid"], container.meta["bvid"]
+    aid, cid, ep_id, bvid = container.meta["aid"], container.meta[
+        "cid"], container.meta["epid"], container.meta["bvid"]
 
     if container.format == "flv":
         # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
@@ -107,7 +111,7 @@ def parse_segments(container, quality_sequence, block_size):
 
         # accept_quality = play_info['result']['accept_quality']
         accept_quality = set([video['id']
-                            for video in play_info['result']['dash']['video']])
+                              for video in play_info['result']['dash']['video']])
         for qn in quality_sequence:
             if qn in accept_quality:
                 break

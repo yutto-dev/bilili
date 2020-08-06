@@ -1,5 +1,6 @@
 class Middleware():
     """ 多层次中间件类 """
+
     def __init__(self, parent=None, children=[]):
         self.parent = None
         self.children = []
@@ -26,6 +27,7 @@ class Middleware():
     @property
     def is_root(self):
         return self.parent is None
+
 
 class DownloaderMiddleware(Middleware):
     """ 下载中间件类

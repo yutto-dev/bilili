@@ -91,7 +91,8 @@ def main():
         "url": args.url,
         "dir": args.dir,
         "quality_sequence": quality_sequence_default[quality_sequence_default.index(int(args.quality)):] +
-        list(reversed(quality_sequence_default[:quality_sequence_default.index(int(args.quality))])),
+        list(reversed(
+            quality_sequence_default[:quality_sequence_default.index(int(args.quality))])),
         "episodes": args.episodes,
         "playlist_type": args.playlist_type,
         "playlist_path_type": args.path_type.upper(),
@@ -160,7 +161,8 @@ def main():
         if args.danmaku != 'no':
             get_danmaku(container)
 
-        parse_segments(container, config['quality_sequence'], config['block_size'])
+        parse_segments(
+            container, config['quality_sequence'], config['block_size'])
 
         if args.danmaku == 'ass':
             ass.convert_danmaku_from_xml(
@@ -176,12 +178,14 @@ def main():
                 container._.merged = True
             print("{} {}".format(symbol, str(container)))
             for media in container.medias:
-                media_downloaded = os.path.exists(media.path) or container_downloaded
+                media_downloaded = os.path.exists(
+                    media.path) or container_downloaded
                 symbol = "✓" if media_downloaded else "✖"
                 if not container_downloaded:
                     print("    {} {}".format(symbol, media.name))
                 for block in media.blocks:
-                    block_downloaded = os.path.exists(block.path) or media_downloaded
+                    block_downloaded = os.path.exists(
+                        block.path) or media_downloaded
                     symbol = "✓" if block_downloaded else "✖"
                     block._.downloaded = block_downloaded
                     if not media_downloaded:
@@ -203,18 +207,20 @@ def main():
 
         # 部署下载与合并任务
         merge_wait_flag = Flag(False)                       # 合并线程池不能因为没有任务就结束
-        merge_pool = ThreadPool(3, wait=merge_wait_flag)    # 因此要设定一个 flag，待最后合并结束后改变其值
+        # 因此要设定一个 flag，待最后合并结束后改变其值
+        merge_pool = ThreadPool(3, wait=merge_wait_flag)
         download_pool = ThreadPool(args.num_threads)
         for container in containers:
             merging_file = MergingFile(container.format,
-                            [media.path for media in container.medias], container.path)
+                                       [media.path for media in container.medias], container.path)
             for media in container.medias:
 
                 block_merging_file = MergingFile(None,
-                                                [block.path for block in media.blocks], media.path)
+                                                 [block.path for block in media.blocks], media.path)
                 for block in media.blocks:
 
-                    remote_file = RemoteFile(block.url, block.path, range=block.range)
+                    remote_file = RemoteFile(
+                        block.url, block.path, range=block.range)
 
                     # 为下载挂载各种钩子，以修改状态
                     @remote_file.on('before_download', middleware=block._)
@@ -226,7 +232,7 @@ def main():
                         middleware.size = file.size
 
                     @remote_file.on('downloaded', middleware=block._, merging_file=merging_file,
-                                        block_merging_file=block_merging_file)
+                                    block_merging_file=block_merging_file)
                     def downloaded(file, middleware=None, merging_file=None, block_merging_file=None):
                         middleware.downloaded = True
 
@@ -248,14 +254,16 @@ def main():
                                     middleware.merging = False
                                     middleware.merged = True
 
-                                merge_pool.add_task(merging_file.merge, args=())
+                                merge_pool.add_task(
+                                    merging_file.merge, args=())
 
                         middleware.downloading = False
 
                     # 下载过的不应继续部署任务
                     if block._.downloaded:
                         continue
-                    download_pool.add_task(remote_file.download, args=(spider, ))
+                    download_pool.add_task(
+                        remote_file.download, args=(spider, ))
 
         # 启动线程池
         merge_pool.run()
@@ -265,12 +273,14 @@ def main():
         console = Console(debug=args.debug)
         console.add_component(
             Line(center=Font(char_a='𝓪', char_A='𝓐'), fillchar=' '))
-        console.add_component(Line(left=ColorString(fore='cyan'), fillchar=' '))
+        console.add_component(
+            Line(left=ColorString(fore='cyan'), fillchar=' '))
         console.add_component(
             List(Line(left=String(), right=String(), fillchar='-')))
         console.add_component(Line(left=ColorString(fore='green', back='white', subcomponent=ProgressBar(
             symbols=' ▏▎▍▌▋▊▉█', width=65)), right=String(), fillchar=' '))
-        console.add_component(Line(left=ColorString(fore='blue'), fillchar=' '))
+        console.add_component(
+            Line(left=ColorString(fore='blue'), fillchar=' '))
         console.add_component(
             List(Line(left=String(), right=DynamicSymbol(symbols="🌑🌒🌓🌔🌕🌖🌗🌘"), fillchar=' ')))
         console.add_component(Line(left=ColorString(fore='yellow', back='white', subcomponent=ProgressBar(

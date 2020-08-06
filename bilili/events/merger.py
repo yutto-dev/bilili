@@ -37,6 +37,7 @@ class MergingFile():
 
     def on(self, event, **params):
         assert event in self.events
+
         def on_event(func):
             def new_func(*args, **kwargs):
                 return func(*args, **kwargs, **params)

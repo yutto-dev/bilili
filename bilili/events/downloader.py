@@ -48,11 +48,13 @@ class RemoteFile():
             while not downloaded:
                 # 设置 headers
                 headers = dict(spider.headers)
-                headers["Range"] = "bytes={}-{}".format(self.size + self.range[0], self.range[1])
+                headers["Range"] = "bytes={}-{}".format(
+                    self.size + self.range[0], self.range[1])
 
                 try:
                     # 尝试建立连接
-                    res = spider.get(self.url, stream=stream, headers=headers, timeout=(5, 10))
+                    res = spider.get(self.url, stream=stream,
+                                     headers=headers, timeout=(5, 10))
                     # 下载到临时路径
                     with open(self.tmp_path, 'ab') as f:
                         if stream:
@@ -79,6 +81,7 @@ class RemoteFile():
 
     def on(self, event, **params):
         assert event in self.events
+
         def on_event(func):
             def new_func(*args, **kwargs):
                 return func(*args, **kwargs, **params)

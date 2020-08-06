@@ -4,6 +4,7 @@ from bilili.tools import spider
 
 danmaku_api = "http://comment.bilibili.com/{cid}.xml"
 
+
 def get_danmaku(container):
     # 下载弹幕
     danmaku_url = danmaku_api.format(cid=container.meta['cid'])

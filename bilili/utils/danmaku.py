@@ -10,6 +10,7 @@ class ASS():
     plugin_zip_url = "https://github.com/m13253/danmaku2ass/archive/master.zip"
     plugin_zip_path = "plugins/danmaku2ass.zip"
     plugin_path = "plugins/danmaku2ass.py"
+
     def __init__(self):
         self.has_plugin = os.path.exists(ASS.plugin_path)
 
@@ -17,7 +18,8 @@ class ASS():
         if self.has_plugin:
             return
         touch_dir(os.path.dirname(ASS.plugin_path))
-        touch_file(os.path.join(os.path.dirname(ASS.plugin_path), "__init__.py"))
+        touch_file(os.path.join(os.path.dirname(
+            ASS.plugin_path), "__init__.py"))
         print("下载弹幕转换插件中……")
         try:
             res = requests.get(ASS.plugin_url)
@@ -27,7 +29,8 @@ class ASS():
             with open(ASS.plugin_zip_path, 'wb') as f:
                 f.write(res.content)
             plugin_zip = zipfile.ZipFile(ASS.plugin_zip_path, 'r')
-            plugin_content = plugin_zip.read('danmaku2ass-master/danmaku2ass.py').decode('utf-8')
+            plugin_content = plugin_zip.read(
+                'danmaku2ass-master/danmaku2ass.py').decode('utf-8')
             plugin_zip.close()
             os.remove(ASS.plugin_zip_path)
 
