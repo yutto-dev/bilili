@@ -80,6 +80,7 @@ def main():
                         choices=["xml", "ass", "no"], help="弹幕类型，支持 xml 和 ass，如果设置为 no 则不下载弹幕")
     parser.add_argument("--block-size", default=128, type=int,
                         help="分块下载器的块大小，单位为 MB，默认为 128MB，设置为 0 时禁用分块下载")
+    parser.add_argument("--disable-proxy", action="store_true", help="禁用系统代理")
     parser.add_argument("--debug", action="store_true", help="debug 模式")
 
     args = parser.parse_args()
@@ -119,6 +120,8 @@ def main():
 
     # 获取标题
     spider.set_cookies(config["cookies"])
+    if args.disable_proxy:
+        spider.trust_env = False
     title = get_title(home_url)
     print(title)
 

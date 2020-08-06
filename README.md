@@ -107,6 +107,7 @@ bilili <url>
 -  `--path-type` 指定播放列表路径的类型（`rp`：相对路径，`ap`：绝对路径），默认为相对路径
 -  `--danmaku` 指定弹幕类型，支持 `xml` 和 `ass`，如果设置为 `no` 则不下载弹幕，默认为 `xml` 弹幕
 -  `--block-size` 分块下载器的块大小，单位为 MB，默认为 128MB，设置为 0 时禁用分块下载
+-  `--disable-proxy` 禁用系统代理 「Beta」
 -  `--debug` 开启 `debug` 模式
 
 <details>
