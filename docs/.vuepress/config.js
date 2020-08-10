@@ -1,8 +1,30 @@
 module.exports = {
   title: "bilili",
   description: "🍻 bilibili video and danmaku downloader | B站视频、弹幕下载器",
+  locales: {
+    "/": {
+      lang: "zh-CN"
+    }
+  },
+
+  head: [
+    ["meta", { property: "og:url", content: "https://bilili.sigure.xyz" }],
+    ["meta", { property: "og:site_name", content: "bilili" }],
+    ["meta", { property: "og:image", content: "/logo.png" }],
+    [
+      "meta",
+      {
+        property: "og:description",
+        content:
+          "🍻 bilibili video and danmaku downloader | B站视频、弹幕下载器"
+      }
+    ],
+    ["meta", { property: "og:title", content: "bilili" }]
+  ],
 
   plugins: [
+    // 返回顶部
+    ["@vuepress/back-to-top"],
     // 鼠标特效插件
     [
       "cursor-effects",
@@ -15,8 +37,8 @@ module.exports = {
     [
       "dynamic-title",
       {
-        showText: "(ฅ>ω<*ฅ)欢迎回来！",
-        hideText: "( ๑ˊ•̥▵•)੭₎₎不要走呀！",
+        showText: "(๑‾᷅^‾᷅๑)哼，还知道回来！",
+        hideText: "(〟-_・)ﾝ?这就走了？",
         recoverTime: 2000
       }
     ]
@@ -35,6 +57,7 @@ module.exports = {
         "getting-started",
         "work-process",
         "faq",
+        "knack",
         "sponsor",
         "notice"
       ],
@@ -42,6 +65,8 @@ module.exports = {
     },
     repo: "SigureMo/bilili",
     docsDir: "docs",
-    docsBranch: "master"
+    docsBranch: "master",
+    editLinks: true,
+    editLinkText: "帮我改进我的风格！"
   }
 };

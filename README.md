@@ -9,6 +9,8 @@
    <a href="https://gitmoji.carloscuesta.me"><img src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg" alt="Gitmoji"></a>
 </p>
 
+**全新文档请访问 <https://bilili.sigure.xyz>**
+
 使用 Python 下载 [B 站](https://www.bilibili.com/)视频，ビリリ~
 
 > 仅限个人学习和研究使用，切勿用于其他用途
