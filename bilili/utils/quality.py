@@ -1,4 +1,4 @@
-quality_sequence_default = [120, 116, 112, 80, 74, 64, 32, 16, 6]
+quality_sequence_default = [120, 116, 112, 80, 74, 64, 32, 16]
 
 quality_map = {
     120: {

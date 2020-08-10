@@ -116,10 +116,6 @@ dmypy.json
 
 # Node.js
 node_modules/
-yarn.lock
-package.json
-.huskyrc
-commitlint.config.js
 
 # draft
 draft/

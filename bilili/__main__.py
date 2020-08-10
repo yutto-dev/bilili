@@ -63,7 +63,7 @@ def main():
     parser.add_argument('-f', '--format', default='m4s',
                         choices=['flv', 'm4s', 'mp4'], help="选择下载源格式（m4s 或 flv 或 mp4）")
     parser.add_argument("-d", "--dir", default=r"", help="下载目录")
-    parser.add_argument("-q", "--quality", default='120', choices=['120', '116', '112', '80', '74', '64', '32', '16', '6'],
+    parser.add_argument("-q", "--quality", default=120, choices=[120, 116, 112, 80, 74, 64, 32, 16], type=int,
                         help="视频清晰度 120:4K, 116:1080P60, 112:1080P+, 80:1080P, 74:720P60, 64:720P, 32:480P, 16:360P, 6:240P")
     parser.add_argument("-t", "--num-threads", default=30,
                         type=int, help="最大下载线程数")
@@ -91,9 +91,9 @@ def main():
     config = {
         "url": args.url,
         "dir": args.dir,
-        "quality_sequence": quality_sequence_default[quality_sequence_default.index(int(args.quality)):] +
+        "quality_sequence": quality_sequence_default[quality_sequence_default.index(args.quality):] +
         list(reversed(
-            quality_sequence_default[:quality_sequence_default.index(int(args.quality))])),
+            quality_sequence_default[:quality_sequence_default.index(args.quality)])),
         "episodes": args.episodes,
         "playlist_type": args.playlist_type,
         "playlist_path_type": args.path_type.upper(),
@@ -191,7 +191,7 @@ def main():
                         block.path) or media_downloaded
                     symbol = "✓" if block_downloaded else "✖"
                     block._.downloaded = block_downloaded
-                    if not media_downloaded:
+                    if not media_downloaded and not args.debug:
                         print("        {} {}".format(symbol, block.name))
 
         # 询问是否下载，通过参数 -y 可以跳过
