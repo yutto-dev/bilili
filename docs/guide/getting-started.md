@@ -1,0 +1,122 @@
+# 快速上手
+
+## 我所支持的 url
+
+嘛～我也是比较挑剔的，目前我只支持以下几种视频 url
+
+-  投稿视频主页：
+   -  `https://www.bilibili.com/video/avxxxxxx` 嘛，这种 av 号的我会支持
+   -  `https://b23.tv/avxxxxxx` 短链接也可以考虑
+   -  `https://www.bilibili.com/video/BVxxxxxx` 最新的 bv 号也不错
+   -  `https://b23.tv/BVxxxxxx` 当然，它的短链接也可以
+-  番剧视频主页：
+   -  `https://www.bilibili.com/bangumi/media/mdxxxxxx` 暂时只支持这种番剧主页啦，如果你已经在播放页面的话，点一下下面的封面就可以跳转过去啦
+
+## 我的解释器：Python
+
+为了能够正常与你交流，你需要先安装 Python 姐姐，当然一定要是 3.6 以上的版本，不然她可能也不知道我在说什么
+
+如果你是 Windows，请自行去 [Python 官网](https://www.python.org/)下载并安装，安装时记得要勾选 「Add to PATH」选项，不然可能需要你手动添加到环境变量
+
+`*nix` 的话一般都自带 python 环境，但要注意版本
+
+## 我的依赖：ffmpeg
+
+由于 B 站给我的视频大多是需要合并的，所以我需要依赖于 ffmpeg 小可爱的帮助，你需要实现把她安装到你的电脑上～
+
+如果你所使用的操作系统是 Windows，操作有些些麻烦，你需要[手动下载](https://ffmpeg.org/download.html)她，并将她放到你的环境变量中～
+
+::: details 详细操作
+
+打开下载链接后，在 `Get packages & executable files` 部分选择 Windows 徽标，在 `Windows EXE Files` 下找到 `Windows builds by Zeranoe` 并点击，点击新页面的 `Download Build` 按钮，就开始下载啦～
+
+下载后解压，并随便放到一个安全的地方，然后在文件夹中找到 `ffmpeg.exe`，复制其所在文件夹路径
+
+右击「此电脑」，选择属性，在其中找到「高级系统设置」 → 「环境变量」，双击 PATH，在其中添加刚刚复制的路径
+
+保存保存，完事啦～～～
+
+:::
+
+当然，如果你使用的是 `*nix` 系统的话，直接使用自己的包管理器就能一键完成该过程
+
+::: details 示例
+
+比如 MacOS 可以使用
+
+```bash
+brew install ffmpeg
+```
+
+Ubuntu 可以使用
+
+```bash
+apt install ffmpeg
+```
+
+Manjaro 等 Arch 系可以使用
+
+```bash
+pacman -S ffmpeg
+```
+
+:::
+
+此时，你可以通过 `ffmpeg -version` 命令来测试安装是否正确
+
+## 召唤 𝓫𝓲𝓵𝓲𝓵𝓲
+
+### 通过 pip 复制我的镜像
+
+是时候闪亮登场啦，由于我已经在 PyPI 上放置了自己的一份镜像，因此你可以通过 pip 来把那份镜像 copy 到自己电脑上
+
+```bash
+pip install bilili
+```
+
+### 通过 git 复制我的本体
+
+如果你想见到我的最新版本体，那么你需要从 github 上将我 clone 下来
+
+```bash
+git clone git@github.com:SigureMo/bilili.git
+cd bilili/
+python setup.py build
+python setup.py install
+```
+
+无论通过哪种方式安装，此时直接使用 `bilili` 命令都应该不再是 `Command not found` 之类的提示啦
+
+## 开始工作
+
+一切准备就绪，请为我分配任务吧
+
+当然你只可以指派我可以完成的任务，也就是我所支持的 url 格式
+
+我的工作指派方式无比简单
+
+```bash
+bilili <url>
+```
+
+这里的 `<url>` 就是前面所说的我所支持的 url
+
+::: details 示例
+
+比如下载我的 bilili 演示视频只需要
+
+```bash
+bilili https://www.bilibili.com/video/BV1vZ4y1M7mQ
+```
+
+下载番剧《雾山五行》只需要
+
+```bash
+bilili https://www.bilibili.com/bangumi/media/md28228714
+```
+
+:::
+
+如果一切配置正确，此时我应该会正常工作咯
+
+当然，如果你想了解我的更多功能，请查阅[参数使用](../options/)部分

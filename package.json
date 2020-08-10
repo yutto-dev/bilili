@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs",
+    "docs:test": "vuepress build docs && npx serve docs/.vuepress/dist"
+  },
+  "devDependencies": {
+    "vuepress": "^1.5.3",
+    "vuepress-plugin-cursor-effects": "^1.0.0",
+    "vuepress-plugin-dynamic-title": "^1.0.0"
+  }
+}
