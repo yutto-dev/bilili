@@ -32,11 +32,11 @@
 
 ::: details 详细操作
 
-打开下载链接后，在 `Get packages & executable files` 部分选择 Windows 徽标，在 `Windows EXE Files` 下找到 `Windows builds by Zeranoe` 并点击，点击新页面的 `Download Build` 按钮，就开始下载啦～
+打开下载链接后，在 「Get packages & executable files」 部分选择 Windows 徽标，在 「Windows EXE Files」 下找到 「Windows builds by Zeranoe」 并点击，点击新页面的 「Download Build」 按钮，就开始下载啦～
 
 下载后解压，并随便放到一个安全的地方，然后在文件夹中找到 `ffmpeg.exe`，复制其所在文件夹路径
 
-右击「此电脑」，选择属性，在其中找到「高级系统设置」 → 「环境变量」，双击 PATH，在其中添加刚刚复制的路径
+右击「此电脑」，选择属性，在其中找到「高级系统设置」 → 「环境变量」，双击 PATH，在其中添加刚刚复制的路径（非 Win10 系统操作略有差异，请自行查阅「环境变量设置」的方法）
 
 保存保存，完事啦～～～
 
@@ -68,7 +68,7 @@ pacman -S ffmpeg
 
 :::
 
-此时，你可以通过 `ffmpeg -version` 命令来测试安装是否正确
+此时，你可以在终端上使用 `ffmpeg -version` 命令来测试安装是否正确，只要显示的不是 `Command not found` 之类的提示就说明……成功啦～～～
 
 ## 召唤 𝓫𝓲𝓵𝓲𝓵𝓲
 
@@ -97,7 +97,7 @@ python setup.py install
 
 一切准备就绪，请为我分配任务吧
 
-当然你只可以指派我可以完成的任务，也就是我所支持的 url 格式
+当然你只可以指派我可以完成的任务，也就是[我所支持的 url 格式](#我所支持的-url)。
 
 我的工作指派方式无比简单
 
