@@ -16,7 +16,7 @@
 -  番剧视频主页：
    -  `https://www.bilibili.com/bangumi/media/mdxxxxxx` 暂时只支持这种番剧主页啦，如果你已经在播放页面的话，点一下下面的封面就可以跳转过去啦
 
-## 我的解释器：Python
+## 我的解释器：Python <Badge type="tip" text="3.6+"/>
 
 为了能够正常与你交流，你需要先安装 Python 姐姐，当然一定要是 3.6 以上的版本，不然她可能也不知道我在说什么。
 
