@@ -1,6 +1,7 @@
 {
   "name": "bilili-docs",
   "description": "bilili documentation",
+  "license": "CC0-1.0",
   "scripts": {
     "dev": "vuepress dev",
     "build": "vuepress build",

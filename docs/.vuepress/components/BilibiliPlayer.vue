@@ -17,48 +17,47 @@ export default {
     avid: {
       required: false,
       type: String,
-      default: "",
+      default: ''
     },
     bvid: {
       required: false,
       type: String,
-      default: "",
+      default: ''
     },
     cid: {
       required: false,
       type: String,
-      default: "",
+      default: ''
     },
     page: {
       required: false,
       type: Number,
-      default: 1,
-    },
+      default: 1
+    }
   },
   data() {
-    if (this.avid === "" && this.bvid === "") {
-      console.log("avid 和 bvid 同时空缺！");
+    if (this.avid === '' && this.bvid === '') {
+      console.log('avid 和 bvid 同时空缺！')
     }
-    let video_url = "//player.bilibili.com/player.html?high_quality=1";
+    let video_url = '//player.bilibili.com/player.html?high_quality=1'
     if (this.avid) {
-      video_url += "&aid=" + this.avid;
+      video_url += '&aid=' + this.avid
     }
     if (this.bvid) {
-      video_url += "&bvid=" + this.bvid;
+      video_url += '&bvid=' + this.bvid
     }
     // 移动端必须指定 cid 字段才能解析到正确的视频
     if (this.cid) {
-      video_url += "&cid=" + this.cid;
+      video_url += '&cid=' + this.cid
     }
     if (this.page) {
-      video_url += "&page=" + this.page;
+      video_url += '&page=' + this.page
     }
-    console.log(video_url);
     return {
-      url: video_url,
-    };
-  },
-};
+      url: video_url
+    }
+  }
+}
 </script>
 
 <style scoped>
