@@ -19,6 +19,6 @@ features:
 footer: GPL-3.0 Licensed | Copyright © 2020-present SigureMo
 ---
 
-## 特性速览
+## 3 分钟快速开始
 
 <bilibili-player bvid="BV1vZ4y1M7mQ" cid="222190584" :page=1></bilibili-player>

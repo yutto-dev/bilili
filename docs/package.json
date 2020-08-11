@@ -1,8 +1,10 @@
 {
+  "name": "bilili-docs",
+  "description": "bilili documentation",
   "scripts": {
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs",
-    "docs:test": "vuepress build docs && npx serve docs/.vuepress/dist"
+    "dev": "vuepress dev",
+    "build": "vuepress build",
+    "serve": "vuepress build && npx serve .vuepress/dist"
   },
   "devDependencies": {
     "@vuepress/plugin-back-to-top": "^1.5.3",

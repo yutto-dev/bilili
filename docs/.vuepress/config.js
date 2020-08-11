@@ -3,8 +3,8 @@ module.exports = {
   description: "🍻 bilibili video and danmaku downloader | B站视频、弹幕下载器",
   locales: {
     "/": {
-      lang: "zh-CN"
-    }
+      lang: "zh-CN",
+    },
   },
 
   head: [
@@ -16,10 +16,10 @@ module.exports = {
       {
         property: "og:description",
         content:
-          "🍻 bilibili video and danmaku downloader | B站视频、弹幕下载器"
-      }
+          "🍻 bilibili video and danmaku downloader | B站视频、弹幕下载器",
+      },
     ],
-    ["meta", { property: "og:title", content: "bilili" }]
+    ["meta", { property: "og:title", content: "bilili" }],
   ],
 
   plugins: [
@@ -30,8 +30,8 @@ module.exports = {
       "cursor-effects",
       {
         size: 1.75,
-        shape: "star"
-      }
+        shape: "star",
+      },
     ],
     // 离开页面标题变化
     [
@@ -39,34 +39,53 @@ module.exports = {
       {
         showText: "(๑‾᷅^‾᷅๑)哼，还知道回来！",
         hideText: "(〟-_・)ﾝ?这就走了？",
-        recoverTime: 2000
-      }
-    ]
+        recoverTime: 2000,
+      },
+    ],
   ],
 
   themeConfig: {
     nav: [
       { text: "首页", link: "/" },
       { text: "指南", link: "/guide/" },
-      { text: "参数", link: "/options/" }
+      { text: "参数", link: "/options/" },
+      {
+        text: "支持我",
+        items: [
+          { text: "赞助", link: "/sponsor" },
+          {
+            text: "参与贡献",
+            link:
+              "https://github.com/SigureMo/bilili/blob/master/CONTRIBUTING.md",
+          },
+        ],
+      },
     ],
     sidebarDepth: 1,
     sidebar: {
       "/guide/": [
-        "",
-        "getting-started",
-        "work-process",
+        {
+          title: "指南",
+          collapsable: false,
+          sidebarDepth: 1,
+          children: ["", "getting-started", "knack"],
+        },
+        {
+          title: "深入",
+          collapsable: false,
+          sidebarDepth: 1,
+          children: ["../options/cli", "work-process"],
+        },
         "faq",
-        "knack",
-        "sponsor",
-        "notice"
+        "feedback",
+        "notice",
       ],
-      "/options/": ["", "cli", "usage"]
+      "/options/": ["", "cli", "usage"],
     },
     repo: "SigureMo/bilili",
     docsDir: "docs",
     docsBranch: "master",
     editLinks: true,
-    editLinkText: "帮我改进我的风格！"
-  }
+    editLinkText: "帮我改进我的风格！",
+  },
 };
