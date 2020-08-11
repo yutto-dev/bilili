@@ -1,11 +1,10 @@
 import os
 import requests
 
+from bilili.events.base import Handler
 
-noop = lambda *args, **kwargs: None
 
-
-class RemoteFile():
+class RemoteFile(Handler):
     """ 远程文件类
 
     网络 url 与本地文件的绑定，可调用 download 进行下载
@@ -14,18 +13,16 @@ class RemoteFile():
     """
 
     def __init__(self, url, local_path, range=(0, '')):
+        super().__init__([
+            'before_download', 'before_update',
+            'updated', 'downloaded'
+        ])
         self.url = url
         self.path = local_path
         self.name = os.path.split(self.path)[-1]
         self.tmp_path = self.path + '.dl'
         self.size = self.get_local_size()
         self.range = range
-        self.events = [
-            'before_download', 'before_update',
-            'updated', 'downloaded'
-        ]
-        for event in self.events:
-            setattr(self, event, noop)
 
     def get_local_size(self):
         """ 通过 os.path.getsize 获取本地文件大小 """
@@ -78,12 +75,3 @@ class RemoteFile():
             os.rename(self.tmp_path, self.path)
 
         self.downloaded(self)
-
-    def on(self, event, **params):
-        assert event in self.events
-
-        def on_event(func):
-            def new_func(*args, **kwargs):
-                return func(*args, **kwargs, **params)
-            setattr(self, event, new_func)
-        return on_event

@@ -1,21 +1,17 @@
 import os
 
+from bilili.events.base import Handler
 from bilili.tools import ffmpeg
 
 
-noop = lambda *args, **kwargs: None
-
-
-class MergingFile():
+class MergingFile(Handler):
     def __init__(self, format, src_path_list=[], dst_path=''):
+        super().__init__([
+            'before_merge', 'merged'
+        ])
         self.format = format
         self.src_path_list = src_path_list
         self.dst_path = dst_path
-        self.events = [
-            'before_merge', 'merged'
-        ]
-        for event in self.events:
-            setattr(self, event, noop)
 
     def merge(self):
         self.before_merge(self)
@@ -34,12 +30,3 @@ class MergingFile():
         for src_path in self.src_path_list:
             os.remove(src_path)
         self.merged(self)
-
-    def on(self, event, **params):
-        assert event in self.events
-
-        def on_event(func):
-            def new_func(*args, **kwargs):
-                return func(*args, **kwargs, **params)
-            setattr(self, event, new_func)
-        return on_event

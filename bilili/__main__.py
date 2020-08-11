@@ -195,7 +195,7 @@ def main():
                         block.path) or media_downloaded
                     symbol = "✓" if block_downloaded else "✖"
                     block._.downloaded = block_downloaded
-                    if not media_downloaded and not args.debug:
+                    if not media_downloaded and args.debug:
                         print("        {} {}".format(symbol, block.name))
 
         # 询问是否下载，通过参数 -y 可以跳过
