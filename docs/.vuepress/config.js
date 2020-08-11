@@ -17,8 +17,7 @@ module.exports = {
       "meta",
       {
         property: "og:description",
-        content:
-          "🍻 bilibili video and danmaku downloader | B站视频、弹幕下载器",
+        content: "🍻 bilibili video and danmaku downloader | B站视频、弹幕下载器",
       },
     ],
     ["meta", { property: "og:title", content: "bilili" }],
@@ -42,6 +41,18 @@ module.exports = {
         showText: "(๑‾᷅^‾᷅๑)哼，还知道回来！",
         hideText: "(〟-_・)ﾝ?这就走了？",
         recoverTime: 2000,
+      },
+    ],
+    // Vssue
+    [
+      "@vssue/vuepress-plugin-vssue",
+      {
+        platform: "github",
+        owner: "SigureMo",
+        repo: "bilili",
+        clientId: "913b8e73e5c2ad957b42",
+        clientSecret: "6cab2f1bf1afb0c25a87a45ab778863c464d8864",
+        prefix: "💬 ",
       },
     ],
   ],
@@ -88,7 +99,7 @@ module.exports = {
     docsDir: "docs",
     docsBranch: "master",
     editLinks: true,
-    editLinkText: "帮我改进我的风格！",
+    editLinkText: "啊，我说错了？你可以帮我纠正哦～",
   },
 
   // 作为插件的额外路由

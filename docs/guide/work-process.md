@@ -1,5 +1,7 @@
 # 工作流程
 
+是时候让你了解一下我的工作方式了。
+
 ## url 解析
 
 最开始，我会解析你的 url 类型，依此送入 [bangumi API 解析器](https://github.com/SigureMo/bilili/blob/master/bilili/api/bangumi.py)或者 [acg_video API 解析器](https://github.com/SigureMo/bilili/blob/master/bilili/api/acg_video.py)
