@@ -1,3 +1,5 @@
+const path = require("path");
+
 module.exports = {
   title: "bilili",
   description: "🍻 bilibili video and danmaku downloader | B站视频、弹幕下载器",
@@ -48,7 +50,7 @@ module.exports = {
     nav: [
       { text: "首页", link: "/" },
       { text: "指南", link: "/guide/" },
-      { text: "参数", link: "/options/" },
+      { text: "参数", link: "/cli/" },
       {
         text: "支持我",
         items: [
@@ -74,13 +76,13 @@ module.exports = {
           title: "深入",
           collapsable: false,
           sidebarDepth: 1,
-          children: ["../options/cli", "work-process"],
+          children: ["cli", "work-process"],
         },
         "faq",
         "feedback",
         "notice",
       ],
-      "/options/": ["", "cli", "usage"],
+      "/cli/": "auto",
     },
     repo: "SigureMo/bilili",
     docsDir: "docs",
@@ -88,4 +90,12 @@ module.exports = {
     editLinks: true,
     editLinkText: "帮我改进我的风格！",
   },
+
+  // 作为插件的额外路由
+  additionalPages: [
+    {
+      path: "/guide/cli.html",
+      filePath: path.resolve(__dirname, "../cli/README.md"),
+    },
+  ],
 };
