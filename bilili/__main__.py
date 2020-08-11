@@ -27,16 +27,20 @@ def parse_episodes(episodes_str, total):
     print("全 {} 话".format(total))
     if episodes_str == "all":
         episode_list = list(range(1, total+1))
-    elif re.match(r"\d+~\d+", episodes_str):
-        start, end = episodes_str.split("~")
-        start, end = int(start), int(end)
-        assert end > start, "终点值应大于起点值"
-        episode_list = list(range(start, end+1))
-    elif re.match(r"\d+(,\d+)*", episodes_str):
-        episode_list = episodes_str.split(",")
-        episode_list = list(map(int, episode_list))
+    elif re.match(r"(\d+(~\d+)?)(,\d+(~\d+)?)*", episodes_str):
+        episode_list = []
+        for episode_item in episodes_str.split(','):
+            if '~' in episode_item:
+                start, end = episode_item.split("~")
+                start, end = int(start), int(end)
+                assert end > start, "终点值（{}）应大于起点值（{}）".format(end, start)
+                episode_list.extend(list(range(start, end+1)))
+            else:
+                episode_list.append(int(episode_item))
     else:
         episode_list = []
+
+    episode_list = sorted(list(set(episode_list)))
 
     # 筛选满足条件的剧集
     out_of_range = []
