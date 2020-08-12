@@ -122,7 +122,11 @@ bilili <url> -p 1,3,7~9,13,15~17       # 此时选中了 1、3、7、8、9、13�
 
 也就是强制将已经下载过的部分覆盖掉啦。
 
-> 现在的实现比较简单，在下载前清空 `Videos` 目录，可能会带来别的隐患。
+::: tip
+
+现在的实现比较简单，在下载前清空 `Videos` 目录，可能会带来别的隐患。
+
+:::
 
 ## 个人信息认证
 
@@ -137,7 +141,17 @@ bilili <url> -p 1,3,7~9,13,15~17       # 此时选中了 1、3、7、8、9、13�
 
 首先，用你的帐号登录 B 站，然后随便打开一个 B 站网页，比如[首页](https://www.bilibili.com/)。
 
-按 F12 打开开发者工具，切换到 Network 栏，刷新页面，此时第一个加载的资源应该就是当前页面的 html，选中该资源，在右侧 「Request Headers」 中找到 「cookie」，在其中找到 `SESSDATA=blablablablablablabla;`，复制这里的 `blablablablablablabla`，这就是你需要的 `SESSDATA`。
+按 F12 打开开发者工具，切换到 Network 栏，刷新页面，此时第一个加载的资源应该就是当前页面的 html，选中该资源，在右侧 「Request Headers」 中找到 「cookie」，在其中找到 `SESSDATA=xxxxxxxxxxxxxxxxxxxx;`，复制这里的 `xxxxxxxxxxxxxxxxxxxx`，这就是你需要的 `SESSDATA`。
+
+:::
+
+::: tip
+
+SESSDATA 中可能有特殊符号，所以传入时你可能需要使用双引号来包裹
+
+```bash
+bilili <url> -c "xxxxxxxxxxxxxxxxxxxx"
+```
 
 :::
 

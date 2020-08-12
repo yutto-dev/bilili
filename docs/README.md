@@ -21,4 +21,4 @@ footer: GPL-3.0 Licensed | Copyright © 2020-present SigureMo
 
 ## 3 分钟快速开始
 
-<BilibiliPlayer bvid="BV1vZ4y1M7mQ" cid="222190584" :page=1></bilibili-player>
+<BilibiliPlayer bvid="BV1vZ4y1M7mQ" cid="222190584" :page=1 />

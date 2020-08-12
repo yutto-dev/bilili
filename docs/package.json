@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vuepress dev",
     "build": "vuepress build",
-    "serve": "vuepress build && npx serve .vuepress/dist"
+    "serve": "vuepress build --no-cache && npx serve .vuepress/dist"
   },
   "devDependencies": {
     "@vssue/api-github-v3": "^1.4.4",

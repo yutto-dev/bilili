@@ -2,7 +2,7 @@
 
 ## 视频速览
 
-<BilibiliPlayer bvid="BV1vZ4y1M7mQ" cid="222200470" :page=2></bilibili-player>
+<BilibiliPlayer bvid="BV1vZ4y1M7mQ" cid="222200470" :page=2 />
 
 ## 我所支持的 url
 
@@ -24,9 +24,9 @@
 
 `*nix` 的话一般都自带 python 环境，但要注意版本。
 
-## 我的依赖：ffmpeg
+## 我的依赖：FFmpeg
 
-由于 B 站给我的视频大多是需要合并的，所以我需要依赖于 ffmpeg 小可爱的帮助，你需要实现把她安装到你的电脑上～
+由于 B 站给我的视频大多是需要合并的，所以我需要依赖于 FFmpeg 小可爱的帮助，你需要实现把她安装到你的电脑上～
 
 如果你所使用的操作系统是 Windows，操作有些些麻烦，你需要[手动下载](https://ffmpeg.org/download.html)她，并将她放到你的环境变量中～
 
