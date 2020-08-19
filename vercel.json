@@ -1,0 +1,12 @@
+{
+  "name": "bilili-api",
+  "routes": [
+    {
+      "src": "/.*",
+      "dest": "/api/index.py",
+      "headers": {
+        "Access-Control-Allow-Origin": "*"
+      }
+    }
+  ]
+}

@@ -11,8 +11,10 @@ from bilili.api.exceptions import (
     UnsupportTypeError,
     IsPreviewError,
 )
+from bilili.api.exports import export_api
 
 
+@export_api(route="/video_info")
 def get_video_info(avid: str = "", bvid: str = ""):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
@@ -29,6 +31,7 @@ def get_video_info(avid: str = "", bvid: str = ""):
     }
 
 
+@export_api(route="/acg_video/title")
 def get_acg_video_title(avid: str = "", bvid: str = "") -> str:
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
@@ -42,6 +45,7 @@ def get_acg_video_title(avid: str = "", bvid: str = "") -> str:
     return title
 
 
+@export_api(route="/acg_video/list")
 def get_acg_video_list(avid: str = "", bvid: str = ""):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
@@ -58,6 +62,7 @@ def get_acg_video_list(avid: str = "", bvid: str = ""):
     ]
 
 
+@export_api(route="/acg_video/playurl")
 def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality: int = 120, type: str = "dash"):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")

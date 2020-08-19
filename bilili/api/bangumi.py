@@ -11,14 +11,17 @@ from bilili.api.exceptions import (
     UnsupportTypeError,
     IsPreviewError,
 )
+from bilili.api.exports import export_api
 
 
+@export_api(route="/get_season_id")
 def get_season_id(media_id: str) -> str:
     home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
     season_id = re.search(r'"param":{"season_id":(\d+),"season_type":\d+}', spider.get(home_url).text).group(1)
     return season_id
 
 
+@export_api(route="/bangumi/title")
 def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str = "") -> str:
     if not (media_id or season_id or episode_id):
         raise ArgumentsError("media_id", "season_id", "episode_id")
@@ -38,6 +41,7 @@ def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str =
     return title
 
 
+@export_api(route="/bangumi/list")
 def get_bangumi_list(episode_id: str = "", season_id: str = ""):
     if not (season_id or episode_id):
         raise ArgumentsError("season_id", "episode_id")
@@ -61,6 +65,7 @@ def get_bangumi_list(episode_id: str = "", season_id: str = ""):
     ]
 
 
+@export_api(route="/bangumi/playurl")
 def get_bangumi_playurl(avid: str = "", episode_id: str = "", cid: str = "", quality: int = 120, type: str = "dash"):
     quality_sequence = gen_quality_sequence(quality)
     play_api = "https://api.bilibili.com/pgc/player/web/playurl?avid={avid}&ep_id={episode_id}&cid={cid}&qn={quality}"

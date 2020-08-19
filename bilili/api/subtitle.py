@@ -2,8 +2,10 @@ import re
 import json
 
 from bilili.tools import spider
+from bilili.api.exports import export_api
 
 
+@export_api(route="/subtitle")
 def get_subtitle(avid: str = "", bvid: str = "", cid: str = ""):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
