@@ -204,6 +204,18 @@ def main():
             "{:02}/{:02} parsing segments info...".format(i + 1, len(containers)), end="\r",
         )
 
+        # 解析视频 url
+        try:
+            for playinfo in get_playurl(container, config["quality"]):
+                container.append_media(
+                    block_size=config["block_size"],
+                    **playinfo
+                )
+        except CannotDownloadError as e:
+            print('[warn] {} 无法下载，原因：{}'.format(container.name, e.message))
+        except IsPreviewError:
+            print('[warn] {} 是预览视频'.format(container.name))
+
         # 写入播放列表
         if playlist is not None:
             playlist.write_path(container.path)
@@ -220,18 +232,6 @@ def main():
         if args.danmaku != "no":
             with open(os.path.splitext(container.path)[0] + ".xml", 'w', encoding='utf-8') as f:
                 f.write(get_danmaku(container.meta['cid']))
-
-        # 解析视频 url
-        try:
-            for playinfo in get_playurl(container, config["quality"]):
-                container.append_media(
-                    block_size=config["block_size"],
-                    **playinfo
-                )
-        except CannotDownloadError as e:
-            print('[warn] {} 无法下载，原因：{}'.format(container.name, e.message))
-        except IsPreviewError:
-            print('[warn] {} 是预览视频'.format(container.name))
 
         # 转换弹幕为 ASS
         if args.danmaku == "ass":
