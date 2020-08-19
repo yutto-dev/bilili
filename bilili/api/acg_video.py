@@ -1,169 +1,157 @@
 import re
-import os
+import json
 
-from bilili.tools import (spider, regex_acg_video_av, regex_acg_video_av_short,
-                          regex_acg_video_bv, regex_acg_video_bv_short)
-from bilili.utils.quality import quality_map
-from bilili.video import BililiContainer
-from bilili.utils.base import repair_filename, touch_dir, touch_url
+from bilili.tools import spider, regex_bangumi_ep
+from bilili.quality import gen_quality_sequence, quality_map
+from bilili.utils.base import touch_url
+from bilili.api.exceptions import (
+    ArgumentsError,
+    CannotDownloadError,
+    UnknownTypeError,
+    UnsupportTypeError,
+    IsPreviewError,
+)
 
-info_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&bvid={bvid}&jsonp=jsonp"
-parse_api = "https://api.bilibili.com/x/player/playurl?avid={avid}&cid={cid}&bvid={bvid}&qn={qn}&type=&otype=json"
+
+def get_video_info(avid: str = "", bvid: str = ""):
+    if not (avid or bvid):
+        raise ArgumentsError("avid", "bvid")
+    info_api = "http://api.bilibili.com/x/web-interface/view?aid={avid}&bvid={bvid}"
+    res = spider.get(info_api.format(avid=avid, bvid=bvid))
+    res_json_data = res.json()["data"]
+    return {
+        "avid": res_json_data["aid"],
+        "bvid": res_json_data["bvid"],
+        "picture": res_json_data["pic"],
+        "episode_id": regex_bangumi_ep.match(res_json_data["redirect_url"]).group("episode_id")
+        if res_json_data.get("redirect_url")
+        else "",
+    }
 
 
-def get_title(home_url):
+def get_acg_video_title(avid: str = "", bvid: str = "") -> str:
+    if not (avid or bvid):
+        raise ArgumentsError("avid", "bvid")
+    home_url = (
+        "https://www.bilibili.com/video/{bvid}".format(bvid=bvid)
+        if bvid
+        else "https://www.bilibili.com/video/av{avid}".format(avid=avid)
+    )
     res = spider.get(home_url)
-    title = re.search(
-        r'<title .*>(.*)_哔哩哔哩 \(゜-゜\)つロ 干杯~-bilibili</title>', res.text).group(1)
+    title = re.search(r"<title .*>(.*)_哔哩哔哩 \(゜-゜\)つロ 干杯~-bilibili</title>", res.text).group(1)
     return title
 
 
-def get_context(home_url):
-    context = {
-        'avid': '',
-        'bvid': ''
-    }
-
-    if regex_acg_video_av.match(home_url):
-        context['avid'] = regex_acg_video_av.match(home_url).group('avid')
-    elif regex_acg_video_av_short.match(home_url):
-        context['avid'] = regex_acg_video_av_short.match(
-            home_url).group('avid')
-    elif regex_acg_video_bv.match(home_url):
-        context['bvid'] = regex_acg_video_bv.match(home_url).group('bvid')
-    elif regex_acg_video_bv_short.match(home_url):
-        context['bvid'] = regex_acg_video_bv_short.match(
-            home_url).group('bvid')
-
-    return context
+def get_acg_video_list(avid: str = "", bvid: str = ""):
+    if not (avid or bvid):
+        raise ArgumentsError("avid", "bvid")
+    list_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&bvid={bvid}&jsonp=jsonp"
+    res = spider.get(list_api.format(avid=avid, bvid=bvid))
+    return [
+        # fmt: off
+        {
+            'id': i + 1,
+            'name': item['part'],
+            'cid': item['cid']
+        }
+        for i, item in enumerate(res.json()['data'])
+    ]
 
 
-def get_containers(context, video_dir, format, playlist=None):
-    avid, bvid = context['avid'], context['bvid']
-    containers = []
-    info_url = info_api.format(avid=avid, bvid=bvid)
-    res = spider.get(info_url)
-
-    for i, item in enumerate(res.json()["data"]):
-        file_path = os.path.join(video_dir, repair_filename(
-            '{}.mp4'.format(item["part"])))
-        if playlist is not None:
-            playlist.write_path(file_path)
-        containers.append(BililiContainer(
-            id=i+1,
-            name=item["part"],
-            path=file_path,
-            meta={
-                "avid": avid,
-                "bvid": bvid,
-                "cid": item["cid"]
-            },
-            format=format,
-        ))
-    if playlist is not None:
-        playlist.flush()
-    return containers
-
-
-def parse_segments(container, quality_sequence, block_size):
-    cid, avid, bvid = container.meta["cid"], container.meta["avid"], container.meta["bvid"]
-
-    if container.format == "flv":
-        # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
-        touch_message = spider.get(parse_api.format(
-            avid=avid, cid=cid, bvid=bvid, qn=80)).json()
+def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality: int = 120, type: str = "dash"):
+    if not (avid or bvid):
+        raise ArgumentsError("avid", "bvid")
+    quality_sequence = gen_quality_sequence(quality)
+    play_api = (
+        "https://api.bilibili.com/x/player/playurl?avid={avid}&bvid={bvid}&cid={cid}&qn={quality}&type=&otype=json"
+    )
+    if type == "flv":
+        touch_message = spider.get(play_api.format(avid=avid, bvid=bvid, cid=cid, quality=80)).json()
         if touch_message["code"] != 0:
-            print("warn: 无法下载 {} ，原因： {}".format(
-                container.name, touch_message["message"]))
-            return
+            raise CannotDownloadError(touch_message["code"], touch_message["message"])
 
-        accept_quality = touch_message['data']['accept_quality']
-        for qn in quality_sequence:
-            if qn in accept_quality:
+        accept_quality = touch_message["data"]["accept_quality"]
+        for quality in quality_sequence:
+            if quality in accept_quality:
                 break
 
-        parse_url = parse_api.format(avid=avid, cid=cid, bvid=bvid, qn=qn)
-        res = spider.get(parse_url)
+        play_url = play_api.format(avid=avid, bvid=bvid, cid=cid, quality=quality)
+        res = spider.get(play_url)
 
-        for i, segment in enumerate(res.json()['data']['durl']):
-            container.append_media(
-                id=i+1,
-                url=segment["url"],
-                qn=qn,
-                height=quality_map[qn]['height'],
-                width=quality_map[qn]['width'],
-                size=segment["size"],
-                type="segment",
-                block_size=block_size,
-            )
-    elif container.format == "m4s":
-        # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
-        parse_api_m4s = parse_api + "&fnver=0&fnval=16&fourk=1"
-        play_info = spider.get(parse_api_m4s.format(
-            avid=avid, cid=cid, bvid=bvid, qn=quality_sequence[0])).json()
-        if play_info["code"] != 0:
-            print("warn: 无法下载 {} ，原因： {}".format(
-                container.name, play_info["message"]))
-            return
+        return [
+            {
+                "id": i + 1,
+                "url": segment["url"],
+                "quality": quality,
+                "height": quality_map[quality]["height"],
+                "width": quality_map[quality]["width"],
+                "size": segment["size"],
+                "type": "flv_segment",
+            }
+            for i, segment in enumerate(res.json()["data"]["durl"])
+        ]
+    elif type == "dash":
+        result = []
+        play_api_dash = play_api + "&fnver=0&fnval=16&fourk=1"
+        touch_message = spider.get(
+            play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=quality_sequence[0])
+        ).json()
+        if touch_message["code"] != 0:
+            raise CannotDownloadError(touch_message["code"], touch_message["message"])
 
-        if play_info['data'].get('dash') is None:
-            raise Exception('该视频尚不支持 M4S format 哦~')
+        if touch_message["data"].get("dash") is None:
+            raise UnsupportTypeError("dash")
 
-        # accept_quality = play_info['data']['accept_quality']
-        accept_quality = set([video['id']
-                              for video in play_info['data']['dash']['video']])
-        for qn in quality_sequence:
-            if qn in accept_quality:
+        accept_quality = set([video["id"] for video in touch_message["data"]["dash"]["video"]])
+        for quality in quality_sequence:
+            if quality in accept_quality:
                 break
 
-        parse_url = parse_api_m4s.format(avid=avid, cid=cid, bvid=bvid, qn=qn)
-        play_info = spider.get(parse_url).json()
+        res = spider.get(play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=quality))
 
-        for video in play_info['data']['dash']['video']:
-            if video['id'] == qn:
-                container.append_media(
-                    id=1,
-                    url=video['base_url'],
-                    qn=qn,
-                    height=video['height'],
-                    width=video['width'],
-                    size=touch_url(video['base_url'], spider)[0],
-                    type="video",
-                    block_size=block_size,
+        for video in res.json()["data"]["dash"]["video"]:
+            if video["id"] == quality:
+                result.append(
+                    {
+                        "id": 1,
+                        "url": video["base_url"],
+                        "quality": quality,
+                        "height": video["height"],
+                        "width": video["width"],
+                        "size": touch_url(video["base_url"], spider)[0],
+                        "type": "dash_video",
+                    }
                 )
                 break
-        for audio in play_info['data']['dash']['audio']:
-            container.append_media(
-                id=2,
-                url=audio['base_url'],
-                height=None,
-                width=None,
-                size=touch_url(audio['base_url'], spider)[0],
-                qn=qn,
-                type="audio",
-                block_size=block_size,
+        for audio in res.json()["data"]["dash"]["audio"]:
+            result.append(
+                {
+                    "id": 2,
+                    "url": audio["base_url"],
+                    "quality": quality,
+                    "height": None,
+                    "width": None,
+                    "size": touch_url(audio["base_url"], spider)[0],
+                    "type": "dash_audio",
+                }
             )
             break
-
-    elif container.format == 'mp4':
-        # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
-        parse_api_mp4 = parse_api + "&platform=html5&high_quality=1"
-        play_info = spider.get(parse_api_mp4.format(
-            avid=avid, cid=cid, bvid=bvid, qn=120)).json()
+        return result
+    elif type == "mp4":
+        play_api_mp4 = play_api + "&platform=html5&high_quality=1"
+        play_info = spider.get(play_api_mp4.format(avid=avid, bvid=bvid, cid=cid, quality=120)).json()
         if play_info["code"] != 0:
-            print("warn: 无法下载 {} ，原因： {}".format(
-                container.name, play_info["message"]))
-            return
-
-        container.append_media(
-            id=1,
-            url=play_info['data']['durl'][0]['url'],
-            qn=play_info['data']['quality'],
-            height=quality_map[play_info['data']['quality']]['height'],
-            width=quality_map[play_info['data']['quality']]['width'],
-            size=play_info['data']['durl'][0]['size'],
-            type="container",
-            block_size=block_size,
-        )
+            raise CannotDownloadError(play_info["code"], play_info["message"])
+        return [
+            {
+                "id": 1,
+                "url": play_info["data"]["durl"][0]["url"],
+                "quality": play_info["data"]["quality"],
+                "height": quality_map[play_info["data"]["quality"]]["height"],
+                "width": quality_map[play_info["data"]["quality"]]["width"],
+                "size": play_info["data"]["durl"][0]["size"],
+                "type": "mp4_container",
+            }
+        ]
     else:
-        print("Unknown format {}".format(container.format))
+        raise UnknownTypeError(type)

@@ -7,17 +7,21 @@ import time
 import shutil
 
 from bilili.utils.base import repair_filename, touch_dir, touch_file, size_format
-from bilili.utils.quality import quality_sequence_default
 from bilili.utils.playlist import Dpl, M3u
 from bilili.utils.thread import ThreadPool, Flag
-from bilili.utils.console import Console, Font, Line, String, ProgressBar, List, DynamicSymbol, ColorString
+from bilili.utils.console import (Console, Font, Line, String, ProgressBar,
+                                  List, DynamicSymbol, ColorString)
+from bilili.utils.subtitle import Subtitle
+from bilili.utils.attrdict import AttrDict
 from bilili.api.subtitle import get_subtitle
 from bilili.api.danmaku import get_danmaku
-from bilili.tools import (spider, ass, regex_acg_video_av, regex_acg_video_av_short,
-                          regex_acg_video_bv, regex_acg_video_bv_short, regex_bangumi)
-from bilili.video import global_middleware
+from bilili.tools import spider, ass, regex
+from bilili.tools import global_middleware
 from bilili.events.downloader import RemoteFile
 from bilili.events.merger import MergingFile
+from bilili.video import BililiContainer
+from bilili.api.exceptions import (ArgumentsError, CannotDownloadError,
+                                   UnknownTypeError, UnsupportTypeError, IsPreviewError)
 
 
 def parse_episodes(episodes_str, total):
@@ -26,15 +30,15 @@ def parse_episodes(episodes_str, total):
     # 解析字符串为列表
     print("全 {} 话".format(total))
     if episodes_str == "all":
-        episode_list = list(range(1, total+1))
+        episode_list = list(range(1, total + 1))
     elif re.match(r"(\d+(~\d+)?)(,\d+(~\d+)?)*", episodes_str):
         episode_list = []
-        for episode_item in episodes_str.split(','):
-            if '~' in episode_item:
+        for episode_item in episodes_str.split(","):
+            if "~" in episode_item:
                 start, end = episode_item.split("~")
                 start, end = int(start), int(end)
                 assert end > start, "终点值（{}）应大于起点值（{}）".format(end, start)
-                episode_list.extend(list(range(start, end+1)))
+                episode_list.extend(list(range(start, end + 1)))
             else:
                 episode_list.append(int(episode_item))
     else:
@@ -46,7 +50,7 @@ def parse_episodes(episodes_str, total):
     out_of_range = []
     episodes = []
     for episode in episode_list:
-        if episode in range(1, total+1):
+        if episode in range(1, total + 1):
             if episode not in episodes:
                 episodes.append(episode)
         else:
@@ -64,90 +68,117 @@ def main():
 
     parser = argparse.ArgumentParser(description="bilili B 站视频、弹幕下载器")
     parser.add_argument("url", help="视频主页地址")
-    parser.add_argument('-f', '--format', default='m4s',
-                        choices=['flv', 'm4s', 'mp4'], help="选择下载源格式（m4s 或 flv 或 mp4）")
+    parser.add_argument(
+        "-f", "--type", default="dash", choices=["flv", "dash", "mp4"], help="选择下载源类型（dash 或 flv 或 mp4）",
+    )
     parser.add_argument("-d", "--dir", default=r"", help="下载目录")
-    parser.add_argument("-q", "--quality", default=120, choices=[120, 116, 112, 80, 74, 64, 32, 16], type=int,
-                        help="视频清晰度 120:4K, 116:1080P60, 112:1080P+, 80:1080P, 74:720P60, 64:720P, 32:480P, 16:360P, 6:240P")
-    parser.add_argument("-t", "--num-threads", default=30,
-                        type=int, help="最大下载线程数")
+    parser.add_argument(
+        "-q",
+        "--quality",
+        default=120,
+        choices=[120, 116, 112, 80, 74, 64, 32, 16],
+        type=int,
+        help="视频清晰度 120:4K, 116:1080P60, 112:1080P+, 80:1080P, 74:720P60, 64:720P, 32:480P, 16:360P",
+    )
+    parser.add_argument("-t", "--num-threads", default=30, type=int, help="最大下载线程数")
     parser.add_argument("-p", "--episodes", default="all", help="选集")
-    parser.add_argument("-w", "--overwrite",
-                        action="store_true", help="强制覆盖已下载视频")
+    parser.add_argument("-w", "--overwrite", action="store_true", help="强制覆盖已下载视频")
     parser.add_argument("-c", "--sess-data", default=None, help="输入 cookies")
     parser.add_argument("-y", "--yes", action="store_true", help="跳过下载询问")
-    parser.add_argument("--playlist-type", default="dpl",
-                        choices=["dpl", "m3u", "no"], help="播放列表类型，支持 dpl 和 m3u，输入 no 不生成播放列表")
-    parser.add_argument("--path-type", default="rp",
-                        help="播放列表路径类型（rp：相对路径，ap：绝对路径）")
-    parser.add_argument("--danmaku", default="xml",
-                        choices=["xml", "ass", "no"], help="弹幕类型，支持 xml 和 ass，如果设置为 no 则不下载弹幕")
-    parser.add_argument("--block-size", default=128, type=int,
-                        help="分块下载器的块大小，单位为 MB，默认为 128MB，设置为 0 时禁用分块下载")
+    parser.add_argument(
+        "--playlist-type", default="dpl", choices=["dpl", "m3u", "no"], help="播放列表类型，支持 dpl 和 m3u，输入 no 不生成播放列表",
+    )
+    parser.add_argument("--path-type", default="rp", help="播放列表路径类型（rp：相对路径，ap：绝对路径）")
+    parser.add_argument(
+        "--danmaku", default="xml", choices=["xml", "ass", "no"], help="弹幕类型，支持 xml 和 ass，如果设置为 no 则不下载弹幕",
+    )
+    parser.add_argument(
+        "--block-size", default=128, type=int, help="分块下载器的块大小，单位为 MB，默认为 128MB，设置为 0 时禁用分块下载",
+    )
     parser.add_argument("--disable-proxy", action="store_true", help="禁用系统代理")
     parser.add_argument("--debug", action="store_true", help="debug 模式")
 
     args = parser.parse_args()
-    cookies = {
-        "SESSDATA": args.sess_data
-    }
+    cookies = {"SESSDATA": args.sess_data}
 
     config = {
         "url": args.url,
         "dir": args.dir,
-        "quality_sequence": quality_sequence_default[quality_sequence_default.index(args.quality):] +
-        list(reversed(
-            quality_sequence_default[:quality_sequence_default.index(args.quality)])),
+        "quality": args.quality,
         "episodes": args.episodes,
         "playlist_type": args.playlist_type,
         "playlist_path_type": args.path_type.upper(),
         "overwrite": args.overwrite,
         "cookies": cookies,
-        "format": args.format.lower(),
+        "type": args.type.lower(),
         "block_size": int(args.block_size * 1024 * 1024),
     }
 
-    if regex_acg_video_av.match(args.url) or \
-       regex_acg_video_av_short.match(args.url) or \
-       regex_acg_video_bv.match(args.url) or \
-       regex_acg_video_bv_short.match(args.url):
-        bili_type = "acg_video"
-        from bilili.api.acg_video import get_title, get_context, get_containers, parse_segments
-    elif regex_bangumi.match(args.url):
-        bili_type = "bangumi"
-        from bilili.api.bangumi import get_title, get_context, get_containers, parse_segments
+    # 匹配资源的 id 以及其对应所属类型
+    # fmt: off
+    resource_id = {
+        "avid": "",
+        "bvid": "",
+        "episode_id": "",
+        "season_id": "",
+    } >> AttrDict()
+
+    # fmt: off
+    if (avid_match := regex.acg_video.av.origin.match(args.url)) or \
+        (avid_match := regex.acg_video.av.short.match(args.url)):
+        from bilili.api.acg_video import get_video_info
+        avid = avid_match.group("avid")
+        if episode_id := get_video_info(avid=avid)["episode_id"]:
+            resource_id.episode_id = episode_id
+        else:
+            resource_id.avid = avid
+    elif (bvid_match := regex.acg_video.bv.origin.match(args.url)) or \
+        (bvid_match := regex.acg_video.bv.short.match(args.url)):
+        from bilili.api.acg_video import get_video_info
+        bvid = bvid_match.group("bvid")
+        if episode_id := get_video_info(bvid=bvid)["episode_id"]:
+            resource_id.episode_id = episode_id
+        else:
+            resource_id.bvid = bvid
+    elif media_id_match := regex.bangumi.md.origin.match(args.url):
+        from bilili.api.bangumi import get_season_id
+        media_id = media_id_match.group("media_id")
+        resource_id.season_id = get_season_id(media_id=media_id)
+    elif (episode_id_match := regex.bangumi.ep.origin.match(args.url)) or \
+        (episode_id_match := regex.bangumi.ep.short.match(args.url)):
+        episode_id = episode_id_match.group("episode_id")
+        resource_id.episode_id = episode_id
+    elif (season_id_match := regex.bangumi.ss.origin.match(args.url)) or \
+        (season_id_match := regex.bangumi.ss.short.match(args.url)):
+        season_id = season_id_match.group("season_id")
+        resource_id.season_id = season_id
     else:
         print("视频地址有误！")
         sys.exit(1)
 
-    home_url = args.url
+    if resource_id.avid or resource_id.bvid:
+        from bilili.video_parser.acg_video import get_title, get_list, get_playurl
+        bili_type = "acg_video"
+    elif resource_id.season_id or resource_id.episode_id:
+        from bilili.video_parser.bangumi import get_title, get_list, get_playurl
+        bili_type = "bangumi"
 
     # 获取标题
     spider.set_cookies(config["cookies"])
     if args.disable_proxy:
         spider.trust_env = False
-    title = get_title(home_url)
+    title = get_title(resource_id)
     print(title)
 
     # 创建所需目录结构
-    base_dir = touch_dir(os.path.join(
-        config['dir'], repair_filename(title + " - bilibili")))
+    base_dir = touch_dir(os.path.join(config["dir"], repair_filename(title + " - bilibili")))
     video_dir = touch_dir(os.path.join(base_dir, "Videos"))
     if args.overwrite:
         shutil.rmtree(video_dir)
         touch_dir(video_dir)
-    if config['playlist_type'] == 'dpl':
-        playlist = Dpl(os.path.join(base_dir, 'Playlist.dpl'),
-                       path_type=config["playlist_path_type"])
-    elif config["playlist_type"] == "m3u":
-        playlist = M3u(os.path.join(base_dir, 'Playlist.m3u'),
-                       path_type=config["playlist_path_type"])
-    else:
-        playlist = None
 
     # 获取需要的信息
-    context = get_context(home_url)
-    containers = get_containers(context, video_dir, config['format'], playlist)
+    containers = [BililiContainer(video_dir=video_dir, type=args.type, **video) for video in get_list(resource_id)]
 
     # 解析并过滤不需要的选集
     episodes = parse_episodes(config["episodes"], len(containers))
@@ -159,21 +190,56 @@ def main():
         else:
             containers.append(container)
 
+    # 初始化播放列表
+    if config["playlist_type"] == "dpl":
+        playlist = Dpl(os.path.join(base_dir, "Playlist.dpl"), path_type=config["playlist_path_type"])
+    elif config["playlist_type"] == "m3u":
+        playlist = M3u(os.path.join(base_dir, "Playlist.m3u"), path_type=config["playlist_path_type"])
+    else:
+        playlist = None
+
     # 解析片段信息及视频 url
     for i, container in enumerate(containers):
-        print("{:02}/{:02} parsing segments info...".format(i+1,
-                                                            len(containers)), end="\r")
-        if bili_type == 'acg_video':
-            get_subtitle(container)
-        if args.danmaku != 'no':
-            get_danmaku(container)
+        print(
+            "{:02}/{:02} parsing segments info...".format(i + 1, len(containers)), end="\r",
+        )
 
-        parse_segments(
-            container, config['quality_sequence'], config['block_size'])
+        # 写入播放列表
+        if playlist is not None:
+            playlist.write_path(container.path)
 
-        if args.danmaku == 'ass':
+        # 下载弹幕
+        if bili_type == "acg_video":
+            for sub_info in get_subtitle(avid=resource_id.avid, bvid=resource_id.bvid, cid=container.meta['cid']):
+                sub_path = '{}_{}.srt'.format(os.path.splitext(container.path)[0], sub_info['lang'])
+                subtitle = Subtitle(sub_path)
+                for sub_line in sub_info['lines']:
+                    subtitle.write_line(sub_line["content"], sub_line["from"], sub_line["to"])
+
+        # 生成弹幕
+        if args.danmaku != "no":
+            with open(os.path.splitext(container.path)[0] + ".xml", 'w', encoding='utf-8') as f:
+                f.write(get_danmaku(container.meta['cid']))
+
+        # 解析视频 url
+        try:
+            for playinfo in get_playurl(container, config["quality"]):
+                container.append_media(
+                    block_size=config["block_size"],
+                    **playinfo
+                )
+        except CannotDownloadError as e:
+            print('[warn] {} 无法下载，原因：{}'.format(container.name, e.message))
+        except IsPreviewError:
+            print('[warn] {} 是预览视频'.format(container.name))
+
+        # 转换弹幕为 ASS
+        if args.danmaku == "ass":
             ass.convert_danmaku_from_xml(
-                os.path.splitext(container.path)[0]+'.xml', container.height, container.width)
+                os.path.splitext(container.path)[0] + ".xml", container.height, container.width,
+            )
+    if playlist is not None:
+        playlist.flush()
 
     # 准备下载
     if containers:
@@ -185,14 +251,12 @@ def main():
                 container._.merged = True
             print("{} {}".format(symbol, str(container)))
             for media in container.medias:
-                media_downloaded = os.path.exists(
-                    media.path) or container_downloaded
+                media_downloaded = os.path.exists(media.path) or container_downloaded
                 symbol = "✓" if media_downloaded else "✖"
                 if not container_downloaded:
                     print("    {} {}".format(symbol, media.name))
                 for block in media.blocks:
-                    block_downloaded = os.path.exists(
-                        block.path) or media_downloaded
+                    block_downloaded = os.path.exists(block.path) or media_downloaded
                     symbol = "✓" if block_downloaded else "✖"
                     block._.downloaded = block_downloaded
                     if not media_downloaded and args.debug:
@@ -203,9 +267,9 @@ def main():
             answer = None
             while answer is None:
                 result = input("以上标 ✖ 为需要进行下载的视频，是否立刻进行下载？[Y/n]")
-                if result == '' or result[0].lower() == 'y':
+                if result == "" or result[0].lower() == "y":
                     answer = True
-                elif result[0].lower() == 'n':
+                elif result[0].lower() == "n":
                     answer = False
                 else:
                     answer = None
@@ -213,33 +277,34 @@ def main():
                 sys.exit(0)
 
         # 部署下载与合并任务
-        merge_wait_flag = Flag(False)                       # 合并线程池不能因为没有任务就结束
+        merge_wait_flag = Flag(False)  # 合并线程池不能因为没有任务就结束
         # 因此要设定一个 flag，待最后合并结束后改变其值
         merge_pool = ThreadPool(3, wait=merge_wait_flag)
         download_pool = ThreadPool(args.num_threads)
         for container in containers:
-            merging_file = MergingFile(container.format,
-                                       [media.path for media in container.medias], container.path)
+            merging_file = MergingFile(container.type, [media.path for media in container.medias], container.path,)
             for media in container.medias:
 
-                block_merging_file = MergingFile(None,
-                                                 [block.path for block in media.blocks], media.path)
+                block_merging_file = MergingFile(None, [block.path for block in media.blocks], media.path)
                 for block in media.blocks:
 
-                    remote_file = RemoteFile(
-                        block.url, block.path, range=block.range)
+                    remote_file = RemoteFile(block.url, block.path, range=block.range)
 
                     # 为下载挂载各种钩子，以修改状态
-                    @remote_file.on('before_download', middleware=block._)
+                    @remote_file.on("before_download", middleware=block._)
                     def before_download(file, middleware=None):
                         middleware.downloading = True
 
-                    @remote_file.on('updated', middleware=block._)
+                    @remote_file.on("updated", middleware=block._)
                     def updated(file, middleware=None):
                         middleware.size = file.size
 
-                    @remote_file.on('downloaded', middleware=block._, merging_file=merging_file,
-                                    block_merging_file=block_merging_file)
+                    @remote_file.on(
+                        "downloaded",
+                        middleware=block._,
+                        merging_file=merging_file,
+                        block_merging_file=block_merging_file,
+                    )
                     def downloaded(file, middleware=None, merging_file=None, block_merging_file=None):
                         middleware.downloaded = True
 
@@ -252,25 +317,23 @@ def main():
                             # 如果该线程同时也是当前 container 的最后一个 block，就部署合并任务（放到线程池）
                             if middleware.parent.parent.downloaded and not middleware.parent.parent.merged:
                                 # 为合并挂载各种钩子
-                                @merging_file.on('before_merge', middleware=middleware.parent.parent)
+                                @merging_file.on("before_merge", middleware=middleware.parent.parent)
                                 def before_merge(file, middleware=None):
                                     middleware.merging = True
 
-                                @merging_file.on('merged', middleware=middleware.parent.parent)
+                                @merging_file.on("merged", middleware=middleware.parent.parent)
                                 def merged(file, middleware=None):
                                     middleware.merging = False
                                     middleware.merged = True
 
-                                merge_pool.add_task(
-                                    merging_file.merge, args=())
+                                merge_pool.add_task(merging_file.merge, args=())
 
                         middleware.downloading = False
 
                     # 下载过的不应继续部署任务
                     if block._.downloaded:
                         continue
-                    download_pool.add_task(
-                        remote_file.download, args=(spider, ))
+                    download_pool.add_task(remote_file.download, args=(spider,))
 
         # 启动线程池
         merge_pool.run()
@@ -278,72 +341,82 @@ def main():
 
         # 初始化界面
         console = Console(debug=args.debug)
+        console.add_component(Line(center=Font(char_a="𝓪", char_A="𝓐"), fillchar=" "))
+        console.add_component(Line(left=ColorString(fore="cyan"), fillchar=" "))
+        console.add_component(List(Line(left=String(), right=String(), fillchar="-")))
         console.add_component(
-            Line(center=Font(char_a='𝓪', char_A='𝓐'), fillchar=' '))
+            Line(
+                left=ColorString(fore="green", back="white", subcomponent=ProgressBar(symbols=" ▏▎▍▌▋▊▉█", width=65),),
+                right=String(),
+                fillchar=" ",
+            )
+        )
+        console.add_component(Line(left=ColorString(fore="blue"), fillchar=" "))
+        console.add_component(List(Line(left=String(), right=DynamicSymbol(symbols="🌑🌒🌓🌔🌕🌖🌗🌘"), fillchar=" ")))
         console.add_component(
-            Line(left=ColorString(fore='cyan'), fillchar=' '))
-        console.add_component(
-            List(Line(left=String(), right=String(), fillchar='-')))
-        console.add_component(Line(left=ColorString(fore='green', back='white', subcomponent=ProgressBar(
-            symbols=' ▏▎▍▌▋▊▉█', width=65)), right=String(), fillchar=' '))
-        console.add_component(
-            Line(left=ColorString(fore='blue'), fillchar=' '))
-        console.add_component(
-            List(Line(left=String(), right=DynamicSymbol(symbols="🌑🌒🌓🌔🌕🌖🌗🌘"), fillchar=' ')))
-        console.add_component(Line(left=ColorString(fore='yellow', back='white', subcomponent=ProgressBar(
-            symbols=' ▏▎▍▌▋▊▉█', width=65)), right=String(), fillchar=' '))
+            Line(
+                left=ColorString(fore="yellow", back="white", subcomponent=ProgressBar(symbols=" ▏▎▍▌▋▊▉█", width=65),),
+                right=String(),
+                fillchar=" ",
+            )
+        )
 
         # 准备监控
         size, t = global_middleware.size, time.time()
         while True:
             now_size, now_t = global_middleware.size, time.time()
-            delta_size, delta_t = max(
-                now_size - size, 0), (now_t - t) if now_t - t > 1e-6 else 1e-6
+            delta_size, delta_t = (
+                max(now_size - size, 0),
+                (now_t - t) if now_t - t > 1e-6 else 1e-6,
+            )
             speed = delta_size / delta_t
             size, t = now_size, now_t
 
             # 数据传入，界面渲染
-            console.refresh([
-                {
-                    'center': ' 🍻 bilili ',
-                },
-                {
-                    'left': '🌠 Downloading videos: '
-                } if global_middleware.downloading else None,
+            console.refresh(
+                # fmt: off
                 [
                     {
-                        'left': '{} '.format(str(container)),
-                        'right': ' {}/{}'.format(
-                            size_format(container._.size),
-                            size_format(container._.total_size)
-                        )
-                    } if container._.downloading else None for container in containers
-                ] if global_middleware.downloading else None,
-                {
-                    'left': global_middleware.size / global_middleware.total_size,
-                    'right': " {}/{} {}/s ⚡".format(
-                        size_format(global_middleware.size),
-                        size_format(global_middleware.total_size),
-                        size_format(speed)
-                    )
-                } if global_middleware.downloading else None,
-                {
-                    'left': '🍰 Merging videos: '
-                } if global_middleware.merging else None,
-                [
+                        "center": " 🍻 bilili ",
+                    },
                     {
-                        'left': '{} '.format(str(container)),
-                        'right': True
-                    } if container._.merging else None for container in containers
-                ] if global_middleware.merging else None,
-                {
-                    'left': sum([container._.merged for container in containers]) / len(containers),
-                    'right': " {}/{} 🚀".format(
-                        sum([container._.merged for container in containers]),
-                        len(containers)
-                    )
-                } if global_middleware.merging else None,
-            ])
+                        "left": "🌠 Downloading videos: "
+                    } if global_middleware.downloading else None,
+                    [
+                        {
+                            "left": "{} ".format(str(container)),
+                            "right": " {}/{}".format(
+                                size_format(container._.size), size_format(container._.total_size),
+                            ),
+                        } if container._.downloading else None
+                        for container in containers
+                    ] if global_middleware.downloading else None,
+                    {
+                        "left": global_middleware.size / global_middleware.total_size,
+                        "right": " {}/{} {}/s ⚡".format(
+                            size_format(global_middleware.size),
+                            size_format(global_middleware.total_size),
+                            size_format(speed),
+                        ),
+                    } if global_middleware.downloading else None,
+                    {
+                        "left": "🍰 Merging videos: "
+                    } if global_middleware.merging else None,
+                    [
+                        {
+                            "left": "{} ".format(str(container)),
+                            "right": True
+                        } if container._.merging else None
+                        for container in containers
+                    ] if global_middleware.merging else None,
+                    {
+                        "left": sum([container._.merged for container in containers]) / len(containers),
+                        "right": " {}/{} 🚀".format(
+                            sum([container._.merged for container in containers]), len(containers),
+                        ),
+                    } if global_middleware.merging else None,
+                ]
+            )
 
             # 检查是否已经全部完成
             if global_middleware.downloaded and global_middleware.merged:
@@ -352,7 +425,7 @@ def main():
             try:
                 # 将刷新率稳定在 2fps
                 refresh_rate = 2
-                time.sleep(max(1 / refresh_rate - (time.time()-now_t), 0.01))
+                time.sleep(max(1 / refresh_rate - (time.time() - now_t), 0.01))
             except (SystemExit, KeyboardInterrupt):
                 raise
         print("已全部下载完成！")
