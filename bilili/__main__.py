@@ -69,7 +69,7 @@ def main():
     parser = argparse.ArgumentParser(description="bilili B 站视频、弹幕下载器")
     parser.add_argument("url", help="视频主页地址")
     parser.add_argument(
-        "-f", "--type", default="dash", choices=["flv", "dash", "mp4"], help="选择下载源类型（dash 或 flv 或 mp4）",
+        "-t", "--type", default="dash", choices=["flv", "dash", "mp4"], help="选择下载源类型（dash 或 flv 或 mp4）",
     )
     parser.add_argument("-d", "--dir", default=r"", help="下载目录")
     parser.add_argument(
@@ -80,7 +80,7 @@ def main():
         type=int,
         help="视频清晰度 120:4K, 116:1080P60, 112:1080P+, 80:1080P, 74:720P60, 64:720P, 32:480P, 16:360P",
     )
-    parser.add_argument("-t", "--num-threads", default=30, type=int, help="最大下载线程数")
+    parser.add_argument("-n", "--num-threads", default=30, type=int, help="最大下载线程数")
     parser.add_argument("-p", "--episodes", default="all", help="选集")
     parser.add_argument("-w", "--overwrite", action="store_true", help="强制覆盖已下载视频")
     parser.add_argument("-c", "--sess-data", default=None, help="输入 cookies")

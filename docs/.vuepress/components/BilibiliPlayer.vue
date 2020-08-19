@@ -1,19 +1,17 @@
 <template>
-  <div>
-    <iframe
-      :src="url"
-      scrolling="no"
-      border="0"
-      frameborder="no"
-      framespacing="0"
-      allowfullscreen="true"
-    ></iframe>
-  </div>
+  <div id="dplayer" class="dplayer"></div>
 </template>
 
 <script>
+import DPlayer from 'dplayer'
+
 export default {
   props: {
+    bilipi: {
+      required: false,
+      type: String,
+      default: `https://bilipi.sigure.xyz/api/`
+    },
     avid: {
       required: false,
       type: String,
@@ -36,43 +34,28 @@ export default {
     }
   },
   data() {
-    if (this.avid === '' && this.bvid === '') {
-      console.log('avid 和 bvid 同时空缺！')
-    }
-    let video_url = '//player.bilibili.com/player.html?high_quality=1'
-    if (this.avid) {
-      video_url += '&aid=' + this.avid
-    }
-    if (this.bvid) {
-      video_url += '&bvid=' + this.bvid
-    }
-    // 移动端必须指定 cid 字段才能解析到正确的视频
-    if (this.cid) {
-      video_url += '&cid=' + this.cid
-    }
-    if (this.page) {
-      video_url += '&page=' + this.page
-    }
     return {
-      url: video_url
+      dp: null
     }
+  },
+
+  mounted() {
+    const url = `${this.bilipi}acg_video/playurl?avid=${this.avid}&bvid=${this.bvid}&cid=${this.cid}&type=mp4`
+    fetch(url)
+      .then((res) => {
+        return res.json()
+      })
+      .then((res) => {
+        this.dp = new DPlayer({
+          container: document.getElementById('dplayer'),
+          lang: 'zh-cn',
+          video: {
+            url: res.result[0].url
+          }
+        })
+      })
   }
 }
 </script>
 
-<style scoped>
-div {
-  position: relative;
-  width: 100%;
-  height: 0;
-  padding-bottom: 75%;
-}
-
-iframe {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
-}
-</style>
+<style scoped></style>
