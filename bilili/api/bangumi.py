@@ -18,7 +18,7 @@ from bilili.api.exports import export_api
 def get_season_id(media_id: str) -> str:
     home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
     season_id = re.search(r'"param":{"season_id":(\d+),"season_type":\d+}', spider.get(home_url).text).group(1)
-    return season_id
+    return str(season_id)
 
 
 @export_api(route="/bangumi/title")
@@ -56,9 +56,9 @@ def get_bangumi_list(episode_id: str = "", season_id: str = ""):
                     item["long_title"],
                 ]
             ),
-            "cid": item["cid"],
-            "episode_id": item["id"],
-            "avid": item["aid"],
+            "cid": str(item["cid"]),
+            "episode_id": str(item["id"]),
+            "avid": str(item["aid"]),
             "bvid": item["bvid"],
         }
         for i, item in enumerate(res.json()["result"]["episodes"])
@@ -66,11 +66,15 @@ def get_bangumi_list(episode_id: str = "", season_id: str = ""):
 
 
 @export_api(route="/bangumi/playurl")
-def get_bangumi_playurl(avid: str = "", episode_id: str = "", cid: str = "", quality: int = 120, type: str = "dash"):
+def get_bangumi_playurl(
+    avid: str = "", bvid: str = "", episode_id: str = "", cid: str = "", quality: int = 120, type: str = "dash"
+):
     quality_sequence = gen_quality_sequence(quality)
-    play_api = "https://api.bilibili.com/pgc/player/web/playurl?avid={avid}&ep_id={episode_id}&cid={cid}&qn={quality}"
+    play_api = "https://api.bilibili.com/pgc/player/web/playurl?avid={avid}&bvid={bvid}&ep_id={episode_id}&cid={cid}&qn={quality}"
     if type == "flv":
-        touch_message = spider.get(play_api.format(avid=avid, episode_id=episode_id, cid=cid, quality=80)).json()
+        touch_message = spider.get(
+            play_api.format(avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=80)
+        ).json()
         if touch_message["code"] != 0:
             raise CannotDownloadError(touch_message["code"], touch_message["message"])
         if touch_message["result"]["is_preview"] == 1:
@@ -81,7 +85,7 @@ def get_bangumi_playurl(avid: str = "", episode_id: str = "", cid: str = "", qua
             if quality in accept_quality:
                 break
 
-        play_url = play_api.format(avid=avid, episode_id=episode_id, cid=cid, quality=quality)
+        play_url = play_api.format(avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=quality)
         res = spider.get(play_url)
 
         return [
@@ -100,7 +104,7 @@ def get_bangumi_playurl(avid: str = "", episode_id: str = "", cid: str = "", qua
         result = []
         play_api_dash = play_api + "&fnver=0&fnval=16&fourk=1"
         play_info = spider.get(
-            play_api_dash.format(avid=avid, episode_id=episode_id, cid=cid, quality=quality_sequence[0])
+            play_api_dash.format(avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=quality_sequence[0])
         ).json()
         if play_info["code"] != 0:
             raise CannotDownloadError(play_info["code"], play_info["message"])

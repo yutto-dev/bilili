@@ -1,46 +1,31 @@
 import pytest
 
-from bilili.api.bangumi import get_title, get_context, get_containers, parse_segments
-from bilili.utils.base import touch_dir
-from bilili.utils.quality import quality_sequence_default
-from bilili.video import BililiContainer
+from bilili.api.bangumi import get_season_id, get_bangumi_title, get_bangumi_list, get_bangumi_playurl
+
+
+def test_get_season_id():
+    media_id = "28223066"
+    assert get_season_id(media_id=media_id) == "28770"
 
 
 def test_get_title():
-    url = "https://www.bilibili.com/bangumi/media/md28223066/"
-    assert get_title(url) == "我的三体之章北海传"
+    media_id = "28223066"
+    assert get_bangumi_title(media_id=media_id) == "我的三体之章北海传"
 
 
-def test_get_context():
-    url = "https://www.bilibili.com/bangumi/media/md28223066/"
-    context = get_context(url)
-    assert context["season_id"] == '28770'
+def test_get_list():
+    season_id = "28770"
+    video_list = get_bangumi_list(season_id=season_id)
+    assert video_list[0]["cid"] == "144541892"
+    assert video_list[0]["avid"] == "84271171"
+    assert video_list[0]["bvid"] == "BV1q7411v7Vd"
+    assert video_list[0]["episode_id"] == "300998"
 
 
-def test_get_containers():
-    context = {
-        "season_id": '28770',
-    }
-    video_dir = touch_dir("tmp/ThreeBody/Videos/")
-    containers = get_containers(context, video_dir, 'flv', None)
-    assert len(containers) == 9
-
-
-@pytest.mark.parametrize(
-    'format', [
-        'flv', 'm4s'
-    ])
-def test_parse_segments(format):
-    container = BililiContainer(
-        id=1,
-        name="Unknown",
-        path=touch_dir("tmp/ThreeBody/Videos/video1"),
-        meta={
-            "aid": 84271171,
-            "cid": 144541892,
-            "epid": 300998,
-            "bvid": '',
-        },
-        format=format,
-    )
-    parse_segments(container, quality_sequence_default, block_size=0)
+@pytest.mark.parametrize("type", ["flv", "dash"])
+def test_get_playurl(type):
+    avid = "84271171"
+    bvid = "BV1q7411v7Vd"
+    cid = "144541892"
+    episode_id = "300998"
+    play_list = get_bangumi_playurl(avid=avid, bvid=bvid, cid=cid, episode_id=episode_id, quality=120, type=type)

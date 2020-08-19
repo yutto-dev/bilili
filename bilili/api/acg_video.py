@@ -22,7 +22,7 @@ def get_video_info(avid: str = "", bvid: str = ""):
     res = spider.get(info_api.format(avid=avid, bvid=bvid))
     res_json_data = res.json()["data"]
     return {
-        "avid": res_json_data["aid"],
+        "avid": str(res_json_data["aid"]),
         "bvid": res_json_data["bvid"],
         "picture": res_json_data["pic"],
         "episode_id": regex_bangumi_ep.match(res_json_data["redirect_url"]).group("episode_id")
@@ -56,7 +56,7 @@ def get_acg_video_list(avid: str = "", bvid: str = ""):
         {
             'id': i + 1,
             'name': item['part'],
-            'cid': item['cid']
+            'cid': str(item['cid'])
         }
         for i, item in enumerate(res.json()['data'])
     ]
