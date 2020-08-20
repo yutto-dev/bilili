@@ -1,4 +1,4 @@
-# API <Badge type="warning" text="beta"/> <Badge type="tip" text="v0"/>
+# API <Badge type="tip" text="v0"/> <Badge type="warning" text="beta"/>
 
 除去基本的下载功能，你还可以通过我的一些 API 完成更多操作，比如通过 Python 来调用 `bilili.api` 模块，或者直接使用 WSGI 方式来调用，该 API 部署在 Vercel 上，你可以通过 <https://bilipi.sigure.xyz/api/v0> 来调用。
 
