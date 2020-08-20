@@ -1,148 +1,154 @@
 import re
-import os
+import json
 
-from bilili.tools import spider
-from bilili.utils.quality import quality_map
-from bilili.video import BililiContainer
-from bilili.utils.base import repair_filename, touch_dir, touch_url
+from bilili.tools import spider, regex_bangumi_ep
+from bilili.quality import gen_quality_sequence, quality_map
+from bilili.utils.base import touch_url
+from bilili.api.exceptions import (
+    ArgumentsError,
+    CannotDownloadError,
+    UnknownTypeError,
+    UnsupportTypeError,
+    IsPreviewError,
+)
+from bilili.api.exports import export_api
 
-info_api = "https://api.bilibili.com/pgc/web/season/section?season_id={season_id}"
-parse_api = "https://api.bilibili.com/pgc/player/web/playurl?avid={avid}&cid={cid}&qn={qn}&ep_id={ep_id}"
+
+@export_api(route="/get_season_id")
+def get_season_id(media_id: str) -> str:
+    home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
+    season_id = re.search(r'"param":{"season_id":(\d+),"season_type":\d+}', spider.get(home_url).text).group(1)
+    return str(season_id)
 
 
-def get_title(home_url):
-    """ 获取视频标题 """
-    res = spider.get(home_url)
-    title = re.search(
-        r'<span class="media-info-title-t">(.*?)</span>', res.text).group(1)
+@export_api(route="/bangumi/title")
+def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str = "") -> str:
+    if not (media_id or season_id or episode_id):
+        raise ArgumentsError("media_id", "season_id", "episode_id")
+    if media_id:
+        home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
+        res = spider.get(home_url)
+        title = re.search(r'<span class="media-info-title-t">(.*?)</span>', res.text).group(1)
+    elif season_id or episode_id:
+        if season_id:
+            play_url = "https://www.bilibili.com/bangumi/play/ss{season_id}".format(season_id=season_id)
+        else:
+            play_url = "https://www.bilibili.com/bangumi/play/ep{episode_id}".format(episode_id=episode_id)
+        res = spider.get(play_url)
+        title = re.search(
+            r'<a href=".+" target="_blank" title="(.*?)" class="media-title">(?P<title>.*?)</a>', res.text
+        ).group("title")
     return title
 
 
-def get_context(home_url):
-    context = {
-        'season_id': '',
-    }
-
-    season_id = re.search(
-        r'"param":{"season_id":(\d+),"season_type":\d+}', spider.get(home_url).text).group(1)
-    context['season_id'] = season_id
-
-    return context
-
-
-def get_containers(context, video_dir, format, playlist=None):
-    season_id = context['season_id']
-    containers = []
-    info_url = info_api.format(season_id=season_id)
-    res = spider.get(info_url)
-
-    for i, item in enumerate(res.json()["result"]["main_section"]["episodes"]):
-        index = item["title"]
-        if re.match(r'^\d*\.?\d*$', index):
-            index = '第{}话'.format(index)
-        name = repair_filename(' '.join([index, item["long_title"]]))
-        file_path = os.path.join(video_dir, repair_filename(
-            '{}.mp4'.format(name)))
-        if playlist is not None:
-            playlist.write_path(file_path)
-        containers.append(BililiContainer(
-            id=i+1,
-            name=name,
-            path=file_path,
-            meta={
-                "aid": item["aid"],
-                "cid": item["cid"],
-                "epid": item["id"],
-                "bvid": ''
-            },
-            format=format,
-        ))
-    if playlist is not None:
-        playlist.flush()
-
-    return containers
+@export_api(route="/bangumi/list")
+def get_bangumi_list(episode_id: str = "", season_id: str = ""):
+    if not (season_id or episode_id):
+        raise ArgumentsError("season_id", "episode_id")
+    list_api = "http://api.bilibili.com/pgc/view/web/season?season_id={season_id}&ep_id={episode_id}"
+    res = spider.get(list_api.format(episode_id=episode_id, season_id=season_id))
+    return [
+        {
+            "id": i + 1,
+            "name": " ".join(
+                [
+                    "第{}话".format(item["title"]) if re.match(r"^\d*\.?\d*$", item["title"]) else item["title"],
+                    item["long_title"],
+                ]
+            ),
+            "cid": str(item["cid"]),
+            "episode_id": str(item["id"]),
+            "avid": str(item["aid"]),
+            "bvid": item["bvid"],
+        }
+        for i, item in enumerate(res.json()["result"]["episodes"])
+    ]
 
 
-def parse_segments(container, quality_sequence, block_size):
-    aid, cid, ep_id, bvid = container.meta["aid"], container.meta[
-        "cid"], container.meta["epid"], container.meta["bvid"]
-
-    if container.format == "flv":
-        # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
-        touch_message = spider.get(parse_api.format(
-            avid=aid, cid=cid, ep_id=ep_id, qn=80)).json()
+@export_api(route="/bangumi/playurl")
+def get_bangumi_playurl(
+    avid: str = "", bvid: str = "", episode_id: str = "", cid: str = "", quality: int = 120, type: str = "dash"
+):
+    quality_sequence = gen_quality_sequence(quality)
+    play_api = "https://api.bilibili.com/pgc/player/web/playurl?avid={avid}&bvid={bvid}&ep_id={episode_id}&cid={cid}&qn={quality}"
+    if type == "flv":
+        touch_message = spider.get(
+            play_api.format(avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=80)
+        ).json()
         if touch_message["code"] != 0:
-            print("warn: 无法下载 {} ，原因： {}".format(
-                container.name, touch_message["message"]))
-            return
+            raise CannotDownloadError(touch_message["code"], touch_message["message"])
         if touch_message["result"]["is_preview"] == 1:
-            print("warn: {} 为预览版视频".format(container.name))
+            raise IsPreviewError()
 
-        accept_quality = touch_message['result']['accept_quality']
-        for qn in quality_sequence:
-            if qn in accept_quality:
+        accept_quality = touch_message["result"]["accept_quality"]
+        for quality in quality_sequence:
+            if quality in accept_quality:
                 break
 
-        parse_url = parse_api.format(avid=aid, cid=cid, ep_id=ep_id, qn=qn)
-        res = spider.get(parse_url)
+        play_url = play_api.format(avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=quality)
+        res = spider.get(play_url)
 
-        for i, segment in enumerate(res.json()['result']['durl']):
-            container.append_media(
-                id=i+1,
-                url=segment["url"],
-                qn=qn,
-                height=quality_map[qn]['height'],
-                width=quality_map[qn]['width'],
-                size=segment["size"],
-                type="segment",
-                block_size=block_size,
-            )
-    elif container.format == "m4s":
-        # 检查是否可以下载，同时搜索支持的清晰度，并匹配最佳清晰度
-        parse_api_m4s = parse_api + "&fnver=0&fnval=16&fourk=1"
-        play_info = spider.get(parse_api_m4s.format(
-            avid=aid, cid=cid, ep_id=ep_id, qn=quality_sequence[0], bvid=bvid)).json()
+        return [
+            {
+                "id": i + 1,
+                "url": segment["url"],
+                "quality": quality,
+                "height": quality_map[quality]["height"],
+                "width": quality_map[quality]["width"],
+                "size": segment["size"],
+                "type": "flv_segment",
+            }
+            for i, segment in enumerate(res.json()["result"]["durl"])
+        ]
+    elif type == "dash":
+        result = []
+        play_api_dash = play_api + "&fnver=0&fnval=16&fourk=1"
+        play_info = spider.get(
+            play_api_dash.format(avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=quality_sequence[0])
+        ).json()
         if play_info["code"] != 0:
-            print("warn: 无法下载 {} ，原因： {}".format(
-                container.name, play_info["message"]))
-            return
+            raise CannotDownloadError(play_info["code"], play_info["message"])
+        if play_info["result"].get("dash") is None:
+            raise UnsupportTypeError("dash")
+        if play_info["code"] != 0:
+            raise CannotDownloadError(play_info["code"], play_info["message"])
         if play_info["result"]["is_preview"] == 1:
-            print("warn: {} 为预览版视频".format(container.name))
+            raise IsPreviewError()
 
-        # accept_quality = play_info['result']['accept_quality']
-        accept_quality = set([video['id']
-                              for video in play_info['result']['dash']['video']])
-        for qn in quality_sequence:
-            if qn in accept_quality:
+        accept_quality = set([video["id"] for video in play_info["result"]["dash"]["video"]])
+        for quality in quality_sequence:
+            if quality in accept_quality:
                 break
 
-        for video in play_info['result']['dash']['video']:
-            if video['id'] == qn:
-                container.append_media(
-                    id=1,
-                    url=video['base_url'],
-                    qn=qn,
-                    height=video['height'],
-                    width=video['width'],
-                    size=touch_url(video['base_url'], spider)[0],
-                    type="video",
-                    block_size=block_size,
+        for video in play_info["result"]["dash"]["video"]:
+            if video["id"] == quality:
+                result.append(
+                    {
+                        "id": 1,
+                        "url": video["base_url"],
+                        "quality": quality,
+                        "height": video["height"],
+                        "width": video["width"],
+                        "size": touch_url(video["base_url"], spider)[0],
+                        "type": "dash_video",
+                    }
                 )
                 break
-        for audio in play_info['result']['dash']['audio']:
-            container.append_media(
-                id=2,
-                url=audio['base_url'],
-                height=None,
-                width=None,
-                size=touch_url(audio['base_url'], spider)[0],
-                qn=qn,
-                type="audio",
-                block_size=block_size,
+        for audio in play_info["result"]["dash"]["audio"]:
+            result.append(
+                {
+                    "id": 2,
+                    "url": audio["base_url"],
+                    "quality": quality,
+                    "height": None,
+                    "width": None,
+                    "size": touch_url(audio["base_url"], spider)[0],
+                    "type": "dash_audio",
+                }
             )
             break
-
-    elif container.format == 'mp4':
-        print("番剧不支持 mp4 format")
+        return result
+    elif type == "mp4":
+        raise UnsupportTypeError("mp4")
     else:
-        print("Unknown format {}".format(container.format))
+        raise UnknownTypeError()

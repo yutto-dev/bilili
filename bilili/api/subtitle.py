@@ -1,25 +1,23 @@
-import json
 import re
-import os
+import json
 
-from bilili.utils.subtitle import Subtitle
 from bilili.tools import spider
+from bilili.api.exports import export_api
 
 
-subtitle_api = "https://api.bilibili.com/x/player.so?id=cid:{cid}&aid={avid}&bvid={bvid}"
-
-
-def get_subtitle(container):
-    cid, avid, bvid = container.meta["cid"], container.meta["avid"], container.meta["bvid"]
-    # 检查是否有字幕并下载
+@export_api(route="/subtitle")
+def get_subtitle(avid: str = "", bvid: str = "", cid: str = ""):
+    if not (avid or bvid):
+        raise ArgumentsError("avid", "bvid")
+    subtitle_api = "https://api.bilibili.com/x/player.so?id=cid:{cid}&aid={avid}&bvid={bvid}"
     subtitle_url = subtitle_api.format(avid=avid, cid=cid, bvid=bvid)
     res = spider.get(subtitle_url)
-    subtitles_info = json.loads(
-        re.search(r"<subtitle>(.+)</subtitle>", res.text).group(1))
-    for sub_info in subtitles_info["subtitles"]:
-        sub_path = os.path.splitext(
-            container.path)[0] + sub_info["lan_doc"] + ".srt"
-        subtitle = Subtitle(sub_path)
-        for sub_line in spider.get("https:"+sub_info["subtitle_url"]).json()["body"]:
-            subtitle.write_line(
-                sub_line["content"], sub_line["from"], sub_line["to"])
+    subtitles_info = json.loads(re.search(r"<subtitle>(.+)</subtitle>", res.text).group(1))
+    return [
+        # fmt: off
+        {
+            "lang": sub_info["lan_doc"],
+            "lines": spider.get("https:" + sub_info["subtitle_url"]).json()["body"]
+        }
+        for sub_info in subtitles_info["subtitles"]
+    ]

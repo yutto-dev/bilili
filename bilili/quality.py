@@ -1,3 +1,5 @@
+from typing import List
+
 quality_sequence_default = [120, 116, 112, 80, 74, 64, 32, 16]
 
 quality_map = {
@@ -57,3 +59,9 @@ quality_map = {
         "height": 720,
     }
 }
+
+
+def gen_quality_sequence(quality: int = 120) -> List[int]:
+    """ 根据默认先降后升的清晰度机制生成清晰度序列 """
+    return quality_sequence_default[quality_sequence_default.index(quality):] + list(
+        reversed(quality_sequence_default[:quality_sequence_default.index(quality)]))

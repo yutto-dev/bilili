@@ -32,7 +32,12 @@
    -  `https://b23.tv/avxxxxxx`
    -  `https://www.bilibili.com/video/BVxxxxxx`
    -  `https://b23.tv/BVxxxxxx`
--  番剧视频主页（非播放页面，在播放页面点一下封面即可跳转）： `https://www.bilibili.com/bangumi/media/mdxxxxxx`
+-  番剧视频主页：
+   -  `https://www.bilibili.com/bangumi/media/mdxxxxxx`
+   -  `https://www.bilibili.com/bangumi/play/ssxxxxxx`
+   -  `https://b23.tv/ssxxxxxx`
+   -  `https://www.bilibili.com/bangumi/play/epxxxxxx`
+   -  `https://b23.tv/epxxxxxx`
 
 ### 安装 FFmpeg
 
@@ -79,7 +84,7 @@ bilili <url>
 
 `bilili` 还支持很多参数，具体如下
 
--  `-f`/`--format` 选择下载格式（`flv` or `m4s` or `mp4`），默认为 m4s 格式，注意该参数仅代表下载源格式，所有格式最后均会转为 mp4
+-  `-t`/`--type` 选择下载类型（`flv` or `dash` or `mp4`），默认为 dash 类型，注意该参数仅代表下载源格式，所有格式最后均会转为 mp4
 -  `-d`/`--dir` 指定存储目录，默认为项目根目录
 -  `-q`/`--quality` 指定清晰度，默认为 `120`，对应关系如下
    |code|清晰度|
@@ -96,7 +101,7 @@ bilili <url>
    |208|高清 1080P，MP4 格式专属，无法作为参数指定|
    |192|高清 720P，MP4 格式专属，无法作为参数指定|
    > 如果不存在指定的清晰度，则会按照默认的清晰度搜索机制进行调节，比如指定清晰度为 80，**首先会依次降清晰度搜索** 74、64、32、16、6，如果依然找不到合适的则**继续升清晰度搜索** 112、116、120
--  `-t`/`--num-threads` 指定最大下载线程数，默认为 30
+-  `-n`/`--num-threads` 指定最大下载线程数，默认为 30
 -  `-p`/`--episodes` 选集，可通过以下方式进行选择，默认为 all
    -  `<p1>` 单独下某一剧集
    -  `<p1>,<p2>,<p3>,...,<pn>` 即通过 `,` 分割，不要加空格
@@ -143,13 +148,13 @@ bilili <url> -w
 视频格式是指 bilibili 直接提供的资源格式，本程序最终都会转换成通用的 mp4 格式方便观看，不同格式在通用性、下载速度等方面的比较如下
 
 <!-- prettier-ignore -->
-||M4S|FLV|MP4|
+||dash|flv|mp4|
 |:-:|:-:|:-:|:-:|
 |支持程度|中（少数视频不支持）|高|低（仅支持 acg_video）|
 |下载速度|高|低|中|
 |需要 FFmpeg 合并|是|是|否|
 |清晰度支持|全面|中（部分较新的 4K 等清晰度无法获取）|极少（仅支持 1080P 及更低的清晰度，且无法选择）|
-|我该怎么选|B 站当前使用的格式，拥有齐全的清晰度和最佳的下载速度|当 M4S 无法下载时的备用选项|除了不需要合并，一无是处|
+|我该怎么选|B 站当前使用的格式，拥有齐全的清晰度和最佳的下载速度|当 dash 无法下载时的备用选项|除了不需要合并，一无是处|
 
 ### 高清晰度下载
 

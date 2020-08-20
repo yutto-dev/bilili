@@ -2,7 +2,7 @@
 
 ## 视频速览
 
-<BilibiliPlayer bvid="BV1vZ4y1M7mQ" cid="222200470" :page=2 />
+<BililiPlayer bvid="BV1vZ4y1M7mQ" cid="222200470" :page=2 />
 
 ## 我所支持的 url
 
@@ -14,11 +14,15 @@
    -  `https://www.bilibili.com/video/BVxxxxxx` 最新的 bv 号也不错
    -  `https://b23.tv/BVxxxxxx` 当然，它的短链接也可以
 -  番剧视频主页：
-   -  `https://www.bilibili.com/bangumi/media/mdxxxxxx` 暂时只支持这种番剧主页啦，如果你已经在播放页面的话，点一下下面的封面就可以跳转过去啦
+   -  `https://www.bilibili.com/bangumi/media/mdxxxxxx` 番剧的主页当然可以
+   -  `https://www.bilibili.com/bangumi/play/ssxxxxxx` 番剧的播放页（ss 号的）也可以啦
+   -  `https://b23.tv/ssxxxxxx` 还有它的短链接
+   -  `https://www.bilibili.com/bangumi/play/epxxxxxx` 番剧的播放页（ep 号的）也是可以哒
+   -  `https://b23.tv/epxxxxxx` 当然也包括它的短链接啦
 
-## 我的解释器：Python <Badge type="tip" text="3.6+"/>
+## 我的解释器：Python <Badge type="tip" text="3.8+"/>
 
-为了能够正常与你交流，你需要先安装 Python 姐姐，当然一定要是 3.6 以上的版本，不然她可能也不知道我在说什么。
+为了能够正常与你交流，你需要先安装 Python 姐姐，当然一定要是 3.8 以上的版本，不然她可能也不知道我在说什么。
 
 如果你是 Windows，请自行去 [Python 官网](https://www.python.org/)下载并安装，安装时记得要勾选 「Add to PATH」选项，不然可能需要你手动添加到环境变量。
 

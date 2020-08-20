@@ -1,15 +1,10 @@
-import os
-
 from bilili.tools import spider
+from bilili.api.exports import export_api
 
-danmaku_api = "http://comment.bilibili.com/{cid}.xml"
 
-
-def get_danmaku(container):
-    # 下载弹幕
-    danmaku_url = danmaku_api.format(cid=container.meta['cid'])
-    res = spider.get(danmaku_url)
+@export_api(route="/danmaku")
+def get_danmaku(cid: str) -> str:
+    danmaku_api = "http://comment.bilibili.com/{cid}.xml"
+    res = spider.get(danmaku_api.format(cid=cid))
     res.encoding = "utf-8"
-    danmaku_path = os.path.splitext(container.path)[0] + ".xml"
-    with open(danmaku_path, "w", encoding="utf-8") as f:
-        f.write(res.text)
+    return res.text
