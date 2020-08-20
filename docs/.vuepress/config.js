@@ -55,6 +55,13 @@ module.exports = {
         prefix: "💬 ",
       },
     ],
+    // bilili player
+    [
+      require("./plugins/bilili-player/index.js"),
+      {
+        bilipi: "https://bilipi-git-external-api.siguremo.vercel.app/api/v0",
+      },
+    ],
   ],
 
   themeConfig: {

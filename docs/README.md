@@ -21,4 +21,4 @@ footer: GPL-3.0 Licensed | Copyright © 2020-present SigureMo
 
 ## 3 分钟快速开始
 
-<BilibiliPlayer bilipi="https://bilipi-git-external-api.siguremo.vercel.app/api/v0" bvid="BV1vZ4y1M7mQ" cid="222190584" :page=1 />
+<BililiPlayer bvid="BV1vZ4y1M7mQ" cid="222190584" :page=1 />

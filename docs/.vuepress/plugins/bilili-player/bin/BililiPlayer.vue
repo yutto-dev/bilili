@@ -1,17 +1,10 @@
 <template>
-  <div id="dplayer" class="dplayer"></div>
+  <DPlayer :options="options" ref="player" />
 </template>
 
 <script>
-import DPlayer from 'dplayer'
-
 export default {
   props: {
-    bilipi: {
-      required: false,
-      type: String,
-      default: `https://bilipi.sigure.xyz/api/v0`
-    },
     avid: {
       required: false,
       type: String,
@@ -35,25 +28,33 @@ export default {
   },
   data() {
     return {
-      dp: null
+      bilipi: BILIPI,
+      dp: null,
+      options: {
+        lang: 'zh-cn',
+        video: {
+          url: ''
+        }
+      }
     }
   },
 
   mounted() {
+    this.dp = this.$refs.player.dp
     const url = `${this.bilipi}/acg_video/playurl?avid=${this.avid}&bvid=${this.bvid}&cid=${this.cid}&type=mp4`
     fetch(url)
-      .then((res) => {
+      .then(res => {
         return res.json()
       })
-      .then((res) => {
-        this.dp = new DPlayer({
-          container: document.getElementById('dplayer'),
-          lang: 'zh-cn',
-          video: {
-            url: res.result[0].url
-          }
+      .then(res => {
+        this.dp.switchVideo({
+          url: res.result[0].url
         })
       })
+  },
+
+  beforeDestroy() {
+    this.dp && this.dp.destroy()
   }
 }
 </script>
