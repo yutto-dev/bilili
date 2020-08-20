@@ -10,7 +10,7 @@ export default {
     bilipi: {
       required: false,
       type: String,
-      default: `https://bilipi.sigure.xyz/api/`
+      default: `https://bilipi.sigure.xyz/api/v0`
     },
     avid: {
       required: false,
@@ -40,7 +40,7 @@ export default {
   },
 
   mounted() {
-    const url = `${this.bilipi}acg_video/playurl?avid=${this.avid}&bvid=${this.bvid}&cid=${this.cid}&type=mp4`
+    const url = `${this.bilipi}/acg_video/playurl?avid=${this.avid}&bvid=${this.bvid}&cid=${this.cid}&type=mp4`
     fetch(url)
       .then((res) => {
         return res.json()

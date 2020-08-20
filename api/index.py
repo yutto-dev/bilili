@@ -76,7 +76,7 @@ def export_api(func):
 
 
 for route, export_func in exports.items():
-    @app.route("/api" + route, methods=["GET"])
+    @app.route("/api/v0" + route, methods=["GET"])
     @add_params
     @unique_name
     @export_api

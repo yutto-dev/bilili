@@ -4,7 +4,7 @@
 
 ## url 解析
 
-最开始，我会解析你的 url 类型，依此送入 [bangumi API 解析器](https://github.com/SigureMo/bilili/blob/master/bilili/api/bangumi.py)或者 [acg_video API 解析器](https://github.com/SigureMo/bilili/blob/master/bilili/api/acg_video.py)
+最开始，我会解析你的 url 类型，依此送入 [bangumi API 解析器](https://github.com/SigureMo/bilili/blob/master/bilili/video_parser/bangumi.py)或者 [acg_video API 解析器](https://github.com/SigureMo/bilili/blob/master/bilili/video_parser/acg_video.py)
 
 ## 列表获取
 
