@@ -17,7 +17,11 @@ from bilili.api.exports import export_api
 @export_api(route="/get_season_id")
 def get_season_id(media_id: str) -> str:
     home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
-    season_id = re.search(r'"param":{"season_id":(\d+),"season_type":\d+}', spider.get(home_url).text).group(1)
+    season_id = (
+        match.group(1)
+        if (match := re.search(r'"param":{"season_id":(\d+),"season_type":\d+}', spider.get(home_url).text))
+        else ""
+    )
     return str(season_id)
 
 
@@ -28,16 +32,24 @@ def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str =
     if media_id:
         home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
         res = spider.get(home_url)
-        title = re.search(r'<span class="media-info-title-t">(.*?)</span>', res.text).group(1)
+        title = (
+            match.group(1) if (match := re.search(r'<span class="media-info-title-t">(.*?)</span>', res.text)) else ""
+        )
     elif season_id or episode_id:
         if season_id:
             play_url = "https://www.bilibili.com/bangumi/play/ss{season_id}".format(season_id=season_id)
         else:
             play_url = "https://www.bilibili.com/bangumi/play/ep{episode_id}".format(episode_id=episode_id)
         res = spider.get(play_url)
-        title = re.search(
-            r'<a href=".+" target="_blank" title="(.*?)" class="media-title">(?P<title>.*?)</a>', res.text
-        ).group("title")
+        title = (
+            match.group("title")
+            if (
+                match := re.search(
+                    r'<a href=".+" target="_blank" title="(.*?)" class="media-title">(?P<title>.*?)</a>', res.text
+                )
+            )
+            else ""
+        )
     return title
 
 

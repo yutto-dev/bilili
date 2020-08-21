@@ -40,7 +40,7 @@ class ASS:
 
     def convert_danmaku_from_xml(self, xml_path, height, width):
         self.initial_plugin()
-        from plugins.danmaku2ass import Danmaku2ASS
+        from bilili.plugins.danmaku2ass import Danmaku2ASS
 
         ass_path = os.path.splitext(xml_path)[0] + ".ass"
         if not os.path.exists(xml_path):

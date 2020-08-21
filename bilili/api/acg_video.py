@@ -25,8 +25,8 @@ def get_video_info(avid: str = "", bvid: str = ""):
         "avid": str(res_json_data["aid"]),
         "bvid": res_json_data["bvid"],
         "picture": res_json_data["pic"],
-        "episode_id": regex_bangumi_ep.match(res_json_data["redirect_url"]).group("episode_id")
-        if res_json_data.get("redirect_url")
+        "episode_id": match.group("episode_id")
+        if res_json_data.get("redirect_url") and (match := regex_bangumi_ep.match(res_json_data["redirect_url"]))
         else "",
     }
 
@@ -41,7 +41,11 @@ def get_acg_video_title(avid: str = "", bvid: str = "") -> str:
         else "https://www.bilibili.com/video/av{avid}".format(avid=avid)
     )
     res = spider.get(home_url)
-    title = re.search(r"<title .*>(.*)_哔哩哔哩 \(゜-゜\)つロ 干杯~-bilibili</title>", res.text).group(1)
+    title = (
+        match.group(1)
+        if (match := re.search(r"<title .*>(.*)_哔哩哔哩 \(゜-゜\)つロ 干杯~-bilibili</title>", res.text))
+        else "呐，我也不知道是什么标题呢～"
+    )
     return title
 
 

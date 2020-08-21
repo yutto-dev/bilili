@@ -25,7 +25,7 @@ from bilili.api.exceptions import (ArgumentsError, CannotDownloadError,
                                    UnknownTypeError, UnsupportTypeError, IsPreviewError)
 
 
-def parse_episodes(episodes_str: str, total: int) -> List[int]:
+def parse_episodes(episodes_str: str, total: int):
     """ 将选集字符串转为列表 """
 
     # 解析字符串为列表
