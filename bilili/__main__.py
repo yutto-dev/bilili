@@ -6,6 +6,7 @@ import json
 import time
 import shutil
 
+from typing import List
 from bilili.utils.base import repair_filename, touch_dir, touch_file, size_format
 from bilili.utils.playlist import Dpl, M3u
 from bilili.utils.thread import ThreadPool, Flag
@@ -13,18 +14,18 @@ from bilili.utils.console import (Console, Font, Line, String, ProgressBar,
                                   List, DynamicSymbol, ColorString)
 from bilili.utils.subtitle import Subtitle
 from bilili.utils.attrdict import AttrDict
-from bilili.api.subtitle import get_subtitle
-from bilili.api.danmaku import get_danmaku
 from bilili.tools import spider, ass, regex
 from bilili.tools import global_middleware
-from bilili.events.downloader import RemoteFile
-from bilili.events.merger import MergingFile
+from bilili.handlers.downloader import RemoteFile
+from bilili.handlers.merger import MergingFile
 from bilili.video import BililiContainer
+from bilili.api.subtitle import get_subtitle
+from bilili.api.danmaku import get_danmaku
 from bilili.api.exceptions import (ArgumentsError, CannotDownloadError,
                                    UnknownTypeError, UnsupportTypeError, IsPreviewError)
 
 
-def parse_episodes(episodes_str, total):
+def parse_episodes(episodes_str: str, total: int) -> List[int]:
     """ 将选集字符串转为列表 """
 
     # 解析字符串为列表
@@ -157,10 +158,10 @@ def main():
         sys.exit(1)
 
     if resource_id.avid or resource_id.bvid:
-        from bilili.video_parser.acg_video import get_title, get_list, get_playurl
+        from bilili.parser.acg_video import get_title, get_list, get_playurl
         bili_type = "acg_video"
     elif resource_id.season_id or resource_id.episode_id:
-        from bilili.video_parser.bangumi import get_title, get_list, get_playurl
+        from bilili.parser.bangumi import get_title, get_list, get_playurl
         bili_type = "bangumi"
 
     # 获取标题
@@ -290,22 +291,17 @@ def main():
 
                     remote_file = RemoteFile(block.url, block.path, range=block.range)
 
-                    # 为下载挂载各种钩子，以修改状态
-                    @remote_file.on("before_download", middleware=block._)
-                    def before_download(file, middleware=None):
+                    # 为下载挂载各种钩子，以修改状态，注意外部变量应当作为默认参数传入
+                    @remote_file.on("before_download")
+                    def before_download(file, middleware=block._):
                         middleware.downloading = True
 
-                    @remote_file.on("updated", middleware=block._)
-                    def updated(file, middleware=None):
+                    @remote_file.on("updated")
+                    def updated(file, middleware=block._):
                         middleware.size = file.size
 
-                    @remote_file.on(
-                        "downloaded",
-                        middleware=block._,
-                        merging_file=merging_file,
-                        block_merging_file=block_merging_file,
-                    )
-                    def downloaded(file, middleware=None, merging_file=None, block_merging_file=None):
+                    @remote_file.on("downloaded")
+                    def downloaded(file, middleware=block._, merging_file=merging_file, block_merging_file=block_merging_file):
                         middleware.downloaded = True
 
                         if middleware.parent.downloaded:
@@ -317,12 +313,12 @@ def main():
                             # 如果该线程同时也是当前 container 的最后一个 block，就部署合并任务（放到线程池）
                             if middleware.parent.parent.downloaded and not middleware.parent.parent.merged:
                                 # 为合并挂载各种钩子
-                                @merging_file.on("before_merge", middleware=middleware.parent.parent)
-                                def before_merge(file, middleware=None):
+                                @merging_file.on("before_merge")
+                                def before_merge(file, middleware=middleware.parent.parent):
                                     middleware.merging = True
 
-                                @merging_file.on("merged", middleware=middleware.parent.parent)
-                                def merged(file, middleware=None):
+                                @merging_file.on("merged")
+                                def merged(file, middleware=middleware.parent.parent):
                                     middleware.merging = False
                                     middleware.merged = True
 

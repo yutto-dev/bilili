@@ -1,7 +1,7 @@
 import os
 import requests
 
-from bilili.events.base import Handler
+from bilili.handlers.base import Handler
 
 
 class RemoteFile(Handler):
@@ -12,15 +12,12 @@ class RemoteFile(Handler):
     通过中间件与外部监控程序通讯
     """
 
-    def __init__(self, url, local_path, range=(0, '')):
-        super().__init__([
-            'before_download', 'before_update',
-            'updated', 'downloaded'
-        ])
+    def __init__(self, url, local_path, range=(0, "")):
+        super().__init__(["before_download", "before_update", "updated", "downloaded"])
         self.url = url
         self.path = local_path
         self.name = os.path.split(self.path)[-1]
-        self.tmp_path = self.path + '.dl'
+        self.tmp_path = self.path + ".dl"
         self.size = self.get_local_size()
         self.range = range
 
@@ -45,15 +42,13 @@ class RemoteFile(Handler):
             while not downloaded:
                 # 设置 headers
                 headers = dict(spider.headers)
-                headers["Range"] = "bytes={}-{}".format(
-                    self.size + self.range[0], self.range[1])
+                headers["Range"] = "bytes={}-{}".format(self.size + self.range[0], self.range[1])
 
                 try:
                     # 尝试建立连接
-                    res = spider.get(self.url, stream=stream,
-                                     headers=headers, timeout=(5, 10))
+                    res = spider.get(self.url, stream=stream, headers=headers, timeout=(5, 10))
                     # 下载到临时路径
-                    with open(self.tmp_path, 'ab') as f:
+                    with open(self.tmp_path, "ab") as f:
                         if stream:
                             for chunk in res.iter_content(chunk_size=chunk_size):
                                 if not chunk:
@@ -66,8 +61,7 @@ class RemoteFile(Handler):
                             f.write(res.content)
                     downloaded = True
                 except requests.exceptions.RequestException:
-                    print(
-                        "[warn] file {}, request timeout, trying again...".format(self.name))
+                    print("[warn] file {}, request timeout, trying again...".format(self.name))
 
             # 从临时文件迁移，并删除临时文件
             if os.path.exists(self.path):

@@ -2,6 +2,8 @@ import os
 import re
 import unicodedata
 
+from functools import wraps
+
 
 class Ref():
     """ 引用类
@@ -130,6 +132,7 @@ def size_format(size, ndigits=2):
 
 def get_char_width(char):
     """ 计算单个字符的宽度 """
+    # fmt: off
     widths = [
         (126, 1), (159, 0), (687, 1), (710, 0), (711, 1),
         (727, 0), (733, 1), (879, 0), (1154, 1), (1161, 0),
@@ -160,3 +163,79 @@ def get_string_width(string):
     except:
         length = len(string)
     return length
+
+
+def local_vars(**local_kwargs):
+    """ 本地变量闭包装饰器，在闭包内部获取变化的局部变量
+
+    ``` python
+    # 典型错误，因为 i 是可变的变量，foo 虽然是获取外部变量 i，
+    # 但此时并没有运行，当运行时 i 已经变为 9 了
+    funcs = []
+    for i in range(10):
+
+        def foo():
+            print(i)
+
+        funcs.append(foo)
+
+    for func in funcs:
+        func()
+    ```
+
+    ``` python
+    # 因此只需要在外层嵌套一个函数，在此时将参数传进去，这样就正常了
+    funcs = []
+    for i in range(10):
+
+        def make_foo(i):
+            def foo():
+                print(i)
+
+            return foo
+
+        foo = make_foo(i)
+        funcs.append(foo)
+
+    for func in funcs:
+        func()
+    ```
+
+    ``` python
+    # 使用装饰器来完成这个过程
+    funcs = []
+    for i in range(10):
+
+        @local_vars
+        def foo(i=None):
+            print(i)
+
+        funcs.append(foo)
+
+    for func in funcs:
+        func()
+    ```
+
+    ``` python
+    # 其实利用默认参数也可以……
+    funcs = []
+    for i in range(10):
+
+        def foo(i=i):
+            print(i)
+
+        funcs.append(foo)
+
+    for func in funcs:
+        func()
+    ```
+    """
+
+    def decorator(func):
+        @wraps(func)
+        def func_wrapper(*args, **kwargs):
+            return func(*args, **kwargs, **local_kwargs)
+
+        return func_wrapper
+
+    return decorator

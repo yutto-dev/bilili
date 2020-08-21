@@ -17,14 +17,6 @@ from flask import Flask, Response, jsonify, make_response, request
 app = Flask(__name__)
 name_index = 0
 
-def closure(*local_args, **local_kwargs):
-    def decorator(func):
-        @wraps(func)
-        def func_wrapper(*args, **kwargs):
-            return func(*args, *local_args, **kwargs, **local_kwargs)
-        return func_wrapper
-    return decorator
-
 
 def add_params(func):
     @wraps(func)
@@ -80,7 +72,6 @@ for route, export_func in exports.items():
     @add_params
     @unique_name
     @export_api
-    @closure(export_func=export_func)
     def func(export_func=export_func, *args, **kwargs):
         return export_func(*args, **kwargs)
 

@@ -1,6 +1,6 @@
 import os
 
-from bilili.events.base import Handler
+from bilili.handlers.base import Handler
 from bilili.utils.ffmpeg import FFmpeg
 
 

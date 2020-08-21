@@ -4,7 +4,7 @@ import time
 import math
 import subprocess
 
-from bilili.events.middleware import DownloaderMiddleware
+from bilili.handlers.middleware import DownloaderMiddleware
 from bilili.quality import quality_map
 from bilili.tools import global_middleware
 from bilili.utils.base import repair_filename
