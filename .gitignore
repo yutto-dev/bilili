@@ -137,4 +137,4 @@ ffmpeg/
 tmp/
 
 # plugin
-plugins/*.py
+bilili/plugins/
