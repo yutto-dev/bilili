@@ -174,9 +174,6 @@ def main():
     # 创建所需目录结构
     base_dir = touch_dir(os.path.join(config["dir"], repair_filename(title + " - bilibili")))
     video_dir = touch_dir(os.path.join(base_dir, "Videos"))
-    if args.overwrite:
-        shutil.rmtree(video_dir)
-        touch_dir(video_dir)
 
     # 获取需要的信息
     containers = [BililiContainer(video_dir=video_dir, type=args.type, **video) for video in get_list(resource_id)]
@@ -246,18 +243,18 @@ def main():
     if containers:
         # 状态检查与校正
         for i, container in enumerate(containers):
-            container_downloaded = os.path.exists(container.path)
+            container_downloaded = not container.check_needs_download(args.overwrite)
             symbol = "✓" if container_downloaded else "✖"
             if container_downloaded:
                 container._.merged = True
             print("{} {}".format(symbol, str(container)))
             for media in container.medias:
-                media_downloaded = os.path.exists(media.path) or container_downloaded
+                media_downloaded = not media.check_needs_download(args.overwrite) or container_downloaded
                 symbol = "✓" if media_downloaded else "✖"
                 if not container_downloaded:
                     print("    {} {}".format(symbol, media.name))
                 for block in media.blocks:
-                    block_downloaded = os.path.exists(block.path) or media_downloaded
+                    block_downloaded = not block.check_needs_download(args.overwrite) or media_downloaded
                     symbol = "✓" if block_downloaded else "✖"
                     block._.downloaded = block_downloaded
                     if not media_downloaded and args.debug:

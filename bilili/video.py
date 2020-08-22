@@ -38,6 +38,16 @@ class BililiContainer:
     def __str__(self):
         return "{} 「{}」".format(self.name, quality_map[self.quality]["description"])
 
+    def check_needs_download(self, overwrite=False):
+        """ 检查是否需要下载 """
+        if overwrite:
+            if os.path.exists(self.path):
+                os.remove(self.path)
+            return True
+        if os.path.exists(self.path):
+            return False
+        return True
+
 
 class BililiMedia:
     """ bilibili 媒体单元类
@@ -96,6 +106,16 @@ class BililiMedia:
         assert self._.total_size == total_size, "重新设置的 total size 与原来值不匹配"
         return blocks
 
+    def check_needs_download(self, overwrite=False):
+        """ 检查是否需要下载 """
+        if overwrite:
+            if os.path.exists(self.path):
+                os.remove(self.path)
+            return True
+        if os.path.exists(self.path):
+            return False
+        return True
+
 
 class BililiBlock:
     """ bilibili 媒体块类
@@ -114,3 +134,15 @@ class BililiBlock:
         self.name = os.path.split(self.path)[-1]
         self._ = DownloaderMiddleware(parent=self.media._)
         self._.total_size = self.range[1] - self.range[0] + 1
+
+    def check_needs_download(self, overwrite=False):
+        """ 检查是否需要下载 """
+        if overwrite:
+            if os.path.exists(self.path):
+                os.remove(self.path)
+            if os.path.exists(self.path + ".dl"):
+                os.remove(self.path + ".dl")
+            return True
+        if os.path.exists(self.path):
+            return False
+        return True
