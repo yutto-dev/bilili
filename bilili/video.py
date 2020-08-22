@@ -4,9 +4,9 @@ import time
 import math
 import subprocess
 
-from bilili.handlers.middleware import DownloaderMiddleware
+from bilili.handlers.status import DownloaderStatus
 from bilili.quality import quality_map
-from bilili.tools import global_middleware
+from bilili.tools import global_status
 from bilili.utils.base import repair_filename
 
 
@@ -30,7 +30,7 @@ class BililiContainer:
         self.quality = None
         self.height = None
         self.width = None
-        self._ = DownloaderMiddleware(parent=global_middleware)
+        self._ = DownloaderStatus(parent=global_status)
 
     def append_media(self, *args, **kwargs):
         self.medias.append(BililiMedia(*args, **kwargs, container=self))
@@ -73,7 +73,7 @@ class BililiMedia:
         else:
             print("[warn] Unknown container type: {}".format(self.container.type))
         self.name = os.path.split(self.path)[-1]
-        self._ = DownloaderMiddleware(parent=self.container._)
+        self._ = DownloaderStatus(parent=self.container._)
         self._.total_size = size
 
         if self.container.quality is None:
@@ -132,7 +132,7 @@ class BililiBlock:
         ndigits = 1 if block_size == 0 else len(str(10 * 1024 * 1024 * 1024 // self.block_size))
         self.path = "_{:0{}}".format(self.id, ndigits).join(os.path.splitext(self.media.path))
         self.name = os.path.split(self.path)[-1]
-        self._ = DownloaderMiddleware(parent=self.media._)
+        self._ = DownloaderStatus(parent=self.media._)
         self._.total_size = self.range[1] - self.range[0] + 1
 
     def check_needs_download(self, overwrite=False):

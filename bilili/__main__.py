@@ -15,7 +15,7 @@ from bilili.utils.console import (Console, Font, Line, String, ProgressBar,
 from bilili.utils.subtitle import Subtitle
 from bilili.utils.attrdict import AttrDict
 from bilili.tools import spider, ass, regex
-from bilili.tools import global_middleware
+from bilili.tools import global_status
 from bilili.handlers.downloader import RemoteFile
 from bilili.handlers.merger import MergingFile
 from bilili.video import BililiContainer
@@ -290,38 +290,38 @@ def main():
 
                     # 为下载挂载各种钩子，以修改状态，注意外部变量应当作为默认参数传入
                     @remote_file.on("before_download")
-                    def before_download(file, middleware=block._):
-                        middleware.downloading = True
+                    def before_download(file, status=block._):
+                        status.downloading = True
 
                     @remote_file.on("updated")
-                    def updated(file, middleware=block._):
-                        middleware.size = file.size
+                    def updated(file, status=block._):
+                        status.size = file.size
 
                     @remote_file.on("downloaded")
-                    def downloaded(file, middleware=block._, merging_file=merging_file, block_merging_file=block_merging_file):
-                        middleware.downloaded = True
+                    def downloaded(file, status=block._, merging_file=merging_file, block_merging_file=block_merging_file):
+                        status.downloaded = True
 
-                        if middleware.parent.downloaded:
+                        if status.parent.downloaded:
                             # 当前 media 的最后一个 block 所在线程进行合并（直接执行，不放线程池）
-                            middleware.downloaded = False
+                            status.downloaded = False
                             block_merging_file.merge()
-                            middleware.downloaded = True
+                            status.downloaded = True
 
                             # 如果该线程同时也是当前 container 的最后一个 block，就部署合并任务（放到线程池）
-                            if middleware.parent.parent.downloaded and not middleware.parent.parent.merged:
+                            if status.parent.parent.downloaded and not status.parent.parent.merged:
                                 # 为合并挂载各种钩子
                                 @merging_file.on("before_merge")
-                                def before_merge(file, middleware=middleware.parent.parent):
-                                    middleware.merging = True
+                                def before_merge(file, status=status.parent.parent):
+                                    status.merging = True
 
                                 @merging_file.on("merged")
-                                def merged(file, middleware=middleware.parent.parent):
-                                    middleware.merging = False
-                                    middleware.merged = True
+                                def merged(file, status=status.parent.parent):
+                                    status.merging = False
+                                    status.merged = True
 
                                 merge_pool.add_task(merging_file.merge, args=())
 
-                        middleware.downloading = False
+                        status.downloading = False
 
                     # 下载过的不应继续部署任务
                     if block._.downloaded:
@@ -355,9 +355,9 @@ def main():
         )
 
         # 准备监控
-        size, t = global_middleware.size, time.time()
+        size, t = global_status.size, time.time()
         while True:
-            now_size, now_t = global_middleware.size, time.time()
+            now_size, now_t = global_status.size, time.time()
             delta_size, delta_t = (
                 max(now_size - size, 0),
                 (now_t - t) if now_t - t > 1e-6 else 1e-6,
@@ -374,7 +374,7 @@ def main():
                     },
                     {
                         "left": "🌠 Downloading videos: "
-                    } if global_middleware.downloading else None,
+                    } if global_status.downloading else None,
                     [
                         {
                             "left": "{} ".format(str(container)),
@@ -383,36 +383,36 @@ def main():
                             ),
                         } if container._.downloading else None
                         for container in containers
-                    ] if global_middleware.downloading else None,
+                    ] if global_status.downloading else None,
                     {
-                        "left": global_middleware.size / global_middleware.total_size,
+                        "left": global_status.size / global_status.total_size,
                         "right": " {}/{} {}/s ⚡".format(
-                            size_format(global_middleware.size),
-                            size_format(global_middleware.total_size),
+                            size_format(global_status.size),
+                            size_format(global_status.total_size),
                             size_format(speed),
                         ),
-                    } if global_middleware.downloading else None,
+                    } if global_status.downloading else None,
                     {
                         "left": "🍰 Merging videos: "
-                    } if global_middleware.merging else None,
+                    } if global_status.merging else None,
                     [
                         {
                             "left": "{} ".format(str(container)),
                             "right": True
                         } if container._.merging else None
                         for container in containers
-                    ] if global_middleware.merging else None,
+                    ] if global_status.merging else None,
                     {
                         "left": sum([container._.merged for container in containers]) / len(containers),
                         "right": " {}/{} 🚀".format(
                             sum([container._.merged for container in containers]), len(containers),
                         ),
-                    } if global_middleware.merging else None,
+                    } if global_status.merging else None,
                 ]
             )
 
             # 检查是否已经全部完成
-            if global_middleware.downloaded and global_middleware.merged:
+            if global_status.downloaded and global_status.merged:
                 merge_wait_flag.value = True
                 break
             try:

@@ -2,7 +2,7 @@ import re
 
 from bilili.utils.crawler import BililiCrawler
 from bilili.utils.danmaku import ASS
-from bilili.handlers.middleware import DownloaderMiddleware
+from bilili.handlers.status import DownloaderStatus
 from bilili.utils.attrdict import AttrDict
 
 
@@ -28,7 +28,7 @@ regex_bangumi_ss_short = re.compile(r"https?://b23.tv/ss(?P<season_id>\d+)")
 
 spider = BililiCrawler()
 ass = ASS()
-global_middleware = DownloaderMiddleware()
+global_status = DownloaderStatus()
 # fmt: off
 regex = {
     "acg_video": {

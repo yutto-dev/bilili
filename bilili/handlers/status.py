@@ -1,5 +1,5 @@
-class Middleware():
-    """ 多层次中间件类 """
+class Status:
+    """ 多层次状态管理类 """
 
     def __init__(self, parent=None, children=[]):
         self.parent = None
@@ -29,10 +29,8 @@ class Middleware():
         return self.parent is None
 
 
-class DownloaderMiddleware(Middleware):
-    """ 下载中间件类
-
-    用于下载器与外部程序之间的通讯
+class DownloaderStatus(Status):
+    """ 下载状态类
     """
 
     def __init__(self, parent=None, children=[]):
