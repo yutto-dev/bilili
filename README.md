@@ -1,6 +1,10 @@
 # 𝓫𝓲𝓵𝓲𝓵𝓲
 
 <p align="center">
+   <img src="./docs/.vuepress/dist/logo.png" width="500px">
+</p>
+
+<p align="center">
    <a href="https://bilibili.com" target="_blank"><img src="https://img.shields.io/badge/bilibili-1eabc9.svg?logo=bilibili&logoColor=white" alt="Bilibili"></a>
    <a href="https://python.org/" target="_blank"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/bilili?logo=python"></a>
    <a href="https://pypi.org/project/bilili/" target="_blank"><img src="https://img.shields.io/pypi/v/bilili" alt="pypi"></a>
@@ -9,11 +13,9 @@
    <a href="https://gitmoji.carloscuesta.me"><img src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg" alt="Gitmoji"></a>
 </p>
 
+<p align="center"><strong>🍻 𝓫𝓲𝓵𝓲𝓵𝓲，可以帮你快速下载 <a href="https://www.bilibili.com">B 站</a>投稿视频以及番剧视频的 CLI～～～</strong></p>
+
 **全新文档请访问 <https://bilili.sigure.xyz>**
-
-使用 Python 下载 [B 站](https://www.bilibili.com/)视频，ビリリ~
-
-> 仅限个人学习和研究使用，切勿用于其他用途
 
 ## 特性
 
@@ -27,7 +29,7 @@
 
 `bilili` 可以从以下两种视频主页获取视频
 
--  普通视频主页：
+-  投稿视频主页：
    -  `https://www.bilibili.com/video/avxxxxxx`
    -  `https://b23.tv/avxxxxxx`
    -  `https://www.bilibili.com/video/BVxxxxxx`
@@ -41,7 +43,7 @@
 
 ### 安装 FFmpeg
 
-由于大多数格式需要合并，所以 bilili 依赖于 ffmpeg，你需要事先安装好它
+由于大多数格式需要合并，所以 bilili 依赖于 FFmpeg，你需要事先安装好它
 
 Windows 请[手动下载](https://ffmpeg.org/download.html)后，存放到任意目录下，并将 `ffmpeg.exe` 所在目录**添加到环境变量**
 
@@ -150,7 +152,7 @@ bilili <url> -w
 <!-- prettier-ignore -->
 ||dash|flv|mp4|
 |:-:|:-:|:-:|:-:|
-|支持程度|中（少数视频不支持）|高|低（仅支持 acg_video）|
+|支持程度|中（少数视频不支持）|高|低（仅支持投稿视频）|
 |下载速度|高|低|中|
 |需要 FFmpeg 合并|是|是|否|
 |清晰度支持|全面|中（部分较新的 4K 等清晰度无法获取）|极少（仅支持 1080P 及更低的清晰度，且无法选择）|
@@ -176,9 +178,9 @@ bilili <url> -w
 
 ### 弹幕
 
-默认会下载 XML 格式的弹幕，如果想使用 ASS 格式的弹幕（大多数播放器都支持，可以自动加载），可以加参数 `--danmaku=ass` 自动转换，或者手动在[us-danmaku](https://tiansh.github.io/us-danmaku/bilibili/)转换
+默认会下载 XML 格式的弹幕，如果想使用 ASS 格式的弹幕（大多数播放器都支持，可以自动加载），可以加参数 `--danmaku=ass` 自动转换，或者手动在 [us-danmaku](https://tiansh.github.io/us-danmaku/bilibili/) 转换
 
-另外，程序内自动转换依赖 [danmaku2ass](https://github.com/m13253/danmaku2ass) ，但是并没有将它存放在我的代码里，而是根据需要动态从 github 上下载并加载的
+另外，程序内自动转换依赖 [danmaku2ass](https://github.com/m13253/danmaku2ass)，但是并没有将它存放在我的代码里，而是根据需要动态从 GitHub 上下载并加载的
 
 ### 播放列表
 
