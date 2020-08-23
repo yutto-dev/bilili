@@ -7,12 +7,11 @@ from bilili.utils.base import Ref
 
 
 class Flag(Ref):
-
     def __init__(self, value=False):
         super().__init__(value)
 
 
-class Task():
+class Task:
     """ 任务对象 """
 
     def __init__(self, func, args=(), kwargs={}):
@@ -32,13 +31,14 @@ class Task():
         return result
 
 
-class ThreadPool():
+class ThreadPool:
     """ 线程池类
     快速创建多个相同任务的线程池
     """
 
-    def __init__(self, num, wait=Flag(True)):
+    def __init__(self, num, wait=Flag(True), daemon=False):
         self.num = num
+        self.daemon = daemon
         self._taskQ = queue.Queue()
         self.threads = []
         self.__wait_flag = wait
@@ -63,7 +63,7 @@ class ThreadPool():
         """ 启动线程池　"""
         for _ in range(self.num):
             th = threading.Thread(target=self._run_task)
-            th.setDaemon(True)
+            th.setDaemon(self.daemon)
             self.threads.append(th)
             th.start()
 
