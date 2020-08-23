@@ -38,11 +38,20 @@ class FFmpeg:
 
     def convert(self, input_path, output_path):
         """ 视频格式转换 """
-        params = ["-i", input_path, "-c", "copy", "-map", "0", "-y", output_path]
+
+        # fmt: off
+        params = [
+            "-i", input_path,
+            "-c", "copy",
+            "-map", "0",
+            "-y",
+            output_path
+        ]
         self.exec(params)
 
     def join_videos(self, video_path_list, output_path):
         """ 将视频拼接起来 """
+
         concat_list_path = os.path.join(self.tmp_dir, "concat_list_{:04}.tmp".format(random.randint(0, 9999))).replace(
             "\\", "/"
         )
@@ -51,13 +60,28 @@ class FFmpeg:
                 if os.path.isfile(video_path):
                     video_relpath = os.path.relpath(video_path, start=self.tmp_dir)
                     f.write("file '{}'\n".format(video_relpath))
-        params = ["-f", "concat", "-safe", "-1", "-i", concat_list_path, "-c", "copy", "-y", output_path]
+        # fmt: off
+        params = [
+            "-f", "concat",
+            "-safe", "-1",
+            "-i", concat_list_path,
+            "-c", "copy",
+            "-y",
+            output_path
+        ]
         self.exec(params)
         os.remove(concat_list_path)
 
     def join_video_audio(self, video_path, audio_path, output_path):
         """ 将视频和音频合并 """
 
-        params = ["-i", video_path, "-i", audio_path, "-codec", "copy", "-y", output_path]
+        # fmt: off
+        params = [
+            "-i", video_path,
+            "-i", audio_path,
+            "-codec", "copy",
+            "-y",
+            output_path
+        ]
 
         self.exec(params)
