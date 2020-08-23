@@ -69,4 +69,5 @@ class ThreadPool:
 
     def join(self):
         """ 等待所有任务结束　"""
-        self._taskQ.join()
+        for th in self.threads:
+            th.join()

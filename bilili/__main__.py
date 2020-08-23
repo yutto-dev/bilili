@@ -277,8 +277,8 @@ def main():
         # 部署下载与合并任务
         merge_wait_flag = Flag(False)  # 合并线程池不能因为没有任务就结束
         # 因此要设定一个 flag，待最后合并结束后改变其值
-        merge_pool = ThreadPool(3, wait=merge_wait_flag, daemon=False)
-        download_pool = ThreadPool(args.num_threads, daemon=False)
+        merge_pool = ThreadPool(3, wait=merge_wait_flag, daemon=True)
+        download_pool = ThreadPool(args.num_threads, daemon=True)
         for container in containers:
             merging_file = MergingFile(container.type, [media.path for media in container.medias], container.path,)
             for media in container.medias:
@@ -414,6 +414,8 @@ def main():
             # 检查是否已经全部完成
             if global_status.downloaded and global_status.merged:
                 merge_wait_flag.value = True
+                download_pool.join()
+                merge_pool.join()
                 break
             try:
                 # 将刷新率稳定在 2fps
