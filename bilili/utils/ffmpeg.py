@@ -27,7 +27,7 @@ class FFmpeg:
         self.tmp_dir = os.path.normpath(tmp_dir)
 
     def __del__(self):
-        if os.path.exists(self.tmp_dir):
+        if hasattr(self, "tmp_dir") and os.path.exists(self.tmp_dir):
             shutil.rmtree(self.tmp_dir)
 
     def exec(self, params):
