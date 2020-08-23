@@ -118,33 +118,35 @@ def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality
 
         res = spider.get(play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=quality))
 
-        for video in res.json()["data"]["dash"]["video"]:
-            if video["id"] == quality:
+        if videos := res.json()["data"]["dash"]["video"]:
+            for video in videos:
+                if video["id"] == quality:
+                    result.append(
+                        {
+                            "id": 1,
+                            "url": video["base_url"],
+                            "quality": quality,
+                            "height": video["height"],
+                            "width": video["width"],
+                            "size": touch_url(video["base_url"], spider)[0],
+                            "type": "dash_video",
+                        }
+                    )
+                    break
+        if audios := res.json()["data"]["dash"]["audio"]:
+            for audio in audios:
                 result.append(
                     {
-                        "id": 1,
-                        "url": video["base_url"],
+                        "id": 2,
+                        "url": audio["base_url"],
                         "quality": quality,
-                        "height": video["height"],
-                        "width": video["width"],
-                        "size": touch_url(video["base_url"], spider)[0],
-                        "type": "dash_video",
+                        "height": None,
+                        "width": None,
+                        "size": touch_url(audio["base_url"], spider)[0],
+                        "type": "dash_audio",
                     }
                 )
                 break
-        for audio in res.json()["data"]["dash"]["audio"]:
-            result.append(
-                {
-                    "id": 2,
-                    "url": audio["base_url"],
-                    "quality": quality,
-                    "height": None,
-                    "width": None,
-                    "size": touch_url(audio["base_url"], spider)[0],
-                    "type": "dash_audio",
-                }
-            )
-            break
         return result
     elif type == "mp4":
         play_api_mp4 = play_api + "&platform=html5&high_quality=1"

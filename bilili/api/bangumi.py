@@ -132,33 +132,35 @@ def get_bangumi_playurl(
             if quality in accept_quality:
                 break
 
-        for video in play_info["result"]["dash"]["video"]:
-            if video["id"] == quality:
+        if videos := play_info["result"]["dash"]["video"]:
+            for video in videos:
+                if video["id"] == quality:
+                    result.append(
+                        {
+                            "id": 1,
+                            "url": video["base_url"],
+                            "quality": quality,
+                            "height": video["height"],
+                            "width": video["width"],
+                            "size": touch_url(video["base_url"], spider)[0],
+                            "type": "dash_video",
+                        }
+                    )
+                    break
+        if audios := play_info["result"]["dash"]["audio"]:
+            for audio in audios:
                 result.append(
                     {
-                        "id": 1,
-                        "url": video["base_url"],
+                        "id": 2,
+                        "url": audio["base_url"],
                         "quality": quality,
-                        "height": video["height"],
-                        "width": video["width"],
-                        "size": touch_url(video["base_url"], spider)[0],
-                        "type": "dash_video",
+                        "height": None,
+                        "width": None,
+                        "size": touch_url(audio["base_url"], spider)[0],
+                        "type": "dash_audio",
                     }
                 )
                 break
-        for audio in play_info["result"]["dash"]["audio"]:
-            result.append(
-                {
-                    "id": 2,
-                    "url": audio["base_url"],
-                    "quality": quality,
-                    "height": None,
-                    "width": None,
-                    "size": touch_url(audio["base_url"], spider)[0],
-                    "type": "dash_audio",
-                }
-            )
-            break
         return result
     elif type == "mp4":
         raise UnsupportTypeError("mp4")

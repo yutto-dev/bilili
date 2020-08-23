@@ -24,7 +24,10 @@ class MergingFile(Handler):
         elif self.type == "flv":
             ffmpeg.join_videos(self.src_path_list, self.dst_path)
         elif self.type == "dash":
-            ffmpeg.join_video_audio(self.src_path_list[0], self.src_path_list[1], self.dst_path)
+            if len(self.src_path_list) == 2:
+                ffmpeg.join_video_audio(self.src_path_list[0], self.src_path_list[1], self.dst_path)
+            else:
+                ffmpeg.convert(self.src_path_list[0], self.dst_path)
         else:
             print("Unknown type {}".format(self.type))
         for src_path in self.src_path_list:
