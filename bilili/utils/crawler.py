@@ -7,7 +7,7 @@ import requests
 class Crawler(requests.Session):
 
     header = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36",
     }
 
     def __init__(self):
@@ -17,6 +17,7 @@ class Crawler(requests.Session):
     def set_cookies(self, cookies):
         """传入一个字典，用于设置 cookies"""
 
+        self.cookies_dict = cookies
         requests.utils.add_dict_to_cookiejar(self.cookies, cookies)
 
     def download_bin(self, url, file_path, stream=True, chunk_size=1024, **kw):
@@ -49,15 +50,21 @@ class Crawler(requests.Session):
 
         res = self.get(url, **kw)
         res.encoding = res.apparent_encoding
-        with open(file_path, 'w', encoding='utf_8') as f:
+        with open(file_path, "w", encoding="utf_8") as f:
             f.write(res.text)
+
+    def clone(self):
+        new_one = self.__class__()
+        new_one.set_cookies(self.cookies_dict)
+        new_one.trust_env = self.trust_env
+        return new_one
 
 
 class BililiCrawler(Crawler):
 
     header = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.167 Safari/537.36',
-        'Referer': 'https://www.bilibili.com',
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36",
+        "Referer": "https://www.bilibili.com",
     }
 
     def __init__(self):

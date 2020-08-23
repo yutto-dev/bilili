@@ -34,8 +34,15 @@ class RemoteFile(Handler):
             size = 0
         return size
 
-    def download(self, spider, stream=True, chunk_size=1024):
+    def download(self, thread_spider, stream=True, chunk_size=1024):
+        """[summary]
 
+        Args:
+            thread_spider (requests.Session): 线程全局下载器，由线程池管理并传入，每个线程拥有一个
+            stream (bool, optional): 是否启用流式下载. Defaults to True.
+            chunk_size (int, optional): 块大小. Defaults to 1024.
+        """
+        spider = thread_spider
         self.before_download(self)
         if not os.path.exists(self.path):
             downloaded = False

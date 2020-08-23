@@ -278,7 +278,10 @@ def main():
         merge_wait_flag = Flag(False)  # 合并线程池不能因为没有任务就结束
         # 因此要设定一个 flag，待最后合并结束后改变其值
         merge_pool = ThreadPool(3, wait=merge_wait_flag, daemon=True)
-        download_pool = ThreadPool(args.num_threads, daemon=True)
+        download_pool = ThreadPool(args.num_threads, daemon=True, thread_globals_creator={
+            "thread_spider":spider.clone            # 为每个线程创建一个全新的 Session，因为 requests.Session 不是线程安全的
+                                                    # https://github.com/psf/requests/issues/1871
+        })
         for container in containers:
             merging_file = MergingFile(container.type, [media.path for media in container.medias], container.path,)
             for media in container.medias:
@@ -326,7 +329,7 @@ def main():
                     # 下载过的不应继续部署任务
                     if block._.downloaded:
                         continue
-                    download_pool.add_task(remote_file.download, args=(spider,))
+                    download_pool.add_task(remote_file.download, args=())
 
         # 启动线程池
         merge_pool.run()
