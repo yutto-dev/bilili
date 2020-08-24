@@ -10,7 +10,7 @@
   "devDependencies": {
     "@vssue/api-github-v3": "^1.4.4",
     "@vssue/vuepress-plugin-vssue": "^1.4.6",
-    "@vuepress/plugin-back-to-top": "^1.5.3",
+    "@vuepress/plugin-back-to-top": "^1.5.4",
     "vue-dplayer": "^0.0.10",
     "vuepress": "^1.5.3",
     "vuepress-plugin-cursor-effects": "^1.0.0",
