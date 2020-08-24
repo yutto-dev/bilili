@@ -21,13 +21,14 @@ def get_video_info(avid: str = "", bvid: str = ""):
     info_api = "http://api.bilibili.com/x/web-interface/view?aid={avid}&bvid={bvid}"
     res = spider.get(info_api.format(avid=avid, bvid=bvid))
     res_json_data = res.json()["data"]
+    episode_id = ""
+    if res_json_data.get("redirect_url") and regex_bangumi_ep.match(res_json_data["redirect_url"]):
+        episode_id = regex_bangumi_ep.match(res_json_data["redirect_url"]).group("episode_id")
     return {
         "avid": str(res_json_data["aid"]),
         "bvid": res_json_data["bvid"],
         "picture": res_json_data["pic"],
-        "episode_id": match.group("episode_id")
-        if res_json_data.get("redirect_url") and (match := regex_bangumi_ep.match(res_json_data["redirect_url"]))
-        else "",
+        "episode_id": episode_id,
     }
 
 
@@ -41,11 +42,11 @@ def get_acg_video_title(avid: str = "", bvid: str = "") -> str:
         else "https://www.bilibili.com/video/av{avid}".format(avid=avid)
     )
     res = spider.get(home_url)
-    title = (
-        match.group(1)
-        if (match := re.search(r"<title .*>(.*)_哔哩哔哩 \(゜-゜\)つロ 干杯~-bilibili</title>", res.text))
-        else "呐，我也不知道是什么标题呢～"
-    )
+    regex_title = re.compile(r"<title .*>(.*)_哔哩哔哩 \(゜-゜\)つロ 干杯~-bilibili</title>")
+    if regex_title.search(res.text):
+        title = regex_title.search(res.text).group(1)
+    else:
+        title = "呐，我也不知道是什么标题呢～"
     return title
 
 
@@ -118,7 +119,8 @@ def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality
 
         res = spider.get(play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=quality))
 
-        if videos := res.json()["data"]["dash"]["video"]:
+        if res.json()["data"]["dash"]["video"]:
+            videos = res.json()["data"]["dash"]["video"]
             for video in videos:
                 if video["id"] == quality:
                     result.append(
@@ -133,7 +135,8 @@ def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality
                         }
                     )
                     break
-        if audios := res.json()["data"]["dash"]["audio"]:
+        if res.json()["data"]["dash"]["audio"]:
+            audios = res.json()["data"]["dash"]["audio"]
             for audio in audios:
                 result.append(
                     {

@@ -1,8 +1,10 @@
 <template>
-  <DPlayer :options="options" ref="player" />
+  <div class="dplayer" id="dplayer"></div>
 </template>
 
 <script>
+import DPlayer from 'dplayer'
+
 export default {
   props: {
     avid: {
@@ -29,27 +31,46 @@ export default {
   data() {
     return {
       bilipi: BILIPI,
-      dp: null,
-      options: {
-        lang: 'zh-cn',
-        video: {
-          url: ''
-        }
-      }
+      dp: null
     }
   },
 
   mounted() {
-    this.dp = this.$refs.player.dp
-    const url = `${this.bilipi}/acg_video/playurl?avid=${this.avid}&bvid=${this.bvid}&cid=${this.cid}&type=mp4`
-    fetch(url)
+    const video_api = `${this.bilipi}/acg_video/playurl?avid=${this.avid}&bvid=${this.bvid}&cid=${this.cid}&type=mp4`
+    const danmaku_api = `${this.bilipi}/danmaku/dplayer?cid=${this.cid}`
+    let home_url = 'https://www.bilibili.com/video/'
+    if (this.avid) {
+      home_url += 'av' + this.avid
+    } else if (this.bvid) {
+      if (this.bvid.substring(0, 2).toLowerCase() !== 'bv') {
+        home_url += 'BV'
+      }
+      home_url += this.bvid
+    } else {
+      console.log('[BililiPlayer] avid 和 bvid 均未传入！')
+    }
+    fetch(video_api)
       .then(res => {
         return res.json()
       })
       .then(res => {
-        this.dp.switchVideo({
-          url: res.result[0].url
+        const dp = new DPlayer({
+          container: this.$el,
+          lang: 'zh-cn',
+          video: {
+            url: res.data[0].url
+          },
+          contextmenu: [
+            {
+              text: '前往 B 站观看',
+              link: home_url
+            }
+          ],
+          danmaku: {
+            addition: [danmaku_api]
+          }
         })
+        this.dp = dp
       })
   },
 

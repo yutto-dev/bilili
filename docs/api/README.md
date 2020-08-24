@@ -65,7 +65,13 @@
 ### 获取 XML 弹幕
 
 -  Python 调用： `bilili.api.danmaku`
--  WSGI 调用： <https://bilipi.sigure.xyz/api/v0/danmaku>
+-  WSGI 调用： <https://bilipi.sigure.xyz/api/v0/danmaku/xml>
+-  参数： `cid`
+
+### 获取 DPlayer 所需的 JSON 弹幕
+
+-  Python 调用： `bilili.api.danmaku_for_dplayer`
+-  WSGI 调用： <https://bilipi.sigure.xyz/api/v0/danmaku/dplayer>
 -  参数： `cid`
 
 ## 字幕

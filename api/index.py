@@ -48,21 +48,21 @@ def export_api(func):
             return {
                 "code": 0,
                 "message": "",
-                "result": func(*args, **kwargs),
+                "data": func(*args, **kwargs),
             }
         except APIException as e:
             # fmt: off
             return {
                 "code": e.code,
                 "message": e.message,
-                "result": {},
+                "data": {},
             }
         except Exception as e:
             # fmt: off
             return {
                 "code": 200,
                 "message": e.args[0],
-                "result": {},
+                "data": {},
             }
     return func_wrapper
 

@@ -1,11 +1,8 @@
-import 'vue-dplayer/dist/vue-dplayer.css'
-
-import BililiPlayer from './BililiPlayer.vue'
-
 export default ({ Vue, options, router, siteData, isServer }) => {
   if (!isServer) {
-    const DPlayer = require('vue-dplayer')
+    const DPlayer = require('./vue-dplayer.js').default
     Vue.component('DPlayer', DPlayer)
+    const BililiPlayer = require('./BililiPlayer.vue').default
+    Vue.component('BililiPlayer', BililiPlayer)
   }
-  Vue.component('BililiPlayer', BililiPlayer)
 }
