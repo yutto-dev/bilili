@@ -33,3 +33,10 @@ class IsPreviewError(APIException):
     def __init__(self):
         message = "This video is preview video"
         super().__init__(105, message)
+
+
+class BiliAPIError(APIException):
+    """ Bilibili 官方 API 返回的错误信息 """
+
+    def __init__(self, code, message):
+        super().__init__(code, message)
