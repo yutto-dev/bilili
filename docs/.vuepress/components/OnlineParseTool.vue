@@ -22,7 +22,7 @@
       <DPlayer :options="result.dplayer.options" ref="player" />
       <p>
         解析结果：
-        <a :href="result.mp4Url" download="result.mp4">右键此处另存为</a>
+        <a :href="result.mp4Url">右键此处另存为</a>
       </p>
       <textarea name="mp4-result" class="mp4-result form-control" readonly>{{
         result.mp4Url
@@ -49,8 +49,6 @@ export default {
         defaultText: '请先解析获得选 P 列表',
         list: []
       },
-      // selectPartText: '请先解析获得选 P 列表',
-      // partList: [],
       result: {
         show: false,
         dplayer: {
@@ -75,6 +73,7 @@ export default {
 
   methods: {
     parse() {
+      this.cid = ''
       this.hideResult()
       const RE_BV_URL = /https?:\/\/(www\.|m\.)?bilibili\.com\/video\/(?<bvid>(BV|bv)\w+)/
       const RE_BV_URL_SHORT = /https?:\/\/b23\.tv\/(?<bvid>(BV|bv)\w+)/
@@ -154,7 +153,9 @@ export default {
   watch: {
     cid(val, oldval) {
       this.hideResult()
-      this.showResult()
+      if (this.cid) {
+        this.showResult()
+      }
     }
   }
 }
@@ -177,7 +178,7 @@ export default {
 }
 
 .mp4-result {
-  height: 10rem;
+  height: 8rem;
   resize: none;
 }
 </style>

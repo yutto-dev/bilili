@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: '🐛 '
-labels: 'bug: pending triage'
-assignees: ''
-
+title: "🐛 "
+labels: "bug: pending triage"
+assignees: ""
 ---
 
 <!-- 为了提高问题的解决效率，我们衷心希望你能够按照模板来书写 Issue -->
@@ -25,11 +24,13 @@ assignees: ''
 
 ## 环境信息
 
-- OS： 操作系统类型及其版本号
-- Python： Python 版本号
-- Shell：Shell 类型
-- Terminal：终端类型
-- Others： 其它信息
+-  OS： 操作系统类型及其版本号
+-  Python： Python 版本号
+-  bilili： bilili 版本号
+-  如果是显示相关问题
+   -  Shell：Shell 类型
+   -  Terminal：终端类型
+-  Others： 其它信息
 
 ## 问题简述
 
