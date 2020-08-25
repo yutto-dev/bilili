@@ -4,6 +4,9 @@
       class="url-input form-control"
       v-model="biliUrl"
       placeholder="在这里输入视频 url 哦 (ฅ>ω<*ฅ)"
+      @keyup.enter="parse"
+      autocomplete
+      autofocus
     />
     <button class="url-parse form-control" @click="parse">解析</button>
     <select v-model="cid" class="select-part form-control">
@@ -12,15 +15,20 @@
         'P' + item.id + ': ' + item.name
       }}</option>
     </select>
+    <div class="error-container" v-show="showError">
+      <p>出问题啦～：{{ error }}</p>
+    </div>
     <div class="result-container" v-show="showResult">
       <DPlayer :options="options" ref="player" />
-      <p>解析结果：</p>
+      <p>
+        解析结果： <a :href="mp4Url" download="result.mp4">右键此处另存为</a>
+      </p>
       <textarea name="mp4-result" class="mp4-result form-control" readonly>{{
         mp4Url
       }}</textarea>
-    </div>
-    <div class="error-container" v-show="showError">
-      <p>{{ error }}</p>
+      <button class="copy-to-clipboard form-control" @click="copyToClipboard">
+        {{ copyButtonText }}
+      </button>
     </div>
   </div>
 </template>
@@ -34,6 +42,7 @@ export default {
       avid: '',
       bvid: '',
       cid: '',
+      name: '',
       bilipi: 'https://bilipi.sigure.xyz/api/v0',
       selectPartText: '请先解析获得选 P 列表',
       partList: [],
@@ -41,6 +50,7 @@ export default {
       options: {
         video: ''
       },
+      copyButtonText: '复制到剪贴板',
       dp: null,
       mp4Url: '',
       showError: false,
@@ -54,9 +64,9 @@ export default {
 
   methods: {
     parse() {
-      const RE_BV_URL = /https?:\/\/www\.bilibili\.com\/video\/(?<bvid>(BV|bv)\w+)/
+      const RE_BV_URL = /https?:\/\/(www\.|m\.)?bilibili\.com\/video\/(?<bvid>(BV|bv)\w+)/
       const RE_BV_URL_SHORT = /https?:\/\/b23\.tv\/(?<bvid>(BV|bv)\w+)/
-      const RE_AV_URL = /https?:\/\/www\.bilibili\.com\/video\/av(?<avid>\d+)/
+      const RE_AV_URL = /https?:\/\/(www\.|m\.)?bilibili\.com\/video\/av(?<avid>\d+)/
       const RE_AV_URL_SHORT = /https?:\/\/b23\.tv\/av(?<avid>\d+)/
       const matchObj =
         RE_BV_URL.exec(this.biliUrl) ||
@@ -73,8 +83,14 @@ export default {
         fetch(info_api)
           .then(res => res.json())
           .then(res => {
-            this.partList = res.data
-            this.selectPartText = '点此选 P'
+            if (res.code !== 0) {
+              this.error = res.message
+              this.showError = true
+            } else {
+              this.partList = res.data
+              this.selectPartText = '点此选 P'
+              this.showError = false
+            }
           })
       } else {
         this.error = '不支持这样的 URL 哟～'
@@ -95,7 +111,15 @@ export default {
             url: mp4Url
           })
           this.mp4Url = mp4Url
+          this.copyButtonText = '复制到剪贴板'
         })
+    },
+
+    copyToClipboard() {
+      const textarea = this.$el.querySelector('.mp4-result')
+      textarea.select()
+      document.execCommand('Copy')
+      this.copyButtonText = '复制成功✓'
     }
   },
 
