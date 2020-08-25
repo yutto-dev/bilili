@@ -20,6 +20,10 @@
 -  [BilibiliVideoDownload - blogwy](https://github.com/blogwy/BilibiliVideoDownload) 了解到更多清晰度等级（120、112 等）
 -  [BiliUtil](https://github.com/wolfbolin/BiliUtil) 参考了 4k 清晰度获取时需要的额外参数以及打包 PyPI 的方式
 
+## 云服务
+
+-  [Vercel](https://vercel.com/) 提供[文档托管](https://vercel.com/siguremo/bilili)以及 [API 托管](https://vercel.com/siguremo/bilipi)
+
 ## 贡献者
 
 感谢每一位贡献者的辛勤付出

@@ -196,9 +196,3 @@ bilili <url> -w
 ## 参与贡献
 
 请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)
-
-# 参考项目
-
-1. [Bilibili - 1033020837](https://github.com/1033020837/Bilibili)
-2. [BilibiliVideoDownload - blogwy](https://github.com/blogwy/BilibiliVideoDownload)
-3. [BiliUtil](https://github.com/wolfbolin/BiliUtil)
