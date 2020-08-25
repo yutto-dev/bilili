@@ -62,7 +62,9 @@ module.exports = {
       {
         // bilipi: 'https://bilipi-git-external-api.siguremo.vercel.app/api/v0'
       }
-    ]
+    ],
+    // meting
+    ['meting']
   ],
 
   themeConfig: {
@@ -71,7 +73,13 @@ module.exports = {
       { text: '指南', link: '/guide/' },
       { text: '参数', link: '/cli/' },
       { text: 'API', link: '/api/' },
-      { text: '在线解析', link: '/online-parse/' },
+      {
+        text: '在线解析',
+        items: [
+          { text: 'MP4 视频解析', link: '/online-parse/video' },
+          { text: '音频解析', link: '/online-parse/audio' }
+        ]
+      },
       {
         text: '支持我',
         items: [
