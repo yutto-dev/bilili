@@ -22,7 +22,7 @@
       <DPlayer :options="result.dplayer.options" ref="player" />
       <p>
         解析结果：
-        <a :href="result.mp4Url">右键此处另存为</a>
+        <a :href="result.mp4Url" download="result.mp4">右键此处另存为</a>
       </p>
       <textarea name="mp4-result" class="mp4-result form-control" readonly>{{
         result.mp4Url
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import { match } from 'assert'
 export default {
   data() {
     return {
@@ -48,6 +49,8 @@ export default {
         defaultText: '请先解析获得选 P 列表',
         list: []
       },
+      // selectPartText: '请先解析获得选 P 列表',
+      // partList: [],
       result: {
         show: false,
         dplayer: {
