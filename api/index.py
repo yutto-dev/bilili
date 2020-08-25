@@ -7,7 +7,6 @@ sys.path.insert(0, BASE_DIR)
 from functools import wraps
 
 import bilili.api.acg_video
-import bilili.api.audio
 import bilili.api.bangumi
 import bilili.api.danmaku
 import bilili.api.subtitle

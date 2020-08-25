@@ -58,16 +58,6 @@
 -  WSGI 调用： <https://bilipi.sigure.xyz/api/v0/bangumi/playurl>
 -  参数： `avid`, `bvid`, `episode_id`, `cid`, `quality`, `type`
 
-## 音频
-
-[`bilili.api.audio`](https://github.com/SigureMo/bilili/blob/master/bilili/api/audio.py)
-
-### 获取 `season_id`
-
--  Python 调用： `bilili.api.bangumi.get_audio_url`
--  WSGI 调用： <https://bilipi.sigure.xyz/api/v0/get_audio_url>
--  参数： `audio_id`
-
 ## 弹幕
 
 [`bilili.api.danmaku`](https://github.com/SigureMo/bilili/blob/master/bilili/api/danmaku.py)
