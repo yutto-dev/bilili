@@ -73,6 +73,7 @@ export default {
 
   methods: {
     parse() {
+      this.cid = ''
       this.hideResult()
       const RE_BV_URL = /https?:\/\/(www\.|m\.)?bilibili\.com\/video\/(?<bvid>(BV|bv)\w+)/
       const RE_BV_URL_SHORT = /https?:\/\/b23\.tv\/(?<bvid>(BV|bv)\w+)/
@@ -152,7 +153,9 @@ export default {
   watch: {
     cid(val, oldval) {
       this.hideResult()
-      this.showResult()
+      if (this.cid) {
+        this.showResult()
+      }
     }
   }
 }
@@ -175,7 +178,7 @@ export default {
 }
 
 .mp4-result {
-  height: 10rem;
+  height: 8rem;
   resize: none;
 }
 </style>
