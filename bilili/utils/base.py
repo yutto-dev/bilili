@@ -1,6 +1,6 @@
 import os
 import re
-import unicodedata
+import random
 
 from functools import wraps
 
@@ -97,6 +97,7 @@ def repair_filename(filename):
     filename = regex_spaces.sub(' ', filename)
     filename = regex_non_printable.sub('', filename)
     filename = filename.strip()
+    filename = filename if filename else 'file_{:04}'.format(random.randint(0, 9999))
     return filename
 
 
