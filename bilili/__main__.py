@@ -81,7 +81,7 @@ def main():
         type=int,
         help="视频清晰度 120:4K, 116:1080P60, 112:1080P+, 80:1080P, 74:720P60, 64:720P, 32:480P, 16:360P",
     )
-    parser.add_argument("-n", "--num-threads", default=30, type=int, help="最大下载线程数")
+    parser.add_argument("-n", "--num-threads", default=16, type=int, help="最大下载线程数")
     parser.add_argument("-p", "--episodes", default="all", help="选集")
     parser.add_argument("-w", "--overwrite", action="store_true", help="强制覆盖已下载视频")
     parser.add_argument("-c", "--sess-data", default=None, help="输入 cookies")
