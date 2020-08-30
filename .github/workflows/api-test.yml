@@ -23,13 +23,7 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Install tools
-        run: |
-          sudo apt update
-          sudo apt install ffmpeg
-          sudo apt install aria2
-
-      - name: Test crawler
+      - name: Test bilili API
         run: |
           pip install pytest
           pytest
