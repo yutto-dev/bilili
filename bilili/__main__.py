@@ -96,6 +96,7 @@ def main():
     parser.add_argument(
         "--block-size", default=128, type=int, help="分块下载器的块大小，单位为 MB，默认为 128MB，设置为 0 时禁用分块下载",
     )
+    parser.add_argument("--use-mirrors", action="store_true", help="启用从多个镜像下载功能")
     parser.add_argument("--disable-proxy", action="store_true", help="禁用系统代理")
     parser.add_argument("--debug", action="store_true", help="debug 模式")
 
@@ -289,7 +290,8 @@ def main():
                 block_merging_file = MergingFile(None, [block.path for block in media.blocks], media.path)
                 for block in media.blocks:
 
-                    remote_file = RemoteFile(block.url, block.path, range=block.range)
+                    mirrors = block.mirrors if args.use_mirrors else []
+                    remote_file = RemoteFile(block.url, block.path, mirrors=mirrors, range=block.range)
 
                     # 为下载挂载各种钩子，以修改状态，注意外部变量应当作为默认参数传入
                     @remote_file.on("before_download")

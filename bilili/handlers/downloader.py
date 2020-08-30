@@ -1,5 +1,6 @@
 import os
 import requests
+import random
 
 from bilili.handlers.base import Handler
 
@@ -12,9 +13,10 @@ class RemoteFile(Handler):
     通过中间件与外部监控程序通讯
     """
 
-    def __init__(self, url, local_path, range=(0, "")):
+    def __init__(self, url, local_path, mirrors=[], range=(0, "")):
         super().__init__(["before_download", "before_update", "updated", "downloaded"])
         self.url = url
+        self.mirrors = mirrors
         self.path = local_path
         self.name = os.path.split(self.path)[-1]
         self.tmp_path = self.path + ".dl"
@@ -50,10 +52,11 @@ class RemoteFile(Handler):
                 # 设置 headers
                 headers = dict(spider.headers)
                 headers["Range"] = "bytes={}-{}".format(self.size + self.range[0], self.range[1])
+                url = random.choice([self.url] + self.mirrors) if self.mirrors else self.url
 
                 try:
                     # 尝试建立连接
-                    res = spider.get(self.url, stream=stream, headers=headers, timeout=(5, 10))
+                    res = spider.get(url, stream=stream, headers=headers, timeout=(5, 10))
                     # 下载到临时路径
                     with open(self.tmp_path, "ab") as f:
                         if stream:
