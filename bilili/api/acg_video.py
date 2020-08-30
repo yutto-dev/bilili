@@ -92,6 +92,7 @@ def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality
             {
                 "id": i + 1,
                 "url": segment["url"],
+                "mirrors": segment["backup_url"],
                 "quality": quality,
                 "height": quality_map[quality]["height"],
                 "width": quality_map[quality]["width"],
@@ -127,6 +128,7 @@ def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality
                         {
                             "id": 1,
                             "url": video["base_url"],
+                            "mirrors": video["backup_url"],
                             "quality": quality,
                             "height": video["height"],
                             "width": video["width"],
@@ -142,6 +144,7 @@ def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality
                     {
                         "id": 2,
                         "url": audio["base_url"],
+                        "mirrors": audio["backup_url"],
                         "quality": quality,
                         "height": None,
                         "width": None,
@@ -160,6 +163,7 @@ def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality
             {
                 "id": 1,
                 "url": play_info["data"]["durl"][0]["url"],
+                "mirrors": [],
                 "quality": play_info["data"]["quality"],
                 "height": quality_map[play_info["data"]["quality"]]["height"],
                 "width": quality_map[play_info["data"]["quality"]]["width"],

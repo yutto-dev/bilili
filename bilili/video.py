@@ -54,13 +54,14 @@ class BililiMedia:
     从 B 站直接获取的可下载的媒体单元，可能是 flv、mp4、m4s
     """
 
-    def __init__(self, id, url, quality, size, height, width, container, type="dash_video", block_size=0):
+    def __init__(self, id, url, quality, size, height, width, container, mirrors=[], type="dash_video", block_size=0):
 
         self.id = id
         self.quality = quality
         self.height = height
         self.width = width
         self.url = url
+        self.mirrors = mirrors
         self.container = container
         self.block_size = block_size
         self.path = os.path.splitext(self.container.path)[0]
@@ -102,7 +103,11 @@ class BililiMedia:
         else:
             block_range_list = [(0, total_size - 1)]
         for i, block_range in enumerate(block_range_list):
-            blocks.append(BililiBlock(id=i, url=self.url, media=self, block_size=block_size, range=block_range))
+            blocks.append(
+                BililiBlock(
+                    id=i, url=self.url, mirrors=self.mirrors, media=self, block_size=block_size, range=block_range
+                )
+            )
         assert self._.total_size == total_size, "重新设置的 total size 与原来值不匹配"
         return blocks
 
@@ -121,10 +126,11 @@ class BililiBlock:
     """ bilibili 媒体块类
     """
 
-    def __init__(self, id, url, media, block_size, range):
+    def __init__(self, id, url, mirrors, media, block_size, range):
 
         self.id = id
         self.url = url
+        self.mirrors = mirrors
         self.block_size = block_size
         self.media = media
         self.range = range

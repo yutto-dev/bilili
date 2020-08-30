@@ -35,6 +35,7 @@ def get_playurl(container, quality):
         {
             "id": play_info["id"],
             "url": play_info["url"],
+            "mirrors": play_info["mirrors"],
             "quality": play_info["quality"],
             "height": play_info["height"],
             "width": play_info["width"],
