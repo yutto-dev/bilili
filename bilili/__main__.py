@@ -6,7 +6,6 @@ import json
 import time
 import shutil
 
-from typing import List
 from bilili.utils.base import repair_filename, touch_dir, touch_file, size_format
 from bilili.utils.playlist import Dpl, M3u
 from bilili.utils.thread import ThreadPool, Flag
@@ -28,20 +27,26 @@ from bilili.api.exceptions import (ArgumentsError, CannotDownloadError,
 def parse_episodes(episodes_str: str, total: int):
     """ 将选集字符串转为列表 """
 
+    def reslove_negetive(value):
+        return value if value > 0 else value + total + 1
+
     # 解析字符串为列表
     print("全 {} 话".format(total))
-    if episodes_str == "all":
-        episode_list = list(range(1, total + 1))
-    elif re.match(r"(\d+(~\d+)?)(,\d+(~\d+)?)*", episodes_str):
+    if re.match(r"([\-\d\^\$]+(~[\-\d\^\$]+)?)(,[\-\d\^\$]+(~[\-\d\^\$]+)?)*", episodes_str):
+        episodes_str = episodes_str.replace('^', '1')
+        episodes_str = episodes_str.replace('$', '-1')
         episode_list = []
         for episode_item in episodes_str.split(","):
             if "~" in episode_item:
                 start, end = episode_item.split("~")
                 start, end = int(start), int(end)
+                start, end = reslove_negetive(start), reslove_negetive(end)
                 assert end > start, "终点值（{}）应大于起点值（{}）".format(end, start)
                 episode_list.extend(list(range(start, end + 1)))
             else:
-                episode_list.append(int(episode_item))
+                episode_item = int(episode_item)
+                episode_item = reslove_negetive(episode_item)
+                episode_list.append(episode_item)
     else:
         episode_list = []
 
@@ -82,7 +87,7 @@ def main():
         help="视频清晰度 120:4K, 116:1080P60, 112:1080P+, 80:1080P, 74:720P60, 64:720P, 32:480P, 16:360P",
     )
     parser.add_argument("-n", "--num-threads", default=16, type=int, help="最大下载线程数")
-    parser.add_argument("-p", "--episodes", default="all", help="选集")
+    parser.add_argument("-p", "--episodes", default="^~$", help="选集")
     parser.add_argument("-w", "--overwrite", action="store_true", help="强制覆盖已下载视频")
     parser.add_argument("-c", "--sess-data", default=None, help="输入 cookies")
     parser.add_argument("-y", "--yes", action="store_true", help="跳过下载询问")
