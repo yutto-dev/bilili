@@ -41,7 +41,7 @@ def parse_episodes(episodes_str: str, total: int):
                 start, end = episode_item.split("~")
                 start, end = int(start), int(end)
                 start, end = reslove_negetive(start), reslove_negetive(end)
-                assert end > start, "终点值（{}）应大于起点值（{}）".format(end, start)
+                assert end >= start, "终点值（{}）应不小于起点值（{}）".format(end, start)
                 episode_list.extend(list(range(start, end + 1)))
             else:
                 episode_item = int(episode_item)
