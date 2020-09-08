@@ -33,8 +33,8 @@ def parse_episodes(episodes_str: str, total: int):
     # 解析字符串为列表
     print("全 {} 话".format(total))
     if re.match(r"([\-\d\^\$]+(~[\-\d\^\$]+)?)(,[\-\d\^\$]+(~[\-\d\^\$]+)?)*", episodes_str):
-        episodes_str = episodes_str.replace('^', '1')
-        episodes_str = episodes_str.replace('$', '-1')
+        episodes_str = episodes_str.replace("^", "1")
+        episodes_str = episodes_str.replace("$", "-1")
         episode_list = []
         for episode_item in episodes_str.split(","):
             if "~" in episode_item:
@@ -94,13 +94,13 @@ def main():
     parser.add_argument(
         "--playlist-type", default="dpl", choices=["dpl", "m3u", "no"], help="播放列表类型，支持 dpl 和 m3u，输入 no 不生成播放列表",
     )
-    parser.add_argument("--path-type", default="rp", help="播放列表路径类型（rp：相对路径，ap：绝对路径）")
     parser.add_argument(
         "--danmaku", default="xml", choices=["xml", "ass", "no"], help="弹幕类型，支持 xml 和 ass，如果设置为 no 则不下载弹幕",
     )
     parser.add_argument(
         "--block-size", default=128, type=int, help="分块下载器的块大小，单位为 MB，默认为 128MB，设置为 0 时禁用分块下载",
     )
+    parser.add_argument("--abs-path", action="store_true", help="修改播放列表路径类型为绝对路径")
     parser.add_argument("--use-mirrors", action="store_true", help="启用从多个镜像下载功能")
     parser.add_argument("--disable-proxy", action="store_true", help="禁用系统代理")
     parser.add_argument("--debug", action="store_true", help="debug 模式")
@@ -114,7 +114,7 @@ def main():
         "quality": args.quality,
         "episodes": args.episodes,
         "playlist_type": args.playlist_type,
-        "playlist_path_type": args.path_type.upper(),
+        "playlist_path_type": "AP" if args.abs_path else "RP",
         "overwrite": args.overwrite,
         "cookies": cookies,
         "type": args.type.lower(),
