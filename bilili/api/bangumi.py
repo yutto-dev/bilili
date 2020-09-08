@@ -154,7 +154,7 @@ def get_bangumi_playurl(
                     {
                         "id": 2,
                         "url": audio["base_url"],
-                        "mirrors": video["backup_url"],
+                        "mirrors": audio["backup_url"],
                         "quality": quality,
                         "height": None,
                         "width": None,
