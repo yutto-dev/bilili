@@ -107,9 +107,9 @@ def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality
         touch_message = spider.get(
             play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=quality_sequence[0])
         ).json()
+
         if touch_message["code"] != 0:
             raise CannotDownloadError(touch_message["code"], touch_message["message"])
-
         if touch_message["data"].get("dash") is None:
             raise UnsupportTypeError("dash")
 

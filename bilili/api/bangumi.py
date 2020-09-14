@@ -116,12 +116,11 @@ def get_bangumi_playurl(
         play_info = spider.get(
             play_api_dash.format(avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=quality_sequence[0])
         ).json()
+
         if play_info["code"] != 0:
             raise CannotDownloadError(play_info["code"], play_info["message"])
         if play_info["result"].get("dash") is None:
             raise UnsupportTypeError("dash")
-        if play_info["code"] != 0:
-            raise CannotDownloadError(play_info["code"], play_info["message"])
         if play_info["result"]["is_preview"] == 1:
             raise IsPreviewError()
 
