@@ -5,13 +5,13 @@ import math
 import subprocess
 
 from bilili.handlers.status import DownloaderStatus
-from bilili.quality import quality_map
+from bilili.quality import video_quality_map
 from bilili.tools import global_status
 from bilili.utils.base import repair_filename
 
 
 class BililiContainer:
-    """ bilibili 媒体容器类
+    """bilibili 媒体容器类
     即 B 站上的单个视频，其中可能包含多个媒体单元
     * 包含多个 flv 片段
     * 包含 m4s 的视频与音频流
@@ -36,7 +36,7 @@ class BililiContainer:
         self.medias.append(BililiMedia(*args, **kwargs, container=self))
 
     def __str__(self):
-        return "{} 「{}」".format(self.name, quality_map[self.quality]["description"])
+        return "{} 「{}」".format(self.name, video_quality_map[self.quality]["description"])
 
     def check_needs_download(self, overwrite=False):
         """ 检查是否需要下载 """
@@ -50,7 +50,7 @@ class BililiContainer:
 
 
 class BililiMedia:
-    """ bilibili 媒体单元类
+    """bilibili 媒体单元类
     从 B 站直接获取的可下载的媒体单元，可能是 flv、mp4、m4s
     """
 
@@ -123,8 +123,7 @@ class BililiMedia:
 
 
 class BililiBlock:
-    """ bilibili 媒体块类
-    """
+    """bilibili 媒体块类"""
 
     def __init__(self, id, url, mirrors, media, block_size, range):
 

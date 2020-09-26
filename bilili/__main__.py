@@ -92,6 +92,12 @@ def main():
     parser.add_argument("-c", "--sess-data", default=None, help="输入 cookies")
     parser.add_argument("-y", "--yes", action="store_true", help="跳过下载询问")
     parser.add_argument(
+        "--audio-quality", default=30280,
+        choices=[30280, 30232, 30216],
+        type=int,
+        help="音频码率 30280:320kbps, 30232:128kbps, 30216:64kbps",
+    )
+    parser.add_argument(
         "--playlist-type", default="dpl", choices=["dpl", "m3u", "no"], help="播放列表类型，支持 dpl 和 m3u，输入 no 不生成播放列表",
     )
     parser.add_argument(
@@ -112,6 +118,7 @@ def main():
         "url": args.url,
         "dir": args.dir,
         "quality": args.quality,
+        "audio_quality": args.audio_quality,
         "episodes": args.episodes,
         "playlist_type": args.playlist_type,
         "playlist_path_type": "AP" if args.abs_path else "RP",
@@ -119,7 +126,7 @@ def main():
         "cookies": cookies,
         "type": args.type.lower(),
         "block_size": int(args.block_size * 1024 * 1024),
-    }
+    } >> AttrDict()
 
     # 匹配资源的 id 以及其对应所属类型
     # fmt: off
@@ -210,7 +217,7 @@ def main():
 
         # 解析视频 url
         try:
-            for playinfo in get_playurl(container, config["quality"]):
+            for playinfo in get_playurl(container, config["quality"], config["audio_quality"]):
                 container.append_media(
                     block_size=config["block_size"],
                     **playinfo

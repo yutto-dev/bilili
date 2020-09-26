@@ -1,8 +1,16 @@
 from typing import List
+from enum import Enum
 
-quality_sequence_default = [120, 116, 112, 80, 74, 64, 32, 16]
 
-quality_map = {
+class Media(Enum):
+    VIDEO = 0
+    AUDIO = 30200
+
+
+video_quality_sequence_default = [120, 116, 112, 80, 74, 64, 32, 16]
+audio_quality_sequence_default = [30280, 30232, 30216]
+
+video_quality_map = {
     120: {
         "description": "超清 4K",
         "width": 4096,
@@ -57,11 +65,32 @@ quality_map = {
         "description": "高清 720P",
         "width": 1280,
         "height": 720,
-    }
+    },
+}
+
+audio_quality_map = {
+    30280: {
+        "description": "320kbps",
+        "bitrate": 320,
+    },
+    30232: {
+        "description": "128kbps",
+        "bitrate": 128,
+    },
+    30216: {
+        "description": "64kbps",
+        "bitrate": 64,
+    },
+    0: {"description": "Unknown", "bitrate": 0},
 }
 
 
-def gen_quality_sequence(quality: int = 120) -> List[int]:
+def gen_quality_sequence(quality: int = 120, type: Media = Media.VIDEO) -> List[int]:
     """ 根据默认先降后升的清晰度机制生成清晰度序列 """
-    return quality_sequence_default[quality_sequence_default.index(quality):] + list(
-        reversed(quality_sequence_default[:quality_sequence_default.index(quality)]))
+    quality_sequence_default = {
+        Media.VIDEO: video_quality_sequence_default,
+        Media.AUDIO: audio_quality_sequence_default,
+    }[type]
+    return quality_sequence_default[quality_sequence_default.index(quality) :] + list(
+        reversed(quality_sequence_default[: quality_sequence_default.index(quality)])
+    )
