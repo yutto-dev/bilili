@@ -5,7 +5,7 @@ import math
 import subprocess
 
 from bilili.handlers.status import DownloaderStatus
-from bilili.quality import video_quality_map
+from bilili.quality import video_quality_map, audio_quality_map
 from bilili.tools import global_status
 from bilili.utils.base import repair_filename
 
@@ -36,7 +36,19 @@ class BililiContainer:
         self.medias.append(BililiMedia(*args, **kwargs, container=self))
 
     def __str__(self):
-        return "{} 「{}」".format(self.name, video_quality_map[self.quality]["description"])
+        quality_description: str = ""
+        if self.type == "dash":
+            quality_description = " & ".join(
+                [
+                    {"dash_video": video_quality_map, "dash_audio": audio_quality_map}[media.type][media.quality][
+                        "description"
+                    ]
+                    for media in self.medias
+                ]
+            )
+        else:
+            quality_description = video_quality_map[self.quality]["description"]
+        return "{} 「{}」".format(self.name, quality_description)
 
     def check_needs_download(self, overwrite=False):
         """ 检查是否需要下载 """
@@ -65,6 +77,7 @@ class BililiMedia:
         self.container = container
         self.block_size = block_size
         self.path = os.path.splitext(self.container.path)[0]
+        self.type = type
         if self.container.type == "flv":
             self.path += "_{:02d}.flv".format(id)
         elif self.container.type == "dash":

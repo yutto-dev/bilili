@@ -2,9 +2,7 @@ import re
 import sys
 import argparse
 import os
-import json
 import time
-import shutil
 
 from bilili.utils.base import repair_filename, touch_dir, touch_file, size_format
 from bilili.utils.playlist import Dpl, M3u
