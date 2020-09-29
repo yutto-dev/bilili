@@ -12,13 +12,13 @@
 
 本 PR 的类型（至少选择一个）
 
-- [ ] :sparkles: feat: 添加新功能
-- [ ] :bug: fix: 修复 bug
-- [ ] :pencil: docs: 仅对文档进行修改
-- [ ] :art: style: 对代码语义无影响的格式修改（如去除无用空格、格式化等等修改）
-- [ ] :recycle: refactor: 代码重构（即不是新增功能，也不是修改 bug 的代码变动）
-- [ ] :zap: perf: 提高性能的代码修改
-- [ ] :white_check_mark: test: 测试用例添加及修改
-- [ ] :hammer: build: 影响构建系统或外部依赖关系的更改
-- [ ] :construction_worker: ci: 更改 CI 配置文件和脚本
-- [ ] :question: chore: 其它不涉及源码以及测试的修改
+-  [ ] :sparkles: feat: 添加新功能
+-  [ ] :bug: fix: 修复 bug
+-  [ ] :pencil: docs: 对文档进行修改
+-  [ ] :art: style: 对代码语义无影响的格式修改（如去除无用空格、格式化等等修改）
+-  [ ] :recycle: refactor: 代码重构（即不是新增功能，也不是修改 bug 的代码变动）
+-  [ ] :zap: perf: 提高性能的代码修改
+-  [ ] :white_check_mark: test: 测试用例添加及修改
+-  [ ] :hammer: build: 影响构建系统或外部依赖关系的更改
+-  [ ] :construction_worker: ci: 更改 CI 配置文件和脚本
+-  [ ] :question: chore: 其它不涉及源码以及测试的修改
