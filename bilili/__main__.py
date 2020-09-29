@@ -95,7 +95,7 @@ def main():
         "--audio-quality", default=30280,
         choices=[30280, 30232, 30216],
         type=int,
-        help="音频码率 30280:320kbps, 30232:128kbps, 30216:64kbps",
+        help="音频码率等级 30280:320kbps, 30232:128kbps, 30216:64kbps",
     )
     parser.add_argument(
         "--playlist-type", default="dpl", choices=["dpl", "m3u", "no"], help="播放列表类型，支持 dpl 和 m3u，输入 no 不生成播放列表",

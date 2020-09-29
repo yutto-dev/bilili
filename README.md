@@ -91,10 +91,11 @@ bilili <url>
 -  `-d`/`--dir` 指定存储目录，默认为项目根目录
 -  `-q`/`--quality` 指定清晰度，默认为 `120`（4K）
 -  `-n`/`--num-threads` 指定最大下载线程数，默认为 16
--  `-p`/`--episodes` 选集，可通过以下方式进行选择，默认为 `^~$`（全选）
+-  `-p`/`--episodes` 选集，默认为 `^~$`（全选）
 -  `-w`/`--overwrite` 强制覆盖已下载视频
 -  `-c`/`--sess-data` 传入 `cookies` 中的 `SESSDATA`
 -  `-y`/`--yes` 跳过下载询问
+-  `--audio-quality` 指定音频质量等级，默认为 `30280`（320kbps）
 -  `--playlist-type` 指定播放列表类型，支持 `dpl` 和 `m3u` ，默认为 `dpl`，设置为 `no` 即不生成播放列表
 -  `--danmaku` 指定弹幕类型，支持 `xml` 和 `ass`，如果设置为 `no` 则不下载弹幕，默认为 `xml` 弹幕
 -  `--block-size` 分块下载器的块大小，单位为 MB，默认为 128MB，设置为 0 时禁用分块下载
