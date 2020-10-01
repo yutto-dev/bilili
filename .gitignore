@@ -135,6 +135,3 @@ draft/
 # ffmpeg
 ffmpeg/
 tmp/
-
-# plugin
-bilili/plugins/
