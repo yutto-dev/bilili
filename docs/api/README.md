@@ -28,7 +28,7 @@
 
 -  Python 调用： `bilili.api.acg_video.get_acg_video_playurl`
 -  WSGI 调用： <https://bilipi.sigure.xyz/api/v0/acg_video/playurl>
--  参数： `avid`, `bvid`, `cid`, `quality`, `type`
+-  参数： `avid`, `bvid`, `cid`, `quality`, `audio-quality`, `type`
 
 ## 番剧
 
@@ -56,7 +56,7 @@
 
 -  Python 调用： `bilili.api.bangumi.get_bangumi_playurl`
 -  WSGI 调用： <https://bilipi.sigure.xyz/api/v0/bangumi/playurl>
--  参数： `avid`, `bvid`, `episode_id`, `cid`, `quality`, `type`
+-  参数： `avid`, `bvid`, `episode_id`, `cid`, `quality`, `audio_quality`, `type`
 
 ## 弹幕
 

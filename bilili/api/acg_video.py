@@ -1,15 +1,13 @@
 import re
-import json
 
 from bilili.tools import spider, regex_bangumi_ep
-from bilili.quality import gen_quality_sequence, quality_map
+from bilili.quality import gen_quality_sequence, video_quality_map, Media
 from bilili.utils.base import touch_url
 from bilili.api.exceptions import (
     ArgumentsError,
     CannotDownloadError,
     UnknownTypeError,
     UnsupportTypeError,
-    IsPreviewError,
 )
 from bilili.api.exports import export_api
 
@@ -68,10 +66,13 @@ def get_acg_video_list(avid: str = "", bvid: str = ""):
 
 
 @export_api(route="/acg_video/playurl")
-def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality: int = 120, type: str = "dash"):
+def get_acg_video_playurl(
+    avid: str = "", bvid: str = "", cid: str = "", quality: int = 120, audio_quality: int = 30280, type: str = "dash"
+):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
-    quality_sequence = gen_quality_sequence(quality)
+    video_quality_sequence = gen_quality_sequence(quality, type=Media.VIDEO)
+    audio_quality_sequence = gen_quality_sequence(audio_quality, type=Media.AUDIO)
     play_api = (
         "https://api.bilibili.com/x/player/playurl?avid={avid}&bvid={bvid}&cid={cid}&qn={quality}&type=&otype=json"
     )
@@ -81,7 +82,7 @@ def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality
             raise CannotDownloadError(touch_message["code"], touch_message["message"])
 
         accept_quality = touch_message["data"]["accept_quality"]
-        for quality in quality_sequence:
+        for quality in video_quality_sequence:
             if quality in accept_quality:
                 break
 
@@ -94,8 +95,8 @@ def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality
                 "url": segment["url"],
                 "mirrors": segment["backup_url"],
                 "quality": quality,
-                "height": quality_map[quality]["height"],
-                "width": quality_map[quality]["width"],
+                "height": video_quality_map[quality]["height"],
+                "width": video_quality_map[quality]["width"],
                 "size": segment["size"],
                 "type": "flv_segment",
             }
@@ -105,7 +106,7 @@ def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality
         result = []
         play_api_dash = play_api + "&fnver=0&fnval=16&fourk=1"
         touch_message = spider.get(
-            play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=quality_sequence[0])
+            play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=video_quality_sequence[0])
         ).json()
 
         if touch_message["code"] != 0:
@@ -113,23 +114,32 @@ def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality
         if touch_message["data"].get("dash") is None:
             raise UnsupportTypeError("dash")
 
-        accept_quality = set([video["id"] for video in touch_message["data"]["dash"]["video"]])
-        for quality in quality_sequence:
-            if quality in accept_quality:
+        video_accept_quality = set([video["id"] for video in touch_message["data"]["dash"]["video"]])
+        for video_quality in video_quality_sequence:
+            if video_quality in video_accept_quality:
                 break
+        else:
+            video_quality = 120
+
+        audio_accept_quality = set([audio["id"] for audio in touch_message["data"]["dash"]["audio"]])
+        for audio_quality in audio_quality_sequence:
+            if audio_quality in audio_accept_quality:
+                break
+        else:
+            audio_quality = 30280
 
         res = spider.get(play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=quality))
 
         if res.json()["data"]["dash"]["video"]:
             videos = res.json()["data"]["dash"]["video"]
             for video in videos:
-                if video["id"] == quality:
+                if video["id"] == video_quality:
                     result.append(
                         {
                             "id": 1,
                             "url": video["base_url"],
                             "mirrors": video["backup_url"],
-                            "quality": quality,
+                            "quality": video_quality,
                             "height": video["height"],
                             "width": video["width"],
                             "size": touch_url(video["base_url"], spider)[0],
@@ -140,19 +150,20 @@ def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality
         if res.json()["data"]["dash"]["audio"]:
             audios = res.json()["data"]["dash"]["audio"]
             for audio in audios:
-                result.append(
-                    {
-                        "id": 2,
-                        "url": audio["base_url"],
-                        "mirrors": audio["backup_url"],
-                        "quality": quality,
-                        "height": None,
-                        "width": None,
-                        "size": touch_url(audio["base_url"], spider)[0],
-                        "type": "dash_audio",
-                    }
-                )
-                break
+                if audio["id"] == audio_quality:
+                    result.append(
+                        {
+                            "id": 2,
+                            "url": audio["base_url"],
+                            "mirrors": audio["backup_url"],
+                            "quality": audio_quality,
+                            "height": None,
+                            "width": None,
+                            "size": touch_url(audio["base_url"], spider)[0],
+                            "type": "dash_audio",
+                        }
+                    )
+                    break
         return result
     elif type == "mp4":
         play_api_mp4 = play_api + "&platform=html5&high_quality=1"
@@ -165,8 +176,8 @@ def get_acg_video_playurl(avid: str = "", bvid: str = "", cid: str = "", quality
                 "url": play_info["data"]["durl"][0]["url"],
                 "mirrors": [],
                 "quality": play_info["data"]["quality"],
-                "height": quality_map[play_info["data"]["quality"]]["height"],
-                "width": quality_map[play_info["data"]["quality"]]["width"],
+                "height": video_quality_map[play_info["data"]["quality"]]["height"],
+                "width": video_quality_map[play_info["data"]["quality"]]["width"],
                 "size": play_info["data"]["durl"][0]["size"],
                 "type": "mp4_container",
             }

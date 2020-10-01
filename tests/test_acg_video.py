@@ -24,4 +24,4 @@ def test_get_list():
 def test_get_playurl(type):
     bvid = "BV1vZ4y1M7mQ"
     cid = "222190584"
-    play_list = get_acg_video_playurl(bvid=bvid, cid=cid, quality=120, type=type)
+    play_list = get_acg_video_playurl(bvid=bvid, cid=cid, quality=120, audio_quality=30280, type=type)

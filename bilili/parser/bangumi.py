@@ -23,12 +23,13 @@ def get_list(resource_id):
     ]
 
 
-def get_playurl(container, quality):
+def get_playurl(container, quality, audio_quality):
     play_list = get_bangumi_playurl(
         avid=container.meta["avid"],
         episode_id=container.meta["episode_id"],
         cid=container.meta["cid"],
         quality=quality,
+        audio_quality=audio_quality,
         type=container.type,
     )
     return [

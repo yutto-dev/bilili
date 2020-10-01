@@ -1,8 +1,7 @@
 import re
-import json
 
-from bilili.tools import spider, regex_bangumi_ep
-from bilili.quality import gen_quality_sequence, quality_map
+from bilili.tools import spider
+from bilili.quality import gen_quality_sequence, video_quality_map, Media
 from bilili.utils.base import touch_url
 from bilili.api.exceptions import (
     ArgumentsError,
@@ -76,9 +75,16 @@ def get_bangumi_list(episode_id: str = "", season_id: str = ""):
 
 @export_api(route="/bangumi/playurl")
 def get_bangumi_playurl(
-    avid: str = "", bvid: str = "", episode_id: str = "", cid: str = "", quality: int = 120, type: str = "dash"
+    avid: str = "",
+    bvid: str = "",
+    episode_id: str = "",
+    cid: str = "",
+    quality: int = 120,
+    audio_quality: int = 30280,
+    type: str = "dash",
 ):
-    quality_sequence = gen_quality_sequence(quality)
+    video_quality_sequence = gen_quality_sequence(quality, type=Media.VIDEO)
+    audio_quality_sequence = gen_quality_sequence(audio_quality, type=Media.AUDIO)
     play_api = "https://api.bilibili.com/pgc/player/web/playurl?avid={avid}&bvid={bvid}&ep_id={episode_id}&cid={cid}&qn={quality}"
     if type == "flv":
         touch_message = spider.get(
@@ -90,7 +96,7 @@ def get_bangumi_playurl(
             raise IsPreviewError()
 
         accept_quality = touch_message["result"]["accept_quality"]
-        for quality in quality_sequence:
+        for quality in video_quality_sequence:
             if quality in accept_quality:
                 break
 
@@ -103,8 +109,8 @@ def get_bangumi_playurl(
                 "url": segment["url"],
                 "mirrors": segment["backup_url"],
                 "quality": quality,
-                "height": quality_map[quality]["height"],
-                "width": quality_map[quality]["width"],
+                "height": video_quality_map[quality]["height"],
+                "width": video_quality_map[quality]["width"],
                 "size": segment["size"],
                 "type": "flv_segment",
             }
@@ -114,7 +120,9 @@ def get_bangumi_playurl(
         result = []
         play_api_dash = play_api + "&fnver=0&fnval=16&fourk=1"
         play_info = spider.get(
-            play_api_dash.format(avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=quality_sequence[0])
+            play_api_dash.format(
+                avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=video_quality_sequence[0]
+            )
         ).json()
 
         if play_info["code"] != 0:
@@ -124,15 +132,24 @@ def get_bangumi_playurl(
         if play_info["result"]["is_preview"] == 1:
             raise IsPreviewError()
 
-        accept_quality = set([video["id"] for video in play_info["result"]["dash"]["video"]])
-        for quality in quality_sequence:
-            if quality in accept_quality:
+        accept_video_quality = set([video["id"] for video in play_info["result"]["dash"]["video"]])
+        for video_quality in video_quality_sequence:
+            if video_quality in accept_video_quality:
                 break
+        else:
+            video_quality = 120
+
+        accept_audio_quality = set([audio["id"] for audio in play_info["result"]["dash"]["audio"]])
+        for audio_quality in audio_quality_sequence:
+            if audio_quality in accept_audio_quality:
+                break
+        else:
+            audio_quality = 30280
 
         if play_info["result"]["dash"]["video"]:
             videos = play_info["result"]["dash"]["video"]
             for video in videos:
-                if video["id"] == quality:
+                if video["id"] == video_quality:
                     result.append(
                         {
                             "id": 1,
@@ -149,19 +166,20 @@ def get_bangumi_playurl(
         if play_info["result"]["dash"]["audio"]:
             audios = play_info["result"]["dash"]["audio"]
             for audio in audios:
-                result.append(
-                    {
-                        "id": 2,
-                        "url": audio["base_url"],
-                        "mirrors": audio["backup_url"],
-                        "quality": quality,
-                        "height": None,
-                        "width": None,
-                        "size": touch_url(audio["base_url"], spider)[0],
-                        "type": "dash_audio",
-                    }
-                )
-                break
+                if audio["id"] == audio_quality:
+                    result.append(
+                        {
+                            "id": 2,
+                            "url": audio["base_url"],
+                            "mirrors": audio["backup_url"],
+                            "quality": audio_quality,
+                            "height": None,
+                            "width": None,
+                            "size": touch_url(audio["base_url"], spider)[0],
+                            "type": "dash_audio",
+                        }
+                    )
+                    break
         return result
     elif type == "mp4":
         raise UnsupportTypeError("mp4")
