@@ -61,6 +61,7 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
@@ -74,7 +75,11 @@ setup(
     zip_safe=True,
     python_requires=">=3.6.0",
     setup_requires=["wheel"],
-    install_requires=["requests",],
+    install_requires=[
+        "requests",
+    ],
     entry_points={"console_scripts": ["bilili = bilili.__main__:main"]},
-    cmdclass={"upload": UploadCommand,},
+    cmdclass={
+        "upload": UploadCommand,
+    },
 )
