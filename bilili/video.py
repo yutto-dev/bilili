@@ -38,14 +38,17 @@ class BililiContainer:
     def __str__(self):
         quality_description: str = ""
         if self.type == "dash":
-            quality_description = " & ".join(
-                [
-                    {"dash_video": video_quality_map, "dash_audio": audio_quality_map}[media.type][media.quality][
-                        "description"
+            try:
+                quality_description = " & ".join(
+                    [
+                        {"dash_video": video_quality_map, "dash_audio": audio_quality_map}[media.type][media.quality][
+                            "description"
+                        ]
+                        for media in self.medias
                     ]
-                    for media in self.medias
-                ]
-            )
+                )
+            except:
+                quality_description = video_quality_map[self.quality]["description"]
         else:
             quality_description = video_quality_map[self.quality]["description"]
         return "{} 「{}」".format(self.name, quality_description)

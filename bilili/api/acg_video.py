@@ -12,6 +12,25 @@ from bilili.api.exceptions import (
 from bilili.api.exports import export_api
 
 
+@export_api(route="/space_info")
+def get_space_info(spaceid: str = ""):
+    if not (spaceid):
+        raise ArgumentsError("spaceid")
+    info_api = "http://api.bilibili.com/x/space/acc/info?mid={spaceid}&jsonp={jsonp}"
+    res = spider.get(info_api.format(spaceid=spaceid))
+    res_json_data = res.json()["data"]
+    episode_id = ""
+    if res_json_data.get("redirect_url") and regex_bangumi_ep.match(res_json_data["redirect_url"]):
+        episode_id = regex_bangumi_ep.match(res_json_data["redirect_url"]).group("episode_id")
+    return {
+        "avid": str(res_json_data["aid"]),
+        "bvid": res_json_data["bvid"],
+        "picture": res_json_data["pic"],
+        "episode_id": episode_id,
+    }
+
+
+
 @export_api(route="/video_info")
 def get_video_info(avid: str = "", bvid: str = ""):
     if not (avid or bvid):
@@ -49,17 +68,20 @@ def get_acg_video_title(avid: str = "", bvid: str = "") -> str:
 
 
 @export_api(route="/acg_video/list")
-def get_acg_video_list(avid: str = "", bvid: str = ""):
+def get_acg_video_list(avid: str = "", bvid: str = "",name : str = ""):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
     list_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&bvid={bvid}&jsonp=jsonp"
     res = spider.get(list_api.format(avid=avid, bvid=bvid))
+    # print(res.text)
     return [
         # fmt: off
         {
             'id': i + 1,
-            'name': item['part'],
-            'cid': str(item['cid'])
+            'name': name + item['part'],
+            "avid":avid,
+            "bvid":bvid,
+            'cid': str(item['cid']),
         }
         for i, item in enumerate(res.json()['data'])
     ]
@@ -112,59 +134,83 @@ def get_acg_video_playurl(
         if touch_message["code"] != 0:
             raise CannotDownloadError(touch_message["code"], touch_message["message"])
         if touch_message["data"].get("dash") is None:
-            raise UnsupportTypeError("dash")
+            touch_message = spider.get(play_api.format(avid=avid, bvid=bvid, cid=cid, quality=80)).json()
+            if touch_message["code"] != 0:
+                raise CannotDownloadError(touch_message["code"], touch_message["message"])
 
-        video_accept_quality = set([video["id"] for video in touch_message["data"]["dash"]["video"]])
-        for video_quality in video_quality_sequence:
-            if video_quality in video_accept_quality:
-                break
-        else:
-            video_quality = 120
-
-        audio_accept_quality = set([audio["id"] for audio in touch_message["data"]["dash"]["audio"]])
-        for audio_quality in audio_quality_sequence:
-            if audio_quality in audio_accept_quality:
-                break
-        else:
-            audio_quality = 30280
-
-        res = spider.get(play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=quality))
-
-        if res.json()["data"]["dash"]["video"]:
-            videos = res.json()["data"]["dash"]["video"]
-            for video in videos:
-                if video["id"] == video_quality:
-                    result.append(
-                        {
-                            "id": 1,
-                            "url": video["base_url"],
-                            "mirrors": video["backup_url"],
-                            "quality": video_quality,
-                            "height": video["height"],
-                            "width": video["width"],
-                            "size": touch_url(video["base_url"], spider)[0],
-                            "type": "dash_video",
-                        }
-                    )
+            accept_quality = touch_message["data"]["accept_quality"]
+            for quality in video_quality_sequence:
+                if quality in accept_quality:
                     break
-        if res.json()["data"]["dash"]["audio"]:
-            audios = res.json()["data"]["dash"]["audio"]
-            for audio in audios:
-                if audio["id"] == audio_quality:
-                    result.append(
-                        {
-                            "id": 2,
-                            "url": audio["base_url"],
-                            "mirrors": audio["backup_url"],
-                            "quality": audio_quality,
-                            "height": None,
-                            "width": None,
-                            "size": touch_url(audio["base_url"], spider)[0],
-                            "type": "dash_audio",
-                        }
-                    )
+
+            play_url = play_api.format(avid=avid, bvid=bvid, cid=cid, quality=quality)
+            res = spider.get(play_url)
+
+            return [
+                {
+                    "id": i + 1,
+                    "url": segment["url"],
+                    "mirrors": segment["backup_url"],
+                    "quality": quality,
+                    "height": video_quality_map[quality]["height"],
+                    "width": video_quality_map[quality]["width"],
+                    "size": segment["size"],
+                    "type": "flv_segment",
+                }
+                for i, segment in enumerate(res.json()["data"]["durl"])
+            ]
+        else:
+            video_accept_quality = set([video["id"] for video in touch_message["data"]["dash"]["video"]])
+            for video_quality in video_quality_sequence:
+                if video_quality in video_accept_quality:
                     break
-        return result
+            else:
+                video_quality = 120
+
+            audio_accept_quality = set([audio["id"] for audio in touch_message["data"]["dash"]["audio"]])
+            for audio_quality in audio_quality_sequence:
+                if audio_quality in audio_accept_quality:
+                    break
+            else:
+                audio_quality = 30280
+
+            res = spider.get(play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=quality))
+
+            if res.json()["data"]["dash"]["video"]:
+                videos = res.json()["data"]["dash"]["video"]
+                for video in videos:
+                    if video["id"] == video_quality:
+                        result.append(
+                            {
+                                "id": 1,
+                                "url": video["base_url"],
+                                "mirrors": video["backup_url"],
+                                "quality": video_quality,
+                                "height": video["height"],
+                                "width": video["width"],
+                                "size": touch_url(video["base_url"], spider)[0],
+                                "type": "dash_video",
+                            }
+                        )
+                        break
+            if res.json()["data"]["dash"]["audio"]:
+                audios = res.json()["data"]["dash"]["audio"]
+                for audio in audios:
+                    if audio["id"] == audio_quality:
+                        result.append(
+                            {
+                                "id": 2,
+                                "url": audio["base_url"],
+                                "mirrors": audio["backup_url"],
+                                "quality": audio_quality,
+                                "height": None,
+                                "width": None,
+                                "size": touch_url(audio["base_url"], spider)[0],
+                                "type": "dash_audio",
+                            }
+                        )
+                        break
+            return result
     elif type == "mp4":
         play_api_mp4 = play_api + "&platform=html5&high_quality=1"
         play_info = spider.get(play_api_mp4.format(avid=avid, bvid=bvid, cid=cid, quality=120)).json()
