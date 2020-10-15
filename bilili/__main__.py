@@ -9,6 +9,7 @@ from bilili.utils.playlist import Dpl, M3u
 from bilili.utils.thread import ThreadPool, Flag
 from bilili.utils.console import (Console, Font, Line, String, ProgressBar,
                                   List, DynamicSymbol, ColorString)
+
 from bilili.utils.subtitle import Subtitle
 from bilili.utils.attrdict import AttrDict
 from bilili.tools import spider, ass, regex
@@ -86,7 +87,6 @@ def cmdparser():
     parser.add_argument("-n", "--num-threads", default=16, type=int, help="最大下载线程数")
     parser.add_argument("-p", "--episodes", default="^~$", help="选集")
     parser.add_argument("-w", "--overwrite", action="store_true", help="强制覆盖已下载视频")
-    parser.add_argument("-c", "--sess-data", default=None  , help="输入 cookies")
     parser.add_argument("-y", "--yes", action="store_true", help="跳过下载询问")
     parser.add_argument(
         "--audio-quality", default=30280,
@@ -113,6 +113,7 @@ def cmdparser():
 def main():
 
     args = cmdparser();
+
     cookieFile = "cookie.txt"
     if(args.sess_data == None):
         if (os.path.exists(cookieFile)):
@@ -123,7 +124,7 @@ def main():
         file = open(cookieFile, mode='w')
         file.write(args.sess_data)
         file.close()
-        
+
     cookies = {"SESSDATA": args.sess_data}
     config = {
         "url": args.url,
@@ -132,7 +133,7 @@ def main():
         "audio_quality": args.audio_quality,
         "episodes": args.episodes,
         "playlist_type": args.playlist_type,
-        "playlist_path_type": "RP",
+        "playlist_path_type": "AP" if args.abs_path else "RP",
         "overwrite": args.overwrite,
         "cookies": cookies,
         "type": args.type.lower(),
@@ -216,6 +217,7 @@ def main():
     episodes = parse_episodes(config["episodes"], len(containers))
     containers, containers_need_filter = [], containers
     for container in containers_need_filter:
+
         if container.id not in episodes:
             container._.downloaded = True
             container._.merged = True
@@ -250,12 +252,13 @@ def main():
 
         # 写入播放列表
         if playlist is not None:
-            playlist.write_path(container.path)
+            playlist.write_path(container.path,container.name if container.video_name =="" else container.video_name+"_"+container.name)
 
         # 下载弹幕
         if bili_type == "acg_video":
             for sub_info in get_subtitle(avid=resource_id.avid, bvid=resource_id.bvid, cid=container.meta['cid']):
                 sub_path = '{}_{}.srt'.format(os.path.splitext(container.path)[0], sub_info['lang'])
+                print(sub_path)
                 subtitle = Subtitle(sub_path)
                 for sub_line in sub_info['lines']:
                     subtitle.write_line(sub_line["content"], sub_line["from"], sub_line["to"])
@@ -270,6 +273,7 @@ def main():
             ass.convert_danmaku_from_xml(
                 os.path.splitext(container.path)[0] + ".xml", container.height, container.width,
             )
+
     if playlist is not None:
         playlist.flush()
 
@@ -278,18 +282,18 @@ def main():
         # 状态检查与校正
         for i, container in enumerate(containers):
             container_downloaded = not container.check_needs_download(args.overwrite)
-            symbol = " " if container_downloaded else "*"
+            symbol = "#" if container_downloaded else "*"
             if container_downloaded:
                 container._.merged = True
             print("{} {}".format(symbol, str(container)))
             for media in container.medias:
                 media_downloaded = not media.check_needs_download(args.overwrite) or container_downloaded
-                symbol = " " if media_downloaded else "*"
+                symbol = "#" if media_downloaded else "*"
                 if not container_downloaded:
                     print("    {} {}".format(symbol, media.name))
                 for block in media.blocks:
                     block_downloaded = not block.check_needs_download(args.overwrite) or media_downloaded
-                    symbol = " " if block_downloaded else "*"
+                    symbol = "#" if block_downloaded else "*"
                     block._.downloaded = block_downloaded
                     if not media_downloaded and args.debug:
                         print("        {} {}".format(symbol, block.name))
@@ -299,7 +303,7 @@ def main():
         if args.yes:
             answer = None
             while answer is None:
-                result = input("以上标 * 为需要进行下载的视频，是否立刻进行下载？[Y/n]")
+                result = input("以上标 # 为需要进行下载的视频，是否立刻进行下载？[Y/n]")
                 if result == "" or result[0].lower() == "y":
                     answer = True
                 elif result[0].lower() == "n":

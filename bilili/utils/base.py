@@ -77,13 +77,13 @@ def touch_url(url, spider):
             break
     return size, resumable
 
-
-def repair_filename(filename):
     """ 修复不合法的文件名 """
-    def to_full_width_chr(matchobj):
+def to_full_width_chr(matchobj):
         char = matchobj.group(0)
         full_width_char = chr(ord(char) + ord('？') - ord('?'))
         return full_width_char
+
+def repair_filename(filename):
     # 路径非法字符，转全角
     regex_path = re.compile(r'[\\/:*?"<>|]')
     # 空格类字符，转空格
@@ -96,8 +96,9 @@ def repair_filename(filename):
     filename = regex_path.sub(to_full_width_chr, filename)
     filename = regex_spaces.sub(' ', filename)
     filename = regex_non_printable.sub('', filename)
+    filename =filename.replace(".","")
     filename = filename.strip()
-    filename = filename if filename else 'file_{:04}'.format(random.randint(0, 9999))
+    # filename = filename if filename else 'file_{:04}'.format(random.randint(0, 9999))
     return filename
 
 

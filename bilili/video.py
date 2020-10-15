@@ -8,6 +8,7 @@ from bilili.handlers.status import DownloaderStatus
 from bilili.quality import video_quality_map, audio_quality_map
 from bilili.tools import global_status
 from bilili.utils.base import repair_filename
+from bilili.utils.base import touch_dir
 
 
 class BililiContainer:
@@ -18,12 +19,16 @@ class BililiContainer:
     * 包含完整的一个 mp4
     """
 
-    def __init__(self, id, name, meta, type="dash", video_dir=""):
+    def __init__(self, id, name,meta,video_name="",type="dash", video_dir=""):
 
         self.id = id
         self.name = name
         self.meta = meta
         self.type = type
+        self.video_name =repair_filename(video_name)
+        if(self.video_name!=""):  ##添加一个path 用来增加里面的地址
+            video_dir = touch_dir(os.path.join(video_dir, self.video_name))
+
         self.path = os.path.join(video_dir, "{}.mp4".format(repair_filename(self.name)))
 
         self.medias = []

@@ -68,7 +68,7 @@ def get_acg_video_title(avid: str = "", bvid: str = "") -> str:
 
 
 @export_api(route="/acg_video/list")
-def get_acg_video_list(avid: str = "", bvid: str = "",name : str = ""):
+def get_acg_video_list(avid: str = "", bvid: str = "",video_name : str = ""):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
     list_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&bvid={bvid}&jsonp=jsonp"
@@ -78,9 +78,10 @@ def get_acg_video_list(avid: str = "", bvid: str = "",name : str = ""):
         # fmt: off
         {
             'id': i + 1,
-            'name': name + item['part'],
-            "avid":avid,
-            "bvid":bvid,
+            'name': item['part'],
+            'video_name': video_name,
+            "avid": avid,
+            "bvid": bvid,
             'cid': str(item['cid']),
         }
         for i, item in enumerate(res.json()['data'])
@@ -89,15 +90,14 @@ def get_acg_video_list(avid: str = "", bvid: str = "",name : str = ""):
 
 @export_api(route="/acg_video/playurl")
 def get_acg_video_playurl(
-    avid: str = "", bvid: str = "", cid: str = "", quality: int = 120, audio_quality: int = 30280, type: str = "dash"
-):
+        avid: str = "", bvid: str = "", cid: str = "", quality: int = 120, audio_quality: int = 30280,
+        type: str = "dash"):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
     video_quality_sequence = gen_quality_sequence(quality, type=Media.VIDEO)
     audio_quality_sequence = gen_quality_sequence(audio_quality, type=Media.AUDIO)
     play_api = (
-        "https://api.bilibili.com/x/player/playurl?avid={avid}&bvid={bvid}&cid={cid}&qn={quality}&type=&otype=json"
-    )
+        "https://api.bilibili.com/x/player/playurl?avid={avid}&bvid={bvid}&cid={cid}&qn={quality}&type=&otype=json")
     if type == "flv":
         touch_message = spider.get(play_api.format(avid=avid, bvid=bvid, cid=cid, quality=80)).json()
         if touch_message["code"] != 0:
@@ -133,33 +133,8 @@ def get_acg_video_playurl(
 
         if touch_message["code"] != 0:
             raise CannotDownloadError(touch_message["code"], touch_message["message"])
-        if touch_message["data"].get("dash") is None:
-            touch_message = spider.get(play_api.format(avid=avid, bvid=bvid, cid=cid, quality=80)).json()
-            if touch_message["code"] != 0:
-                raise CannotDownloadError(touch_message["code"], touch_message["message"])
 
-            accept_quality = touch_message["data"]["accept_quality"]
-            for quality in video_quality_sequence:
-                if quality in accept_quality:
-                    break
-
-            play_url = play_api.format(avid=avid, bvid=bvid, cid=cid, quality=quality)
-            res = spider.get(play_url)
-
-            return [
-                {
-                    "id": i + 1,
-                    "url": segment["url"],
-                    "mirrors": segment["backup_url"],
-                    "quality": quality,
-                    "height": video_quality_map[quality]["height"],
-                    "width": video_quality_map[quality]["width"],
-                    "size": segment["size"],
-                    "type": "flv_segment",
-                }
-                for i, segment in enumerate(res.json()["data"]["durl"])
-            ]
-        else:
+        if touch_message["data"].get("dash") is not None:
             video_accept_quality = set([video["id"] for video in touch_message["data"]["dash"]["video"]])
             for video_quality in video_quality_sequence:
                 if video_quality in video_accept_quality:
@@ -211,6 +186,9 @@ def get_acg_video_playurl(
                         )
                         break
             return result
+        else:
+            get_acg_video_playurl(avid=avid, bvid=bvid, cid=cid, quality=quality, audio_quality=audio_quality,
+                                  type="flv")
     elif type == "mp4":
         play_api_mp4 = play_api + "&platform=html5&high_quality=1"
         play_info = spider.get(play_api_mp4.format(avid=avid, bvid=bvid, cid=cid, quality=120)).json()

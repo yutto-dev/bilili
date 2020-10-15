@@ -16,7 +16,6 @@ class Playlist(Text):
             path = os.path.abspath(path)
         elif self.path_type == 'RP':
             path = os.path.relpath(path, start=os.path.dirname(self.path))
-
         return path
 
     def write_path(self, path):

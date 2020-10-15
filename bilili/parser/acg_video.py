@@ -8,6 +8,7 @@ def get_title(resource_id):
 
 def get_list(resource_id):
     video_list = get_acg_video_list(avid=resource_id.avid, bvid=resource_id.bvid)
+
     return [
         {
             "id": video["id"],
