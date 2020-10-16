@@ -187,8 +187,32 @@ def get_acg_video_playurl(
                         break
             return result
         else:
-            get_acg_video_playurl(avid=avid, bvid=bvid, cid=cid, quality=quality, audio_quality=audio_quality,
-                                  type="flv")
+            touch_message = spider.get(play_api.format(avid=avid, bvid=bvid, cid=cid, quality=80)).json()
+            if touch_message["code"] != 0:
+                raise CannotDownloadError(touch_message["code"], touch_message["message"])
+
+            accept_quality = touch_message["data"]["accept_quality"]
+            for quality in video_quality_sequence:
+                if quality in accept_quality:
+                    break
+
+            play_url = play_api.format(avid=avid, bvid=bvid, cid=cid, quality=quality)
+            res = spider.get(play_url)
+
+            return [
+                {
+                    "id": i + 1,
+                    "url": segment["url"],
+                    "mirrors": segment["backup_url"],
+                    "quality": quality,
+                    "height": video_quality_map[quality]["height"],
+                    "width": video_quality_map[quality]["width"],
+                    "size": segment["size"],
+                    "type": "flv_segment",
+                }
+                for i, segment in enumerate(res.json()["data"]["durl"])
+            ]
+
     elif type == "mp4":
         play_api_mp4 = play_api + "&platform=html5&high_quality=1"
         play_info = spider.get(play_api_mp4.format(avid=avid, bvid=bvid, cid=cid, quality=120)).json()

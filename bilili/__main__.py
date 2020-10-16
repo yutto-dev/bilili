@@ -68,7 +68,9 @@ def parse_episodes(episodes_str: str, total: int):
     return episodes
 
 
-def cmdparser():
+
+def main():
+
     """ 解析命令行参数并调用相关模块进行下载 """
     parser = argparse.ArgumentParser(description="bilili B 站视频、弹幕下载器")
     parser.add_argument("url", help="视频主页地址")
@@ -87,6 +89,7 @@ def cmdparser():
     parser.add_argument("-n", "--num-threads", default=16, type=int, help="最大下载线程数")
     parser.add_argument("-p", "--episodes", default="^~$", help="选集")
     parser.add_argument("-w", "--overwrite", action="store_true", help="强制覆盖已下载视频")
+    parser.add_argument("-c", "--sess-data", default=None, help="输入 cookies")
     parser.add_argument("-y", "--yes", action="store_true", help="跳过下载询问")
     parser.add_argument(
         "--audio-quality", default=30280,
@@ -107,25 +110,12 @@ def cmdparser():
     parser.add_argument("--use-mirrors", action="store_true", help="启用从多个镜像下载功能")
     parser.add_argument("--disable-proxy", action="store_true", help="禁用系统代理")
     parser.add_argument("--debug", action="store_true", help="debug 模式")
-    return parser.parse_args()
 
-
-def main():
-
-    args = cmdparser();
-
-    cookieFile = "cookie.txt"
-    if(args.sess_data == None):
-        if (os.path.exists(cookieFile)):
-            file = open(cookieFile, mode='r')
-            args.sess_data =file.read()
-            file.close()
-    else:
-        file = open(cookieFile, mode='w')
-        file.write(args.sess_data)
-        file.close()
+    args =parser.parse_args();
 
     cookies = {"SESSDATA": args.sess_data}
+
+    # playlist_path_type  这里修改默认的playlist 调用地址是相对路径不是绝对路径 即 “AP PR”调换
     config = {
         "url": args.url,
         "dir": args.dir,
@@ -237,7 +227,6 @@ def main():
         print(
             "{:02}/{:02} parsing segments info...".format(i + 1, len(containers)), end="\r",
         )
-
         # 解析视频 url
         try:
             for playinfo in get_playurl(container, config["quality"], config["audio_quality"]):
@@ -258,7 +247,6 @@ def main():
         if bili_type == "acg_video":
             for sub_info in get_subtitle(avid=resource_id.avid, bvid=resource_id.bvid, cid=container.meta['cid']):
                 sub_path = '{}_{}.srt'.format(os.path.splitext(container.path)[0], sub_info['lang'])
-                print(sub_path)
                 subtitle = Subtitle(sub_path)
                 for sub_line in sub_info['lines']:
                     subtitle.write_line(sub_line["content"], sub_line["from"], sub_line["to"])
@@ -299,8 +287,7 @@ def main():
                         print("        {} {}".format(symbol, block.name))
 
         # 询问是否下载，通过参数 -y 可以跳过
-        # if not args.yes:
-        if args.yes:
+        if not args.yes:
             answer = None
             while answer is None:
                 result = input("以上标 # 为需要进行下载的视频，是否立刻进行下载？[Y/n]")

@@ -19,7 +19,7 @@ def get_list(resource_id):
     return [
         {
             "id": video["id"],
-            "name": video["name"],
+            "name": video["name"] if video["name"] !="" else video["video_name"],
             "video_name": video["video_name"],
             # fmt: off
             "meta": {

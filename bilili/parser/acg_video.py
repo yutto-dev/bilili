@@ -12,7 +12,7 @@ def get_list(resource_id):
     return [
         {
             "id": video["id"],
-            "name": video["name"],
+            "name": video["name"] if video["name"] !="" else "video",
             # fmt: off
             "meta": {
                 "avid": resource_id.avid,
@@ -33,6 +33,7 @@ def get_playurl(container, quality, audio_quality):
         audio_quality=audio_quality,
         type=container.type,
     )
+    # print(play_list)
     return [
         {
             "id": play_info["id"],

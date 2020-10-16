@@ -25,10 +25,9 @@ class BililiContainer:
         self.name = name
         self.meta = meta
         self.type = type
-        self.video_name =repair_filename(video_name)
-        if(self.video_name!=""):  ##添加一个path 用来增加里面的地址
+        self.video_name =repair_filename(video_name)  ##这里是为了增加二级目录，去掉
+        if(self.video_name!=""):  #是否存在二级目录判定
             video_dir = touch_dir(os.path.join(video_dir, self.video_name))
-
         self.path = os.path.join(video_dir, "{}.mp4".format(repair_filename(self.name)))
 
         self.medias = []
