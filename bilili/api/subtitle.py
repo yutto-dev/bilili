@@ -3,6 +3,7 @@ import json
 
 from bilili.tools import spider
 from bilili.api.exports import export_api
+from bilili.api.exceptions import ArgumentsError
 
 
 @export_api(route="/subtitle")
