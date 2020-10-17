@@ -4,11 +4,12 @@ import argparse
 import os
 import time
 
+from typing import List
 from bilili.utils.base import repair_filename, touch_dir, touch_file, size_format
 from bilili.utils.playlist import Dpl, M3u
 from bilili.utils.thread import ThreadPool, Flag
 from bilili.utils.console import (Console, Font, Line, String, ProgressBar,
-                                  List, DynamicSymbol, ColorString)
+                                  LineList, DynamicSymbol, ColorString)
 from bilili.utils.subtitle import Subtitle
 from bilili.utils.attrdict import AttrDict
 from bilili.tools import spider, ass, regex
@@ -22,7 +23,7 @@ from bilili.api.exceptions import (ArgumentsError, CannotDownloadError,
                                    UnknownTypeError, UnsupportTypeError, IsPreviewError)
 
 
-def parse_episodes(episodes_str: str, total: int):
+def parse_episodes(episodes_str: str, total: int) -> List[int]:
     """ 将选集字符串转为列表 """
 
     def reslove_negetive(value):
@@ -355,7 +356,7 @@ def main():
         console = Console(debug=args.debug)
         console.add_component(Line(center=Font(char_a="𝓪", char_A="𝓐"), fillchar=" "))
         console.add_component(Line(left=ColorString(fore="cyan"), fillchar=" "))
-        console.add_component(List(Line(left=String(), right=String(), fillchar="-")))
+        console.add_component(LineList(Line(left=String(), right=String(), fillchar="-")))
         console.add_component(
             Line(
                 left=ColorString(fore="green", back="white", subcomponent=ProgressBar(symbols=" ▏▎▍▌▋▊▉█", width=65),),
@@ -364,7 +365,7 @@ def main():
             )
         )
         console.add_component(Line(left=ColorString(fore="blue"), fillchar=" "))
-        console.add_component(List(Line(left=String(), right=DynamicSymbol(symbols="🌑🌒🌓🌔🌕🌖🌗🌘"), fillchar=" ")))
+        console.add_component(LineList(Line(left=String(), right=DynamicSymbol(symbols="🌑🌒🌓🌔🌕🌖🌗🌘"), fillchar=" ")))
         console.add_component(
             Line(
                 left=ColorString(fore="yellow", back="white", subcomponent=ProgressBar(symbols=" ▏▎▍▌▋▊▉█", width=65),),
