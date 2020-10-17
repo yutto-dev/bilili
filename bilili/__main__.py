@@ -70,6 +70,10 @@ def parse_episodes(episodes_str: str, total: int):
 def main():
     """ 解析命令行参数并调用相关模块进行下载 """
 
+    if (sys.version_info.major, sys.version_info.minor) < (3, 8):
+        print("请使用 Python3.8 及以上版本哦～")
+        sys.exit(1)
+
     parser = argparse.ArgumentParser(description="bilili B 站视频、弹幕下载器")
     parser.add_argument("url", help="视频主页地址")
     parser.add_argument(
