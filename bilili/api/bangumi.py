@@ -155,7 +155,7 @@ def get_bangumi_playurl(
                             "id": 1,
                             "url": video["base_url"],
                             "mirrors": video["backup_url"],
-                            "quality": quality,
+                            "quality": video_quality,
                             "height": video["height"],
                             "width": video["width"],
                             "size": touch_url(video["base_url"], spider)[0],

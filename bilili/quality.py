@@ -12,57 +12,57 @@ audio_quality_sequence_default = [30280, 30232, 30216]
 
 video_quality_map = {
     120: {
-        "description": "超清 4K",
+        "description": "4K 超清",
         "width": 4096,
         "height": 2160,
     },
     116: {
-        "description": "高清 1080P60",
+        "description": "1080P 60帧",
         "width": 1920,
         "height": 1080,
     },
     112: {
-        "description": "高清 1080P+",
+        "description": "1080P 高码率",
         "width": 1920,
         "height": 1080,
     },
     80: {
-        "description": "高清 1080P",
+        "description": "1080P 高清",
         "width": 1920,
         "height": 1080,
     },
     74: {
-        "description": "高清 720P60",
+        "description": "720P 60帧",
         "width": 1280,
         "height": 720,
     },
     64: {
-        "description": "高清 720P",
+        "description": "720P 高清",
         "width": 1280,
         "height": 720,
     },
     32: {
-        "description": "清晰 480P",
+        "description": "480P 清晰",
         "width": 640,
         "height": 480,
     },
     16: {
-        "description": "流畅 360P",
+        "description": "360P 流畅",
         "width": 480,
         "height": 360,
     },
     6: {
-        "description": "极速 240P",
+        "description": "240P 极速",
         "width": 320,
         "height": 240,
     },
     208: {
-        "description": "高清 1080P",
+        "description": "1080P 高清",
         "width": 1920,
         "height": 1080,
     },
     192: {
-        "description": "高清 720P",
+        "description": "720P 高清",
         "width": 1280,
         "height": 720,
     },
