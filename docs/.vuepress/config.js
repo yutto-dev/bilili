@@ -71,7 +71,6 @@ module.exports = {
       { text: '指南', link: '/guide/' },
       { text: '参数', link: '/cli/' },
       { text: 'API', link: '/api/' },
-      { text: '在线解析', link: '/online-parse/' },
       {
         text: '支持我',
         items: [

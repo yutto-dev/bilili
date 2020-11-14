@@ -1,6 +1,6 @@
 # API <Badge type="tip" text="v0"/> <Badge type="warning" text="beta"/>
 
-除去基本的下载功能，你还可以通过我的一些 API 完成更多操作。我提供了可以通过 Python 直接调用的 `bilili.api` 模块，同时你也可以直接使用 WSGI 方式来调用，该 API 部署在 Vercel 上，你可以通过 <https://bilipi.sigure.xyz/api/v0> 来调用。比如这个文档里的 B 站视频外链以及[在线解析功能](../online-parse/)就是由后者驱动的。
+除去基本的下载功能，你还可以通过我的一些 API 完成更多操作。我提供了可以通过 Python 直接调用的 `bilili.api` 模块，同时你也可以直接使用 WSGI 方式来调用，该 API 部署在 Vercel 上，你可以通过 <https://bilipi.sigure.xyz/api/v0> 来调用。
 
 ## 投稿视频
 
