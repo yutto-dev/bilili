@@ -4,12 +4,10 @@ import time
 from bilili.utils.base import size_format
 from bilili.utils.thread import ThreadPool, Flag
 from bilili.utils.console import Console, Font, Line, String, ProgressBar, LineList, DynamicSymbol, ColorString
-from bilili.tools import spider, global_status
-from bilili.handlers.downloader import RemoteFile
-from bilili.handlers.merger import MergingFile
+from bilili.tools import spider
 
 
-class Downloader:
+class BiliDownloader:
     def __init__(self, containers, overwrite=False, debug=False, yes=False, num_threads=16, use_mirrors=False):
         self.overwrite = overwrite
         self.yes = yes

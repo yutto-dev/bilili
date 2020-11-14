@@ -97,6 +97,7 @@ def repair_filename(filename):
     filename = regex_spaces.sub(' ', filename)
     filename = regex_non_printable.sub('', filename)
     filename = filename.strip()
+    # TODO: 不应当使用随机，应当保证唯一
     filename = filename if filename else 'file_{:04}'.format(random.randint(0, 9999))
     return filename
 

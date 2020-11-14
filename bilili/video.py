@@ -11,12 +11,7 @@ from bilili.utils.base import repair_filename
 
 
 class BililiContainer:
-    """bilibili 媒体容器类
-    即 B 站上的单个视频，其中可能包含多个媒体单元
-    * 包含多个 flv 片段
-    * 包含 m4s 的视频与音频流
-    * 包含完整的一个 mp4
-    """
+    """ bilibili 媒体容器类 """
 
     def __init__(self, id, name, meta, type="dash", video_dir=""):
 

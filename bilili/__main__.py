@@ -3,7 +3,7 @@ import sys
 from bilili.utils.attrdict import AttrDict
 from bilili.bootstrap.cli import parse_args
 from bilili.bootstrap.parser import parse_containers
-from bilili.bootstrap.downloader import Downloader
+from bilili.bootstrap.downloader import BiliDownloader
 
 if __name__ == "__main__":
     if (sys.version_info.major, sys.version_info.minor) < (3, 8):
@@ -17,7 +17,7 @@ if __name__ == "__main__":
         containers.extend(parse_containers(options))
 
     if containers:
-        downloader = Downloader(
+        downloader = BiliDownloader(
             containers,
             overwrite=global_options.overwrite,
             debug=global_options.debug,
