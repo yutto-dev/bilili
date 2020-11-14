@@ -222,7 +222,7 @@ bilili <url> -c "d8bc7493%2C2843925707%2C08c3e*81"
 
 B 站只提供 `xml` 格式的弹幕，因此我默认会下载 `xml` 格式的弹幕，但本地播放器一般不支持 B 站提供的默认弹幕，因此需要你手动转换，比如使用 [us-danmaku](https://tiansh.github.io/us-danmaku/bilibili/) 在线转换。
 
-当然我也可以帮你自动转换咯，指定值为 `ass` 就好啦，该功能依赖于 [danmaku2ass](https://github.com/m13253/danmaku2ass) 啦，在需要该功能的时候我从 GitHub 请她来帮忙。
+其实我也可以帮你自动转换哒，只需要指定值为 `ass` 就好啦。
 
 当然指定为 `no` 就是不需要弹幕咯。
 
