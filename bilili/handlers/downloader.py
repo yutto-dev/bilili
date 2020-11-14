@@ -6,7 +6,7 @@ from bilili.handlers.base import Handler
 
 
 class RemoteFile(Handler):
-    """ 远程文件类
+    """远程文件类
 
     网络 url 与本地文件的绑定，可调用 download 进行下载
     download 支持断点续传
@@ -69,7 +69,11 @@ class RemoteFile(Handler):
                                 self.updated(self)
                         else:
                             f.write(res.content)
-                    downloaded = True
+                    # size 检验，因为有时明明没下完仍然会停止下载
+                    if self.range[1] and (self.range[1] - self.range[0] + 1 != self.size):
+                        downloaded = False
+                    else:
+                        downloaded = True
                 except requests.exceptions.RequestException:
                     print("[warn] file {}, request timeout, trying again...".format(self.name))
 
