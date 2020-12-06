@@ -50,7 +50,7 @@
 
 ::: details 示例
 
-比如 MacOS 可以使用
+比如 macOS 可以使用
 
 ```bash
 brew install ffmpeg
