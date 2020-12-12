@@ -35,6 +35,7 @@
 
 感谢各位赞助者的资金援助
 
-<GithubUser username="Schwarzer251"/>
+<GithubUser username="Uc207Pr4f57t9-251"/>
+<GithubUser username="StarDrewer"/>
 
 ## 以及你的支持～
