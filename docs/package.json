@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@vssue/api-github-v3": "^1.4.7",
-    "@vssue/vuepress-plugin-vssue": "^1.4.6",
+    "@vssue/vuepress-plugin-vssue": "^1.4.7",
     "@vuepress/plugin-back-to-top": "^1.8.0",
     "dplayer": "^1.26.0",
     "vuepress": "^1.8.0",
