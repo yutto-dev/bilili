@@ -25,7 +25,9 @@ class MergingFile(Handler):
             ffmpeg.join_videos(self.src_path_list, self.dst_path)
         elif self.type == "dash":
             if len(self.src_path_list) == 2:
-                ffmpeg.join_video_audio(self.src_path_list[0], self.src_path_list[1], self.dst_path)
+                ffmpeg.join_video_audio(
+                    self.src_path_list[0], self.src_path_list[1], self.dst_path
+                )
             else:
                 ffmpeg.convert(self.src_path_list[0], self.dst_path)
         else:

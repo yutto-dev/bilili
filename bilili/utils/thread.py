@@ -32,7 +32,7 @@ class Task:
 
 
 class ThreadPool:
-    """ 线程池类
+    """线程池类
     快速创建多个相同任务的线程池
     """
 

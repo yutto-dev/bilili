@@ -17,7 +17,6 @@ from bilili.tools import global_status
 from bilili.handlers.downloader import RemoteFile
 from bilili.handlers.merger import MergingFile
 from bilili.video import BililiContainer
-from bilili.api.subtitle import get_subtitle
 from bilili.api.danmaku import get_danmaku
 from bilili.api.exceptions import (ArgumentsError, CannotDownloadError,
                                    UnknownTypeError, UnsupportTypeError, IsPreviewError)
@@ -174,10 +173,10 @@ def main():
         sys.exit(1)
 
     if resource_id.avid or resource_id.bvid:
-        from bilili.parser.acg_video import get_title, get_list, get_playurl
+        from bilili.parser.acg_video import get_title, get_list, get_playurl, get_subtitle
         bili_type = "acg_video"
     elif resource_id.season_id or resource_id.episode_id:
-        from bilili.parser.bangumi import get_title, get_list, get_playurl
+        from bilili.parser.bangumi import get_title, get_list, get_playurl, get_subtitle
         bili_type = "bangumi"
 
     # 获取标题
@@ -234,13 +233,12 @@ def main():
         if playlist is not None:
             playlist.write_path(container.path)
 
-        # 下载弹幕
-        if bili_type == "acg_video":
-            for sub_info in get_subtitle(avid=resource_id.avid, bvid=resource_id.bvid, cid=container.meta['cid']):
-                sub_path = '{}_{}.srt'.format(os.path.splitext(container.path)[0], sub_info['lang'])
-                subtitle = Subtitle(sub_path)
-                for sub_line in sub_info['lines']:
-                    subtitle.write_line(sub_line["content"], sub_line["from"], sub_line["to"])
+        # 下载字幕
+        for sub_info in get_subtitle(container):
+            sub_path = '{}_{}.srt'.format(os.path.splitext(container.path)[0], sub_info['lang'])
+            subtitle = Subtitle(sub_path)
+            for sub_line in sub_info['lines']:
+                subtitle.write_line(sub_line["content"], sub_line["from"], sub_line["to"])
 
         # 生成弹幕
         if args.danmaku != "no":

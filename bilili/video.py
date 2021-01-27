@@ -40,9 +40,9 @@ class BililiContainer:
         if self.type == "dash":
             quality_description = " & ".join(
                 [
-                    {"dash_video": video_quality_map, "dash_audio": audio_quality_map}[media.type][media.quality][
-                        "description"
-                    ]
+                    {"dash_video": video_quality_map, "dash_audio": audio_quality_map}[
+                        media.type
+                    ][media.quality]["description"]
                     for media in self.medias
                 ]
             )
@@ -66,7 +66,19 @@ class BililiMedia:
     从 B 站直接获取的可下载的媒体单元，可能是 flv、mp4、m4s
     """
 
-    def __init__(self, id, url, quality, size, height, width, container, mirrors=[], type="dash_video", block_size=0):
+    def __init__(
+        self,
+        id,
+        url,
+        quality,
+        size,
+        height,
+        width,
+        container,
+        mirrors=[],
+        type="dash_video",
+        block_size=0,
+    ):
 
         self.id = id
         self.quality = quality
@@ -110,15 +122,25 @@ class BililiMedia:
         blocks = []
         total_size = self._.total_size
         if block_size:
-            block_range_list = [(i, i + block_size - 1) for i in range(0, total_size, block_size)]
+            block_range_list = [
+                (i, i + block_size - 1) for i in range(0, total_size, block_size)
+            ]
             if total_size % block_size != 0:
-                block_range_list[-1] = (total_size // block_size * block_size, total_size - 1)
+                block_range_list[-1] = (
+                    total_size // block_size * block_size,
+                    total_size - 1,
+                )
         else:
             block_range_list = [(0, total_size - 1)]
         for i, block_range in enumerate(block_range_list):
             blocks.append(
                 BililiBlock(
-                    id=i, url=self.url, mirrors=self.mirrors, media=self, block_size=block_size, range=block_range
+                    id=i,
+                    url=self.url,
+                    mirrors=self.mirrors,
+                    media=self,
+                    block_size=block_size,
+                    range=block_range,
                 )
             )
         assert self._.total_size == total_size, "重新设置的 total size 与原来值不匹配"
@@ -147,8 +169,14 @@ class BililiBlock:
         self.media = media
         self.range = range
         # 假设最大 10 GB 时所需的位数
-        ndigits = 1 if block_size == 0 else len(str(10 * 1024 * 1024 * 1024 // self.block_size))
-        self.path = "_{:0{}}".format(self.id, ndigits).join(os.path.splitext(self.media.path))
+        ndigits = (
+            1
+            if block_size == 0
+            else len(str(10 * 1024 * 1024 * 1024 // self.block_size))
+        )
+        self.path = "_{:0{}}".format(self.id, ndigits).join(
+            os.path.splitext(self.media.path)
+        )
         self.name = os.path.split(self.path)[-1]
         self._ = DownloaderStatus(parent=self.media._)
         self._.total_size = self.range[1] - self.range[0] + 1

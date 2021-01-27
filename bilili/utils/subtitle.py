@@ -16,10 +16,10 @@ class Subtitle(Text):
         hour, min = minutes // 60, minutes % 60
         return "{:02}:{:02}:{:02},{}".format(hour, min, sec, ms)
 
-
     def write_line(self, content, from_time, to_time):
         self._count += 1
         self.write_string(str(self._count))
         self.write_string(
-            "{} --> {}".format(self.time_format(from_time), self.time_format(to_time)))
+            "{} --> {}".format(self.time_format(from_time), self.time_format(to_time))
+        )
         self.write_string(content + "\n")

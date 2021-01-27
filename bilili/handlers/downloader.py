@@ -50,12 +50,20 @@ class RemoteFile(Handler):
             while not downloaded:
                 # 设置 headers
                 headers = dict(spider.headers)
-                headers["Range"] = "bytes={}-{}".format(self.size + self.range[0], self.range[1])
-                url = random.choice([self.url] + self.mirrors) if self.mirrors else self.url
+                headers["Range"] = "bytes={}-{}".format(
+                    self.size + self.range[0], self.range[1]
+                )
+                url = (
+                    random.choice([self.url] + self.mirrors)
+                    if self.mirrors
+                    else self.url
+                )
 
                 try:
                     # 尝试建立连接
-                    res = spider.get(url, stream=stream, headers=headers, timeout=(5, 10))
+                    res = spider.get(
+                        url, stream=stream, headers=headers, timeout=(5, 10)
+                    )
                     # 下载到临时路径
                     with open(self.tmp_path, "ab") as f:
                         if stream:
@@ -69,12 +77,18 @@ class RemoteFile(Handler):
                         else:
                             f.write(res.content)
                     # size 检验，因为有时明明没下完仍然会停止下载
-                    if self.range[1] and (self.range[1] - self.range[0] + 1 != self.size):
+                    if self.range[1] and (
+                        self.range[1] - self.range[0] + 1 != self.size
+                    ):
                         downloaded = False
                     else:
                         downloaded = True
                 except requests.exceptions.RequestException:
-                    print("[warn] file {}, request timeout, trying again...".format(self.name))
+                    print(
+                        "[warn] file {}, request timeout, trying again...".format(
+                            self.name
+                        )
+                    )
 
             # 从临时文件迁移，并删除临时文件
             if os.path.exists(self.path):

@@ -9,7 +9,7 @@ from functools import wraps
 import bilili.api.acg_video
 import bilili.api.bangumi
 import bilili.api.danmaku
-import bilili.api.subtitle
+
 from bilili.api.exports import exports
 from bilili.api.exceptions import APIException
 from flask import Flask, Response, jsonify, make_response, request

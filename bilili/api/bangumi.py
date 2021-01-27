@@ -15,7 +15,9 @@ from bilili.api.exports import export_api
 
 @export_api(route="/get_season_id")
 def get_season_id(media_id: str) -> str:
-    home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
+    home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(
+        media_id=media_id
+    )
     season_id = ""
     regex_season_id = re.compile(r'"param":{"season_id":(\d+),"season_type":\d+}')
     if regex_season_id.search(spider.get(home_url).text):
@@ -24,11 +26,15 @@ def get_season_id(media_id: str) -> str:
 
 
 @export_api(route="/bangumi/title")
-def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str = "") -> str:
+def get_bangumi_title(
+    media_id: str = "", season_id: str = "", episode_id: str = ""
+) -> str:
     if not (media_id or season_id or episode_id):
         raise ArgumentsError("media_id", "season_id", "episode_id")
     if media_id:
-        home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
+        home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(
+            media_id=media_id
+        )
         res = spider.get(home_url)
         regex_title = re.compile(r'<span class="media-info-title-t">(.*?)</span>')
         if regex_title.search(res.text):
@@ -37,11 +43,17 @@ def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str =
             title = "呐，我也不知道是什么标题呢～"
     elif season_id or episode_id:
         if season_id:
-            play_url = "https://www.bilibili.com/bangumi/play/ss{season_id}".format(season_id=season_id)
+            play_url = "https://www.bilibili.com/bangumi/play/ss{season_id}".format(
+                season_id=season_id
+            )
         else:
-            play_url = "https://www.bilibili.com/bangumi/play/ep{episode_id}".format(episode_id=episode_id)
+            play_url = "https://www.bilibili.com/bangumi/play/ep{episode_id}".format(
+                episode_id=episode_id
+            )
         res = spider.get(play_url)
-        regex_title = re.compile(r'<a href=".+" target="_blank" title="(.*?)" class="media-title">(?P<title>.*?)</a>')
+        regex_title = re.compile(
+            r'<a href=".+" target="_blank" title="(.*?)" class="media-title">(?P<title>.*?)</a>'
+        )
         if regex_title.search(res.text):
             title = regex_title.search(res.text).group("title")
         else:
@@ -60,7 +72,9 @@ def get_bangumi_list(episode_id: str = "", season_id: str = ""):
             "id": i + 1,
             "name": " ".join(
                 [
-                    "第{}话".format(item["title"]) if re.match(r"^\d*\.?\d*$", item["title"]) else item["title"],
+                    "第{}话".format(item["title"])
+                    if re.match(r"^\d*\.?\d*$", item["title"])
+                    else item["title"],
                     item["long_title"],
                 ]
             ),
@@ -88,7 +102,9 @@ def get_bangumi_playurl(
     play_api = "https://api.bilibili.com/pgc/player/web/playurl?avid={avid}&bvid={bvid}&ep_id={episode_id}&cid={cid}&qn={quality}"
     if type == "flv":
         touch_message = spider.get(
-            play_api.format(avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=80)
+            play_api.format(
+                avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=80
+            )
         ).json()
         if touch_message["code"] != 0:
             raise CannotDownloadError(touch_message["code"], touch_message["message"])
@@ -100,7 +116,9 @@ def get_bangumi_playurl(
             if quality in accept_quality:
                 break
 
-        play_url = play_api.format(avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=quality)
+        play_url = play_api.format(
+            avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=quality
+        )
         res = spider.get(play_url)
 
         return [
@@ -121,7 +139,11 @@ def get_bangumi_playurl(
         play_api_dash = play_api + "&fnver=0&fnval=16&fourk=1"
         play_info = spider.get(
             play_api_dash.format(
-                avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=video_quality_sequence[0]
+                avid=avid,
+                bvid=bvid,
+                episode_id=episode_id,
+                cid=cid,
+                quality=video_quality_sequence[0],
             )
         ).json()
 
@@ -132,14 +154,18 @@ def get_bangumi_playurl(
         if play_info["result"]["is_preview"] == 1:
             raise IsPreviewError()
 
-        accept_video_quality = set([video["id"] for video in play_info["result"]["dash"]["video"]])
+        accept_video_quality = set(
+            [video["id"] for video in play_info["result"]["dash"]["video"]]
+        )
         for video_quality in video_quality_sequence:
             if video_quality in accept_video_quality:
                 break
         else:
             video_quality = 120
 
-        accept_audio_quality = set([audio["id"] for audio in play_info["result"]["dash"]["audio"]])
+        accept_audio_quality = set(
+            [audio["id"] for audio in play_info["result"]["dash"]["audio"]]
+        )
         for audio_quality in audio_quality_sequence:
             if audio_quality in accept_audio_quality:
                 break
@@ -185,3 +211,22 @@ def get_bangumi_playurl(
         raise UnsupportTypeError("mp4")
     else:
         raise UnknownTypeError()
+
+
+@export_api(route="/bangumi/subtitle")
+def get_bangumi_subtitle(avid: str = "", bvid: str = "", cid: str = ""):
+    if not (avid or bvid):
+        raise ArgumentsError("avid", "bvid")
+    subtitle_api = (
+        "https://api.bilibili.com/x/player/v2?cid={cid}&aid={avid}&bvid={bvid}"
+    )
+    subtitle_url = subtitle_api.format(avid=avid, bvid=bvid, cid=cid)
+    subtitles_info = spider.get(subtitle_url).json()["data"]["subtitle"]
+    return [
+        # fmt: off
+        {
+            "lang": sub_info["lan_doc"],
+            "lines": spider.get("https:" + sub_info["subtitle_url"]).json()["body"]
+        }
+        for sub_info in subtitles_info["subtitles"]
+    ]

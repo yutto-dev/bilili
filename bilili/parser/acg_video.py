@@ -1,5 +1,10 @@
 import os
-from bilili.api.acg_video import get_acg_video_title, get_acg_video_list, get_acg_video_playurl
+from bilili.api.acg_video import (
+    get_acg_video_title,
+    get_acg_video_list,
+    get_acg_video_playurl,
+    get_acg_video_subtitle,
+)
 
 
 def get_title(resource_id):
@@ -45,3 +50,11 @@ def get_playurl(container, quality, audio_quality):
         }
         for play_info in play_list
     ]
+
+
+def get_subtitle(container):
+    return get_acg_video_subtitle(
+        avid=container.meta["avid"],
+        bvid=container.meta["bvid"],
+        cid=container.meta["cid"],
+    )

@@ -1,4 +1,4 @@
-# API <Badge type="tip" text="v0"/> <Badge type="warning" text="beta"/>
+# API <Badge type="tip" text="v0"/> <Badge type="warning" text="beta"/> <Badge type="warning" text="随时可能变动甚至移除，不建议使用"/>
 
 除去基本的下载功能，你还可以通过我的一些 API 完成更多操作。我提供了可以通过 Python 直接调用的 `bilili.api` 模块，同时你也可以直接使用 WSGI 方式来调用，该 API 部署在 Vercel 上，你可以通过 <https://bilipi.sigure.xyz/api/v0> 来调用。比如这个文档里的 B 站视频外链就是由后者驱动的。
 
@@ -30,6 +30,12 @@
 -  WSGI 调用： <https://bilipi.sigure.xyz/api/v0/acg_video/playurl>
 -  参数： `avid`, `bvid`, `cid`, `quality`, `audio-quality`, `type`
 
+### 获取视频字幕
+
+-  Python 调用： `bilili.api.acg_video.get_acg_video_subtitle`
+-  WSGI 调用： <https://bilipi.sigure.xyz/api/v0/acg_video/subtitle>
+-  参数： `avid`, `bvid`, `cid`
+
 ## 番剧
 
 [`bilili.api.bangumi`](https://github.com/SigureMo/bilili/blob/master/bilili/api/bangumi.py)
@@ -58,6 +64,12 @@
 -  WSGI 调用： <https://bilipi.sigure.xyz/api/v0/bangumi/playurl>
 -  参数： `avid`, `bvid`, `episode_id`, `cid`, `quality`, `audio_quality`, `type`
 
+### 获取视频字幕
+
+-  Python 调用： `bilili.api.bangumi.get_bangumi_subtitle`
+-  WSGI 调用： <https://bilipi.sigure.xyz/api/v0/bangumi/subtitle>
+-  参数： `avid`, `bvid`, `cid`
+
 ## 弹幕
 
 [`bilili.api.danmaku`](https://github.com/SigureMo/bilili/blob/master/bilili/api/danmaku.py)
@@ -73,13 +85,3 @@
 -  Python 调用： `bilili.api.danmaku_for_dplayer`
 -  WSGI 调用： <https://bilipi.sigure.xyz/api/v0/danmaku/dplayer>
 -  参数： `cid`
-
-## 字幕
-
-[`bilili.api.subtitle`](https://github.com/SigureMo/bilili/blob/master/bilili/api/subtitle.py)
-
-### 获取 srt 字幕
-
--  Python 调用： `bilili.api.subtitle`
--  WSGI 调用： <https://bilipi.sigure.xyz/api/v0/subtitle>
--  参数： `avid`, `bvid`, `cid`
