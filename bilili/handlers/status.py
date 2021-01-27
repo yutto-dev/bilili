@@ -30,8 +30,7 @@ class Status:
 
 
 class DownloaderStatus(Status):
-    """ 下载状态类
-    """
+    """下载状态类"""
 
     def __init__(self, parent=None, children=[]):
         super().__init__(parent=parent, children=children)

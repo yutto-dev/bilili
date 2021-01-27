@@ -2,7 +2,7 @@ from itertools import chain
 
 
 class AttrDict(dict):
-    """ AttrDict 类
+    """AttrDict 类
     像 JS 的 Object 一样方便地读写键值对
     继承于 dict，也可直接使用属性进行读写，避免大量使用字符串的繁琐行为
 
@@ -29,8 +29,7 @@ class AttrDict(dict):
         try:
             return self[key]
         except KeyError:
-            raise AttributeError(
-                r"'AttrDict' object has no attribute '{}'".format(key))
+            raise AttributeError(r"'AttrDict' object has no attribute '{}'".format(key))
 
     def __setattr__(self, key, value):
         """ 将属性的 set 重定向到 dict 的 set """

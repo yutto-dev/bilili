@@ -4,11 +4,10 @@ noop = lambda *args, **kwargs: None
 
 
 class Handler:
-    """事件处理器
-    """
+    """事件处理器"""
 
     def __init__(self, events: List[str] = []):
-        """ 初始化事件处理器
+        """初始化事件处理器
 
         Args:
             events (List[str], optional): 事件名称. Defaults to [].

@@ -7,22 +7,32 @@ from bilili.utils.attrdict import AttrDict
 
 
 # avid
-regex_acg_video_av = re.compile(r"https?://(www\.|m\.)?bilibili\.com/video/av(?P<avid>\d+)")
+regex_acg_video_av = re.compile(
+    r"https?://(www\.|m\.)?bilibili\.com/video/av(?P<avid>\d+)"
+)
 regex_acg_video_av_short = re.compile(r"https?://b23\.tv/av(?P<avid>\d+)")
 
 # bvid
-regex_acg_video_bv = re.compile(r"https?://(www\.|m\.)?bilibili\.com/video/(?P<bvid>(bv|BV)\w+)")
+regex_acg_video_bv = re.compile(
+    r"https?://(www\.|m\.)?bilibili\.com/video/(?P<bvid>(bv|BV)\w+)"
+)
 regex_acg_video_bv_short = re.compile(r"https?://b23\.tv/(?P<bvid>(bv|BV)\w+)")
 
 # media id
-regex_bangumi_md = re.compile(r"https?://(www\.|m\.)?bilibili\.com/bangumi/media/md(?P<media_id>\d+)")
+regex_bangumi_md = re.compile(
+    r"https?://(www\.|m\.)?bilibili\.com/bangumi/media/md(?P<media_id>\d+)"
+)
 
 # episode id
-regex_bangumi_ep = re.compile(r"https?://(www\.|m\.)?bilibili\.com/bangumi/play/ep(?P<episode_id>\d+)")
+regex_bangumi_ep = re.compile(
+    r"https?://(www\.|m\.)?bilibili\.com/bangumi/play/ep(?P<episode_id>\d+)"
+)
 regex_bangumi_ep_short = re.compile(r"https?://b23\.tv/ep(?P<episode_id>\d+)")
 
 # season id
-regex_bangumi_ss = re.compile(r"https?://(www\.|m\.)?bilibili\.com/bangumi/play/ss(?P<season_id>\d+)")
+regex_bangumi_ss = re.compile(
+    r"https?://(www\.|m\.)?bilibili\.com/bangumi/play/ss(?P<season_id>\d+)"
+)
 regex_bangumi_ss_short = re.compile(r"https?://b23\.tv/ss(?P<season_id>\d+)")
 
 

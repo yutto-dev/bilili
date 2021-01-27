@@ -130,13 +130,23 @@ class ColorString(Component):
             return ""
         result = ""
         if self.fore is not None:
-            result += ColorString.template.format(code=ColorString.code_map["fore"][self.fore])
+            result += ColorString.template.format(
+                code=ColorString.code_map["fore"][self.fore]
+            )
         if self.back is not None:
-            result += ColorString.template.format(code=ColorString.code_map["back"][self.back])
+            result += ColorString.template.format(
+                code=ColorString.code_map["back"][self.back]
+            )
         if self.style is not None:
-            result += ColorString.template.format(code=ColorString.code_map["style"][self.style])
-        result += self.subcomponent.render(data) if self.subcomponent is not None else data
-        result += ColorString.template.format(code=ColorString.code_map["style"]["reset"])
+            result += ColorString.template.format(
+                code=ColorString.code_map["style"][self.style]
+            )
+        result += (
+            self.subcomponent.render(data) if self.subcomponent is not None else data
+        )
+        result += ColorString.template.format(
+            code=ColorString.code_map["style"]["reset"]
+        )
         return result
 
 
@@ -172,9 +182,15 @@ class Line(Component):
             center_width = get_string_width(center_result)
 
         if self.center is not None:
-            left_placeholder_width = (Console.max_width - center_width) // 2 - left_width
+            left_placeholder_width = (
+                Console.max_width - center_width
+            ) // 2 - left_width
             right_placeholder_width = (
-                Console.max_width - left_width - left_placeholder_width - center_width - right_width
+                Console.max_width
+                - left_width
+                - left_placeholder_width
+                - center_width
+                - right_width
             )
 
             return (
@@ -187,7 +203,12 @@ class Line(Component):
             )
         else:
             left_placeholder_width = Console.max_width - left_width - right_width
-            return left_result + left_placeholder_width * self.fillchar + right_result + "\n"
+            return (
+                left_result
+                + left_placeholder_width * self.fillchar
+                + right_result
+                + "\n"
+            )
 
 
 class Center(Component):
@@ -258,13 +279,21 @@ if __name__ == "__main__":
 
     console = Console()
     console.add_component(Line(center=Font(char_a="𝓪", char_A="𝓐"), fillchar="="))
-    console.add_component(Line(left=ColorString(fore="cyan", style="italic"), fillchar=" "))
+    console.add_component(
+        Line(left=ColorString(fore="cyan", style="italic"), fillchar=" ")
+    )
     console.add_component(LineList(Line(left=String(), right=String(), fillchar="-")))
-    console.add_component(Line(left=ColorString(fore="blue", style="italic"), fillchar=" "))
+    console.add_component(
+        Line(left=ColorString(fore="blue", style="italic"), fillchar=" ")
+    )
     console.add_component(LineList(Line(left=String(), right=String(), fillchar="-")))
     console.add_component(
         Line(
-            left=ColorString(fore="green", back="white", subcomponent=ProgressBar(symbols=" ▏▎▍▌▋▊▉█", width=70)),
+            left=ColorString(
+                fore="green",
+                back="white",
+                subcomponent=ProgressBar(symbols=" ▏▎▍▌▋▊▉█", width=70),
+            ),
             right=String(),
             fillchar=" ",
         )

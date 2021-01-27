@@ -1,7 +1,12 @@
 import pytest
 
-from bilili.api.bangumi import (get_season_id, get_bangumi_title, get_bangumi_list,
-                                get_bangumi_playurl, get_bangumi_subtitle)
+from bilili.api.bangumi import (
+    get_season_id,
+    get_bangumi_title,
+    get_bangumi_list,
+    get_bangumi_playurl,
+    get_bangumi_subtitle,
+)
 from bilili.api.exceptions import CannotDownloadError
 
 
@@ -32,7 +37,13 @@ def test_get_playurl(type):
     episode_id = "300998"
     try:
         play_list = get_bangumi_playurl(
-            avid=avid, bvid=bvid, cid=cid, episode_id=episode_id, quality=120, audio_quality=30280, type=type
+            avid=avid,
+            bvid=bvid,
+            cid=cid,
+            episode_id=episode_id,
+            quality=120,
+            audio_quality=30280,
+            type=type,
         )
     # 可能 GitHub Action 由于地区限制无法获取
     except CannotDownloadError:
