@@ -1,6 +1,7 @@
 import pytest
 
-from bilili.api.bangumi import get_season_id, get_bangumi_title, get_bangumi_list, get_bangumi_playurl
+from bilili.api.bangumi import (get_season_id, get_bangumi_title, get_bangumi_list,
+                                get_bangumi_playurl, get_bangumi_subtitle)
 from bilili.api.exceptions import CannotDownloadError
 
 
@@ -36,3 +37,8 @@ def test_get_playurl(type):
     # 可能 GitHub Action 由于地区限制无法获取
     except CannotDownloadError:
         pass
+
+
+def test_get_subtitle():
+    # TODO: 暂未找到需要字幕的番剧（非港澳台）
+    pass

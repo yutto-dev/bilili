@@ -1,4 +1,5 @@
-from bilili.api.bangumi import get_bangumi_title, get_bangumi_list, get_bangumi_playurl
+from bilili.api.bangumi import (get_bangumi_title, get_bangumi_list,
+                                get_bangumi_playurl, get_bangumi_subtitle)
 
 
 def get_title(resource_id):
@@ -45,3 +46,7 @@ def get_playurl(container, quality, audio_quality):
         }
         for play_info in play_list
     ]
+
+
+def get_subtitle(container):
+    return get_bangumi_subtitle(avid=container.meta['avid'], bvid=container.meta['bvid'], cid=container.meta['cid'])

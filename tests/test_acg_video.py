@@ -1,6 +1,7 @@
 import pytest
 
-from bilili.api.acg_video import get_video_info, get_acg_video_title, get_acg_video_list, get_acg_video_playurl
+from bilili.api.acg_video import (get_video_info, get_acg_video_title, get_acg_video_list,
+                                  get_acg_video_playurl, get_acg_video_subtitle)
 
 
 def test_get_video_info():
@@ -25,3 +26,8 @@ def test_get_playurl(type):
     bvid = "BV1vZ4y1M7mQ"
     cid = "222190584"
     play_list = get_acg_video_playurl(bvid=bvid, cid=cid, quality=120, audio_quality=30280, type=type)
+
+def test_get_subtitle():
+    bvid = "BV1i741187Dp"
+    cid = "149439373"
+    get_acg_video_subtitle(bvid=bvid, cid=cid)

@@ -185,3 +185,20 @@ def get_bangumi_playurl(
         raise UnsupportTypeError("mp4")
     else:
         raise UnknownTypeError()
+
+
+@export_api(route="/bangumi/subtitle")
+def get_bangumi_subtitle(avid: str = "", bvid: str = "", cid: str = ""):
+    if not (avid or bvid):
+        raise ArgumentsError("avid", "bvid")
+    subtitle_api = "https://api.bilibili.com/x/player/v2?cid={cid}&aid={avid}&bvid={bvid}"
+    subtitle_url = subtitle_api.format(avid=avid, bvid=bvid, cid=cid)
+    subtitles_info = spider.get(subtitle_url).json()["data"]["subtitle"]
+    return [
+        # fmt: off
+        {
+            "lang": sub_info["lan_doc"],
+            "lines": spider.get("https:" + sub_info["subtitle_url"]).json()["body"]
+        }
+        for sub_info in subtitles_info["subtitles"]
+    ]
