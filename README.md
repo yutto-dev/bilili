@@ -1,7 +1,7 @@
 # 𝓫𝓲𝓵𝓲𝓵𝓲
 
 <p align="center">
-   <img src="https://bilili.sigure.xyz/logo.png" width="500px">
+   <img src="./docs/.vuepress/public/logo.png" width="500px">
 </p>
 
 <p align="center">
