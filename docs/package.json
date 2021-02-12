@@ -12,7 +12,7 @@
     "@vssue/vuepress-plugin-vssue": "^1.4.7",
     "@vuepress/plugin-back-to-top": "^1.8.1",
     "dplayer": "^1.26.0",
-    "vuepress": "^1.8.0",
+    "vuepress": "^1.8.1",
     "vuepress-plugin-cursor-effects": "^1.0.0",
     "vuepress-plugin-dynamic-title": "^1.0.0"
   }
