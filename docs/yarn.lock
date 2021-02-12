@@ -907,14 +907,6 @@
     "@vssue/utils" "^1.4.7"
     axios "^0.21.1"
 
-"@vssue/utils@^1.4.0", "@vssue/utils@^1.4.7":
-  version "1.4.7"
-  resolved "https://registry.yarnpkg.com/@vssue/utils/-/utils-1.4.7.tgz#58a9ec2687d26080aa04cab17e8f87049f1342c3"
-  integrity sha512-e94karP4szmSNT2L4bgIT+VGToBSY3bdlgmGcomcD2qCXTWDK4krSOYm8ES+BhHTcmCvzQYU/xenHR4tzrythA==
-  dependencies:
-    date-fns "^1.29.0"
-    qs "^6.6.0"
-
 "@vssue/utils@^1.4.7":
   version "1.4.7"
   resolved "https://registry.yarnpkg.com/@vssue/utils/-/utils-1.4.7.tgz#58a9ec2687d26080aa04cab17e8f87049f1342c3"
@@ -1141,10 +1133,10 @@
   dependencies:
     lodash.debounce "^4.0.8"
 
-"@vuepress/plugin-back-to-top@^1.8.0":
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@vuepress/plugin-back-to-top/-/plugin-back-to-top-1.8.0.tgz#eb7062e33cd65f4582e012702f7f69ccf0f55ae7"
-  integrity sha512-myyC4ZLT887IAaKcBBles8OHYeAfYMFSvC0CqjCBOyoBExNt6E+Xg3ksYksxrew/mNCTiwxXJvu+0o2a/8WIYA==
+"@vuepress/plugin-back-to-top@^1.8.1":
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/@vuepress/plugin-back-to-top/-/plugin-back-to-top-1.8.1.tgz#2dcf12340041742e89e646cf7fdbf74b9bc93104"
+  integrity sha512-2V6SjITnm1tHmGh70pC32McwZlhTBfiFc16Bc2auNLIVREUR4PA1EUN9NZAUbtsRC23myzPLT/v2fcwt2efZVA==
   dependencies:
     lodash.debounce "^4.0.8"
 
