@@ -77,8 +77,7 @@ module.exports = {
           { text: '赞助', link: '/sponsor' },
           {
             text: '参与贡献',
-            link:
-              'https://github.com/SigureMo/bilili/blob/master/CONTRIBUTING.md'
+            link: 'https://github.com/SigureMo/bilili/blob/main/CONTRIBUTING.md'
           }
         ]
       }
@@ -108,7 +107,7 @@ module.exports = {
     },
     repo: 'SigureMo/bilili',
     docsDir: 'docs',
-    docsBranch: 'master',
+    docsBranch: 'main',
     editLinks: true,
     editLinkText: '啊，我说错了？你可以帮我纠正哦～'
   },

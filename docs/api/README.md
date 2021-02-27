@@ -4,7 +4,7 @@
 
 ## 投稿视频
 
-[`bilili.api.acg_video`](https://github.com/SigureMo/bilili/blob/master/bilili/api/acg_video.py)
+[`bilili.api.acg_video`](https://github.com/SigureMo/bilili/blob/main/bilili/api/acg_video.py)
 
 ### 获取视频信息
 
@@ -38,7 +38,7 @@
 
 ## 番剧
 
-[`bilili.api.bangumi`](https://github.com/SigureMo/bilili/blob/master/bilili/api/bangumi.py)
+[`bilili.api.bangumi`](https://github.com/SigureMo/bilili/blob/main/bilili/api/bangumi.py)
 
 ### 获取 `season_id`
 
@@ -72,7 +72,7 @@
 
 ## 弹幕
 
-[`bilili.api.danmaku`](https://github.com/SigureMo/bilili/blob/master/bilili/api/danmaku.py)
+[`bilili.api.danmaku`](https://github.com/SigureMo/bilili/blob/main/bilili/api/danmaku.py)
 
 ### 获取 XML 弹幕
 

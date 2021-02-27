@@ -6,7 +6,7 @@
 
 如果你想要本地调试，最佳的方案是从 github 上下载最新的源码来运行
 
-``` bash
+```bash
 git clone git@github.com:SigureMo/bilili.git
 cd bilili/
 pip install -r requirements.txt
@@ -19,7 +19,7 @@ python -m bilili <url>
 
 bilili 有一些已经编写好的测试，虽然 GitHub Action 会帮忙自动测试，但最好你在本地预先测试一遍
 
-``` bash
+```bash
 pip install pytest                                          # 安装 pytest
 pytest                                                      # 测试
 ```
@@ -30,7 +30,7 @@ pytest                                                      # 测试
 
 提交 PR 的最佳实践是 fork 一个新的 repo 到你的账户下，并创建一个新的分支，在该分支下进行改动后提交到 GitHub 上，并发起 PR
 
-``` bash
+```bash
 # 首先 fork
 git clone git@github.com:<YOUR_USER_NAME>/bilili.git        # 将你的 repo clone 到本地
 cd bilili/                                                  # cd 到该文件夹
@@ -45,10 +45,10 @@ git push origin <NEW_BRANCH>                                # 将该分支推送
 
 如果你的 PR 已经被合并，就可以放心地删除这个分支了
 
-``` bash
-git checkout master                                         # 切换到 master
+```bash
+git checkout main                                           # 切换到 main
 git fetch upstream                                          # 将原作者分支下载到本地
-git merge upstream/master                                   # 将原作者 master 分支最新内容合并到本地 master
+git merge upstream/main                                   # 将原作者 main 分支最新内容合并到本地 main
 git branch -d <NEW_BRANCH>                                  # 删除本地分支
 git push origin --delete <NEW_BRANCH>                       # 同时删除远程分支
 ```
