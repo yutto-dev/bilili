@@ -214,7 +214,7 @@ def main():
     # 解析片段信息及视频 url
     for i, container in enumerate(containers):
         print(
-            "{:02}/{:02} parsing segments info...".format(i + 1, len(containers)), end="\r",
+            "{:02}/{:02} 正在努力解析视频信息～".format(i + 1, len(containers)), end="\r",
         )
 
         # 解析视频 url
