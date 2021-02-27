@@ -8,7 +8,7 @@
 
 ## 一次性赞助
 
-你可以通过[支付宝](https://raw.githubusercontent.com/SigureMo/image-hosting/master/sponsor/alipay.png)或者[微信](https://raw.githubusercontent.com/SigureMo/image-hosting/master/sponsor/wechat.png)来为 SigureMo 提供一笔开发资金。
+你可以通过[支付宝](https://img.nyakku.moe/sponsor/alipay.png)或者[微信](https://img.nyakku.moe/sponsor/wechat.png)来为 SigureMo 提供一笔开发资金。
 
 ## 周期性赞助
 

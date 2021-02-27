@@ -48,7 +48,7 @@ git push origin <NEW_BRANCH>                                # 将该分支推送
 ```bash
 git checkout main                                           # 切换到 main
 git fetch upstream                                          # 将原作者分支下载到本地
-git merge upstream/main                                   # 将原作者 main 分支最新内容合并到本地 main
+git merge upstream/main                                     # 将原作者 main 分支最新内容合并到本地 main
 git branch -d <NEW_BRANCH>                                  # 删除本地分支
 git push origin --delete <NEW_BRANCH>                       # 同时删除远程分支
 ```
