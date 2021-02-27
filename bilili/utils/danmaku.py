@@ -5,7 +5,7 @@ class ASS:
     def __init__(self):
         pass
 
-    def convert_danmaku_from_xml(self, xml_path, height, width):
+    def convert_danmaku_from_xml(self, xml_path: str, height: int, width: int):
         from bilili.plugins.danmaku2ass import Danmaku2ASS
 
         ass_path = os.path.splitext(xml_path)[0] + ".ass"

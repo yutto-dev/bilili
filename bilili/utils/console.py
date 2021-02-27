@@ -2,19 +2,20 @@ import os
 import math
 
 from bilili.utils.base import get_string_width
+from typing import List, Any, Union
 
 
 class Console:
     max_width = 100
 
-    def __init__(self, debug=False):
+    def __init__(self, debug: bool = False):
         self.debug = debug
         self.components = []
 
-    def add_component(self, component):
+    def add_component(self, component: "Component"):
         self.components.append(component)
 
-    def render(self, data):
+    def render(self, data: Any) -> str:
         if data is None:
             return ""
         assert len(self.components) == len(data), "数据个数与组件个数不匹配"
@@ -23,7 +24,7 @@ class Console:
             result += component.render(component_data)
         return result
 
-    def refresh(self, data):
+    def refresh(self, data: Any):
         if not self.debug:
             self.clear()
         print(self.render(data))
@@ -36,7 +37,7 @@ class Component:
     def __init__(self):
         pass
 
-    def render(self, data):
+    def render(self, data: Any) -> str:
         raise NotImplementedError
 
 
@@ -44,7 +45,7 @@ class String(Component):
     def __init__(self):
         super().__init__()
 
-    def render(self, data):
+    def render(self, data: Any) -> str:
         if data is None:
             return ""
         return data
@@ -54,19 +55,19 @@ class EndLine(Component):
     def __init__(self):
         super().__init__()
 
-    def render(self, data):
+    def render(self, data: Any) -> str:
         if data is None:
             return ""
         return "\n"
 
 
 class Font(Component):
-    def __init__(self, char_a="ａ", char_A=None):
+    def __init__(self, char_a: str = "ａ", char_A: Union[str, None] = None):
         super().__init__()
         self.char_a = char_a
         self.char_A = char_A
 
-    def render(self, data):
+    def render(self, data: Any) -> str:
         if data is None:
             return ""
         result = ""
@@ -118,47 +119,49 @@ class ColorString(Component):
 
     template = "\033[{code}m"
 
-    def __init__(self, fore=None, back=None, style=None, subcomponent=None):
+    def __init__(
+        self,
+        fore: Union[str, None] = None,
+        back: Union[str, None] = None,
+        style: Union[str, None] = None,
+        subcomponent: Union[Component, None] = None,
+    ):
         super().__init__()
         self.fore = fore
         self.back = back
         self.style = style
         self.subcomponent = subcomponent
 
-    def render(self, data):
+    def render(self, data: Any) -> str:
         if data is None:
             return ""
         result = ""
         if self.fore is not None:
-            result += ColorString.template.format(
-                code=ColorString.code_map["fore"][self.fore]
-            )
+            result += ColorString.template.format(code=ColorString.code_map["fore"][self.fore])
         if self.back is not None:
-            result += ColorString.template.format(
-                code=ColorString.code_map["back"][self.back]
-            )
+            result += ColorString.template.format(code=ColorString.code_map["back"][self.back])
         if self.style is not None:
-            result += ColorString.template.format(
-                code=ColorString.code_map["style"][self.style]
-            )
-        result += (
-            self.subcomponent.render(data) if self.subcomponent is not None else data
-        )
-        result += ColorString.template.format(
-            code=ColorString.code_map["style"]["reset"]
-        )
+            result += ColorString.template.format(code=ColorString.code_map["style"][self.style])
+        result += self.subcomponent.render(data) if self.subcomponent is not None else data
+        result += ColorString.template.format(code=ColorString.code_map["style"]["reset"])
         return result
 
 
 class Line(Component):
-    def __init__(self, left=None, center=None, right=None, fillchar=" "):
+    def __init__(
+        self,
+        left: Union[Component, None] = None,
+        center: Union[Component, None] = None,
+        right: Union[Component, None] = None,
+        fillchar: str = " ",
+    ):
         super().__init__()
         self.left = left
         self.center = center
         self.right = right
         self.fillchar = fillchar
 
-    def render(self, data):
+    def render(self, data: Any) -> str:
         if data is None:
             return ""
         left_data = data.get("left", None)
@@ -171,26 +174,20 @@ class Line(Component):
         if self.left is not None:
             assert left_data is not None
             left_result = self.left.render(left_data)
-            left_width = get_string_width(left_result)
+            left_width: int = get_string_width(left_result)
         if self.right is not None:
             assert right_data is not None
             right_result = self.right.render(right_data)
-            right_width = get_string_width(right_result)
+            right_width: int = get_string_width(right_result)
         if self.center is not None:
             assert center_data is not None
             center_result = self.center.render(center_data)
-            center_width = get_string_width(center_result)
+            center_width: int = get_string_width(center_result)
 
         if self.center is not None:
-            left_placeholder_width = (
-                Console.max_width - center_width
-            ) // 2 - left_width
+            left_placeholder_width = (Console.max_width - center_width) // 2 - left_width
             right_placeholder_width = (
-                Console.max_width
-                - left_width
-                - left_placeholder_width
-                - center_width
-                - right_width
+                Console.max_width - left_width - left_placeholder_width - center_width - right_width
             )
 
             return (
@@ -203,34 +200,29 @@ class Line(Component):
             )
         else:
             left_placeholder_width = Console.max_width - left_width - right_width
-            return (
-                left_result
-                + left_placeholder_width * self.fillchar
-                + right_result
-                + "\n"
-            )
+            return left_result + left_placeholder_width * self.fillchar + right_result + "\n"
 
 
 class Center(Component):
-    def __init__(self, fillchar=" "):
+    def __init__(self, fillchar: str = " "):
         super().__init__()
         self.fillchar = fillchar
 
-    def render(self, data):
+    def render(self, data: Any) -> str:
         if data is None:
             return ""
         return data.center(Console.max_width, self.fillchar) + "\n"
 
 
 class ProgressBar(Component):
-    def __init__(self, symbols="░▏▎▍▌▋▊▉█", width=Console.max_width):
+    def __init__(self, symbols: Union[str, List[str]] = "░▏▎▍▌▋▊▉█", width: int = Console.max_width):
         super().__init__()
         self.width = width
         self.symbols = symbols
         assert len(symbols) >= 2, "symbols 至少为 2 个"
         self.num_symbol = len(symbols)
 
-    def render(self, data):
+    def render(self, data: Any) -> str:
         if data is None:
             return ""
         if data == 1:
@@ -247,12 +239,12 @@ class ProgressBar(Component):
 
 
 class DynamicSymbol(Component):
-    def __init__(self, symbols="⠁⠂⠄⡀⢀⠠⠐⠈"):
+    def __init__(self, symbols: Union[str, List[str]] = "⠁⠂⠄⡀⢀⠠⠐⠈"):
         super().__init__()
         self.symbols = symbols
         self.index = 0
 
-    def render(self, data):
+    def render(self, data: Any) -> str:
         if data is None:
             return ""
         self.index += 1
@@ -261,11 +253,11 @@ class DynamicSymbol(Component):
 
 
 class LineList(Component):
-    def __init__(self, subcomponent):
+    def __init__(self, subcomponent: Component):
         super().__init__()
         self.subcomponent = subcomponent
 
-    def render(self, data):
+    def render(self, data: Any) -> str:
         if data is None:
             return ""
         result = ""
@@ -279,13 +271,9 @@ if __name__ == "__main__":
 
     console = Console()
     console.add_component(Line(center=Font(char_a="𝓪", char_A="𝓐"), fillchar="="))
-    console.add_component(
-        Line(left=ColorString(fore="cyan", style="italic"), fillchar=" ")
-    )
+    console.add_component(Line(left=ColorString(fore="cyan", style="italic"), fillchar=" "))
     console.add_component(LineList(Line(left=String(), right=String(), fillchar="-")))
-    console.add_component(
-        Line(left=ColorString(fore="blue", style="italic"), fillchar=" ")
-    )
+    console.add_component(Line(left=ColorString(fore="blue", style="italic"), fillchar=" "))
     console.add_component(LineList(Line(left=String(), right=String(), fillchar="-")))
     console.add_component(
         Line(

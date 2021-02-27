@@ -2,8 +2,7 @@ import os
 import re
 import random
 
-from functools import wraps
-
+from typing import Any
 
 class Ref():
     """ 引用类
@@ -11,14 +10,14 @@ class Ref():
     用于包裹基本数据类型，将其封装为对象，其值通过 var.value 来访问
     """
 
-    def __init__(self, value):
+    def __init__(self, value: Any):
         self.value = value
 
 
 class Writer():
     """ 文件写入器，持续打开文件对象，直到使用完毕后才关闭 """
 
-    def __init__(self, path, mode='wb', **kwargs):
+    def __init__(self, path: str, mode: str='wb', **kwargs: Any):
         self.path = path
         self._f = open(path, mode, **kwargs)
 
@@ -35,29 +34,29 @@ class Writer():
 class Text(Writer):
     """ 文本写入器 """
 
-    def __init__(self, path, **kwargs):
+    def __init__(self, path: str, **kwargs: Any):
         kwargs['encoding'] = kwargs.get('encoding', 'utf-8')
         super().__init__(path, 'w', **kwargs)
 
-    def write_string(self, string):
+    def write_string(self, string: str):
         self.write(string + '\n')
 
 
-def touch_dir(path):
+def touch_dir(path:str) ->str:
     """ 若文件夹不存在则新建，并返回标准路径 """
     if not os.path.exists(path):
         os.makedirs(path)
     return os.path.normpath(path)
 
 
-def touch_file(path):
+def touch_file(path: str) -> str:
     """ 若文件不存在则新建，并返回标准路径 """
     if not os.path.exists(path):
         open(path, 'w').close()
     return os.path.normpath(path)
 
 
-def touch_url(url, spider):
+def touch_url(url: str, spider):
     """ 与资源进行测试连接，并获取该资源的 size 与 是否可以断点续传 """
     # 某些资源 head 无法获得真实 size
     methods = [spider.head, spider.get]
@@ -78,7 +77,7 @@ def touch_url(url, spider):
     return size, resumable
 
 
-def repair_filename(filename):
+def repair_filename(filename: str) -> str:
     """ 修复不合法的文件名 """
     def to_full_width_chr(matchobj):
         char = matchobj.group(0)
@@ -101,7 +100,7 @@ def repair_filename(filename):
     return filename
 
 
-def get_size(path):
+def get_size(path: str) -> int:
     """ 获取文件夹或文件的字节数 """
     if os.path.isfile(path):
         return os.path.getsize(path)
@@ -114,7 +113,7 @@ def get_size(path):
         return 0
 
 
-def size_format(size, ndigits=2):
+def size_format(size: int, ndigits:int=2) -> str:
     """ 输入数据字节数，与保留小数位数，返回数据量字符串 """
     flag = '-' if size < 0 else ''
     size = abs(size)
@@ -131,7 +130,7 @@ def size_format(size, ndigits=2):
     return "{}{:.{}f} {}".format(flag, size / unit_size, ndigits, unit)
 
 
-def get_char_width(char):
+def get_char_width(char: str) -> int:
     """ 计算单个字符的宽度 """
     # fmt: off
     widths = [
@@ -154,7 +153,7 @@ def get_char_width(char):
     return 1
 
 
-def get_string_width(string):
+def get_string_width(string: str) -> int:
     """ 计算包含中文的字符串宽度 """
     # 去除颜色码
     regex_color = re.compile(r'\033\[\d+m')
@@ -164,79 +163,3 @@ def get_string_width(string):
     except:
         length = len(string)
     return length
-
-
-def local_vars(**local_kwargs):
-    """ 本地变量闭包装饰器，在闭包内部获取变化的局部变量
-
-    ``` python
-    # 典型错误，因为 i 是可变的变量，foo 虽然是获取外部变量 i，
-    # 但此时并没有运行，当运行时 i 已经变为 9 了
-    funcs = []
-    for i in range(10):
-
-        def foo():
-            print(i)
-
-        funcs.append(foo)
-
-    for func in funcs:
-        func()
-    ```
-
-    ``` python
-    # 因此只需要在外层嵌套一个函数，在此时将参数传进去，这样就正常了
-    funcs = []
-    for i in range(10):
-
-        def make_foo(i):
-            def foo():
-                print(i)
-
-            return foo
-
-        foo = make_foo(i)
-        funcs.append(foo)
-
-    for func in funcs:
-        func()
-    ```
-
-    ``` python
-    # 使用装饰器来完成这个过程
-    funcs = []
-    for i in range(10):
-
-        @local_vars
-        def foo(i=None):
-            print(i)
-
-        funcs.append(foo)
-
-    for func in funcs:
-        func()
-    ```
-
-    ``` python
-    # 其实利用默认参数也可以……
-    funcs = []
-    for i in range(10):
-
-        def foo(i=i):
-            print(i)
-
-        funcs.append(foo)
-
-    for func in funcs:
-        func()
-    ```
-    """
-
-    def decorator(func):
-        @wraps(func)
-        def func_wrapper(*args, **kwargs):
-            return func(*args, **kwargs, **local_kwargs)
-
-        return func_wrapper
-
-    return decorator

@@ -3,6 +3,8 @@ import random
 import subprocess
 import shutil
 
+from typing import List
+
 """
 ref : https://github.com/soimort/you-get
 """
@@ -14,7 +16,7 @@ class FFmpegNotFoundError(Exception):
 
 
 class FFmpeg:
-    def __init__(self, ffmpeg_path="ffmpeg"):
+    def __init__(self, ffmpeg_path:str="ffmpeg"):
         try:
             if subprocess.run([ffmpeg_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE).returncode != 1:
                 raise FFmpegNotFoundError()
@@ -30,13 +32,13 @@ class FFmpeg:
         if hasattr(self, "tmp_dir") and os.path.exists(self.tmp_dir):
             shutil.rmtree(self.tmp_dir)
 
-    def exec(self, params):
+    def exec(self, params: List[str]):
         """ 调用 ffmpeg """
         cmd = [self.path]
         cmd.extend(params)
         return subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    def convert(self, input_path, output_path):
+    def convert(self, input_path: str, output_path: str) -> None:
         """ 视频格式转换 """
 
         # fmt: off
@@ -49,7 +51,7 @@ class FFmpeg:
         ]
         self.exec(params)
 
-    def join_videos(self, video_path_list, output_path):
+    def join_videos(self, video_path_list: List[str], output_path: str) -> None:
         """ 将视频拼接起来 """
 
         concat_list_path = os.path.join(self.tmp_dir, "concat_list_{:04}.tmp".format(random.randint(0, 9999))).replace(
@@ -72,7 +74,7 @@ class FFmpeg:
         self.exec(params)
         os.remove(concat_list_path)
 
-    def join_video_audio(self, video_path, audio_path, output_path):
+    def join_video_audio(self, video_path: str, audio_path: str, output_path: str) -> None:
         """ 将视频和音频合并 """
 
         # fmt: off
