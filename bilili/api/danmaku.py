@@ -1,5 +1,5 @@
-from bilili.tools import spider
-from bilili.api.exports import export_api
+from ..api.exports import export_api
+from ..tools import spider
 
 
 @export_api(route="/danmaku/xml")

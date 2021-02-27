@@ -1,8 +1,8 @@
-import os
 import math
+import os
+from typing import Any, List, Union
 
-from bilili.utils.base import get_string_width
-from typing import List, Any, Union
+from ..utils.base import get_string_width
 
 
 class Console:

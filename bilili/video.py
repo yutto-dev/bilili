@@ -1,13 +1,9 @@
 import os
-import re
-import time
-import math
-import subprocess
 
-from bilili.handlers.status import DownloaderStatus
-from bilili.quality import video_quality_map, audio_quality_map
-from bilili.tools import global_status
-from bilili.utils.base import repair_filename
+from .handlers.status import DownloaderStatus
+from .quality import audio_quality_map, video_quality_map
+from .tools import global_status
+from .utils.base import repair_filename
 
 
 class BililiContainer:
@@ -39,10 +35,12 @@ class BililiContainer:
         quality_description: str = ""
         if self.type == "dash":
             quality_description = " & ".join(
+                # fmt: off
                 [
-                    {"dash_video": video_quality_map, "dash_audio": audio_quality_map}[
-                        media.type
-                    ][media.quality]["description"]
+                    {
+                        "dash_video": video_quality_map,
+                        "dash_audio": audio_quality_map
+                    }[media.type][media.quality]["description"]
                     for media in self.medias
                 ]
             )
@@ -50,7 +48,7 @@ class BililiContainer:
             quality_description = video_quality_map[self.quality]["description"]
         return "{} 「{}」".format(self.name, quality_description)
 
-    def check_needs_download(self, overwrite=False):
+    def check_needs_download(self, overwrite: bool = False):
         """ 检查是否需要下载 """
         if overwrite:
             if os.path.exists(self.path):
@@ -122,9 +120,7 @@ class BililiMedia:
         blocks = []
         total_size = self._.total_size
         if block_size:
-            block_range_list = [
-                (i, i + block_size - 1) for i in range(0, total_size, block_size)
-            ]
+            block_range_list = [(i, i + block_size - 1) for i in range(0, total_size, block_size)]
             if total_size % block_size != 0:
                 block_range_list[-1] = (
                     total_size // block_size * block_size,
@@ -169,14 +165,8 @@ class BililiBlock:
         self.media = media
         self.range = range
         # 假设最大 10 GB 时所需的位数
-        ndigits = (
-            1
-            if block_size == 0
-            else len(str(10 * 1024 * 1024 * 1024 // self.block_size))
-        )
-        self.path = "_{:0{}}".format(self.id, ndigits).join(
-            os.path.splitext(self.media.path)
-        )
+        ndigits = 1 if block_size == 0 else len(str(10 * 1024 * 1024 * 1024 // self.block_size))
+        self.path = "_{:0{}}".format(self.id, ndigits).join(os.path.splitext(self.media.path))
         self.name = os.path.split(self.path)[-1]
         self._ = DownloaderStatus(parent=self.media._)
         self._.total_size = self.range[1] - self.range[0] + 1

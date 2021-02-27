@@ -1,31 +1,29 @@
-import re
-import sys
 import argparse
 import os
+import re
+import sys
 import time
-
 from typing import List
-from bilili.utils.base import repair_filename, touch_dir, touch_file, size_format
-from bilili.utils.playlist import Dpl, M3u
-from bilili.utils.thread import ThreadPool, Flag
-from bilili.utils.console import (Console, Font, Line, String, ProgressBar,
-                                  LineList, DynamicSymbol, ColorString)
-from bilili.utils.subtitle import Subtitle
-from bilili.utils.attrdict import AttrDict
-from bilili.tools import spider, ass, regex
-from bilili.tools import global_status
-from bilili.handlers.downloader import RemoteFile
-from bilili.handlers.merger import MergingFile
-from bilili.video import BililiContainer
-from bilili.api.danmaku import get_danmaku
-from bilili.api.exceptions import (ArgumentsError, CannotDownloadError,
-                                   UnknownTypeError, UnsupportTypeError, IsPreviewError)
+
+from .api.danmaku import get_danmaku
+from .api.exceptions import CannotDownloadError, IsPreviewError
+from .handlers.downloader import RemoteFile
+from .handlers.merger import MergingFile
+from .tools import ass, global_status, regex, spider
+from .utils.attrdict import AttrDict
+from .utils.base import repair_filename, size_format, touch_dir
+from .utils.console import (ColorString, Console, DynamicSymbol, Line,
+                            LineList, ProgressBar, String)
+from .utils.playlist import Dpl, M3u
+from .utils.subtitle import Subtitle
+from .utils.thread import Flag, ThreadPool
+from .video import BililiContainer
 
 
 def parse_episodes(episodes_str: str, total: int) -> List[int]:
     """ 将选集字符串转为列表 """
 
-    def reslove_negetive(value):
+    def reslove_negetive(value: int) -> int:
         return value if value > 0 else value + total + 1
 
     # 解析字符串为列表
@@ -142,7 +140,7 @@ def main():
     # fmt: off
     if (avid_match := regex.acg_video.av.origin.match(args.url)) or \
         (avid_match := regex.acg_video.av.short.match(args.url)):
-        from bilili.api.acg_video import get_video_info
+        from .api.acg_video import get_video_info
         avid = avid_match.group("avid")
         if episode_id := get_video_info(avid=avid)["episode_id"]:
             resource_id.episode_id = episode_id
@@ -150,14 +148,14 @@ def main():
             resource_id.avid = avid
     elif (bvid_match := regex.acg_video.bv.origin.match(args.url)) or \
         (bvid_match := regex.acg_video.bv.short.match(args.url)):
-        from bilili.api.acg_video import get_video_info
+        from .api.acg_video import get_video_info
         bvid = bvid_match.group("bvid")
         if episode_id := get_video_info(bvid=bvid)["episode_id"]:
             resource_id.episode_id = episode_id
         else:
             resource_id.bvid = bvid
     elif media_id_match := regex.bangumi.md.origin.match(args.url):
-        from bilili.api.bangumi import get_season_id
+        from .api.bangumi import get_season_id
         media_id = media_id_match.group("media_id")
         resource_id.season_id = get_season_id(media_id=media_id)
     elif (episode_id_match := regex.bangumi.ep.origin.match(args.url)) or \
@@ -173,10 +171,12 @@ def main():
         sys.exit(1)
 
     if resource_id.avid or resource_id.bvid:
-        from bilili.parser.acg_video import get_title, get_list, get_playurl, get_subtitle
+        from .parser.acg_video import (get_list, get_playurl,
+                                             get_subtitle, get_title)
         bili_type = "acg_video"
     elif resource_id.season_id or resource_id.episode_id:
-        from bilili.parser.bangumi import get_title, get_list, get_playurl, get_subtitle
+        from .parser.bangumi import (get_list, get_playurl, get_subtitle,
+                                           get_title)
         bili_type = "bangumi"
 
     # 获取标题
@@ -258,18 +258,18 @@ def main():
         # 状态检查与校正
         for i, container in enumerate(containers):
             container_downloaded = not container.check_needs_download(args.overwrite)
-            symbol = "✓" if container_downloaded else "✖"
+            symbol = " " if container_downloaded else "*"
             if container_downloaded:
                 container._.merged = True
             print("{} {}".format(symbol, str(container)))
             for media in container.medias:
                 media_downloaded = not media.check_needs_download(args.overwrite) or container_downloaded
-                symbol = "✓" if media_downloaded else "✖"
+                symbol = " " if media_downloaded else "*"
                 if not container_downloaded:
                     print("    {} {}".format(symbol, media.name))
                 for block in media.blocks:
                     block_downloaded = not block.check_needs_download(args.overwrite) or media_downloaded
-                    symbol = "✓" if block_downloaded else "✖"
+                    symbol = " " if block_downloaded else "*"
                     block._.downloaded = block_downloaded
                     if not media_downloaded and args.debug:
                         print("        {} {}".format(symbol, block.name))
@@ -278,7 +278,7 @@ def main():
         if not args.yes:
             answer = None
             while answer is None:
-                result = input("以上标 ✖ 为需要进行下载的视频，是否立刻进行下载？[Y/n]")
+                result = input("以上标 * 为需要进行下载的视频，是否立刻进行下载？[Y/n]")
                 if result == "" or result[0].lower() == "y":
                     answer = True
                 elif result[0].lower() == "n":
@@ -352,7 +352,7 @@ def main():
 
         # 初始化界面
         console = Console(debug=args.debug)
-        console.add_component(Line(center=Font(char_a="𝓪", char_A="𝓐"), fillchar=" "))
+        console.add_component(Line(center=String(), fillchar=" "))
         console.add_component(Line(left=ColorString(fore="cyan"), fillchar=" "))
         console.add_component(LineList(Line(left=String(), right=String(), fillchar="-")))
         console.add_component(
@@ -363,7 +363,7 @@ def main():
             )
         )
         console.add_component(Line(left=ColorString(fore="blue"), fillchar=" "))
-        console.add_component(LineList(Line(left=String(), right=DynamicSymbol(symbols="🌑🌒🌓🌔🌕🌖🌗🌘"), fillchar=" ")))
+        console.add_component(LineList(Line(left=String(), right=DynamicSymbol(), fillchar=" ")))
         console.add_component(
             Line(
                 left=ColorString(fore="yellow", back="white", subcomponent=ProgressBar(symbols=" ▏▎▍▌▋▊▉█", width=65),),
@@ -388,10 +388,10 @@ def main():
                 # fmt: off
                 [
                     {
-                        "center": " 🍻 bilili ",
+                        "center": " bilili ",
                     },
                     {
-                        "left": "🌠 Downloading videos: "
+                        "left": "Downloading videos: "
                     } if global_status.downloading else None,
                     [
                         {
@@ -404,14 +404,14 @@ def main():
                     ] if global_status.downloading else None,
                     {
                         "left": global_status.size / global_status.total_size,
-                        "right": " {}/{} {}/s ⚡".format(
+                        "right": " {}/{} {}/s".format(
                             size_format(global_status.size),
                             size_format(global_status.total_size),
                             size_format(speed),
                         ),
                     } if global_status.downloading else None,
                     {
-                        "left": "🍰 Merging videos: "
+                        "left": "Merging videos: "
                     } if global_status.merging else None,
                     [
                         {
@@ -422,7 +422,7 @@ def main():
                     ] if global_status.merging else None,
                     {
                         "left": sum([container._.merged for container in containers]) / len(containers),
-                        "right": " {}/{} 🚀".format(
+                        "right": " {}/{}".format(
                             sum([container._.merged for container in containers]), len(containers),
                         ),
                     } if global_status.merging else None,

@@ -1,16 +1,11 @@
-import re
 import json
+import re
 
-from bilili.tools import spider, regex_bangumi_ep
-from bilili.quality import gen_quality_sequence, video_quality_map, Media
-from bilili.utils.base import touch_url
-from bilili.api.exceptions import (
-    ArgumentsError,
-    CannotDownloadError,
-    UnknownTypeError,
-    UnsupportTypeError,
-)
-from bilili.api.exports import export_api
+from ..api.exceptions import ArgumentsError, CannotDownloadError, UnknownTypeError, UnsupportTypeError
+from ..api.exports import export_api
+from ..quality import Media, gen_quality_sequence, video_quality_map
+from ..tools import regex_bangumi_ep, spider
+from ..utils.base import touch_url
 
 
 @export_api(route="/video_info")
@@ -21,12 +16,8 @@ def get_video_info(avid: str = "", bvid: str = ""):
     res = spider.get(info_api.format(avid=avid, bvid=bvid))
     res_json_data = res.json()["data"]
     episode_id = ""
-    if res_json_data.get("redirect_url") and regex_bangumi_ep.match(
-        res_json_data["redirect_url"]
-    ):
-        episode_id = regex_bangumi_ep.match(res_json_data["redirect_url"]).group(
-            "episode_id"
-        )
+    if res_json_data.get("redirect_url") and regex_bangumi_ep.match(res_json_data["redirect_url"]):
+        episode_id = regex_bangumi_ep.match(res_json_data["redirect_url"]).group("episode_id")
     return {
         "avid": str(res_json_data["aid"]),
         "bvid": res_json_data["bvid"],
@@ -57,9 +48,7 @@ def get_acg_video_title(avid: str = "", bvid: str = "") -> str:
 def get_acg_video_list(avid: str = "", bvid: str = ""):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
-    list_api = (
-        "https://api.bilibili.com/x/player/pagelist?aid={avid}&bvid={bvid}&jsonp=jsonp"
-    )
+    list_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&bvid={bvid}&jsonp=jsonp"
     res = spider.get(list_api.format(avid=avid, bvid=bvid))
     return [
         # fmt: off
@@ -85,11 +74,11 @@ def get_acg_video_playurl(
         raise ArgumentsError("avid", "bvid")
     video_quality_sequence = gen_quality_sequence(quality, type=Media.VIDEO)
     audio_quality_sequence = gen_quality_sequence(audio_quality, type=Media.AUDIO)
-    play_api = "https://api.bilibili.com/x/player/playurl?avid={avid}&bvid={bvid}&cid={cid}&qn={quality}&type=&otype=json"
+    play_api = (
+        "https://api.bilibili.com/x/player/playurl?avid={avid}&bvid={bvid}&cid={cid}&qn={quality}&type=&otype=json"
+    )
     if type == "flv":
-        touch_message = spider.get(
-            play_api.format(avid=avid, bvid=bvid, cid=cid, quality=80)
-        ).json()
+        touch_message = spider.get(play_api.format(avid=avid, bvid=bvid, cid=cid, quality=80)).json()
         if touch_message["code"] != 0:
             raise CannotDownloadError(touch_message["code"], touch_message["message"])
 
@@ -118,9 +107,7 @@ def get_acg_video_playurl(
         result = []
         play_api_dash = play_api + "&fnver=0&fnval=16&fourk=1"
         touch_message = spider.get(
-            play_api_dash.format(
-                avid=avid, bvid=bvid, cid=cid, quality=video_quality_sequence[0]
-            )
+            play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=video_quality_sequence[0])
         ).json()
 
         if touch_message["code"] != 0:
@@ -128,27 +115,21 @@ def get_acg_video_playurl(
         if touch_message["data"].get("dash") is None:
             raise UnsupportTypeError("dash")
 
-        video_accept_quality = set(
-            [video["id"] for video in touch_message["data"]["dash"]["video"]]
-        )
+        video_accept_quality = set([video["id"] for video in touch_message["data"]["dash"]["video"]])
         for video_quality in video_quality_sequence:
             if video_quality in video_accept_quality:
                 break
         else:
             video_quality = 120
 
-        audio_accept_quality = set(
-            [audio["id"] for audio in touch_message["data"]["dash"]["audio"]]
-        )
+        audio_accept_quality = set([audio["id"] for audio in touch_message["data"]["dash"]["audio"]])
         for audio_quality in audio_quality_sequence:
             if audio_quality in audio_accept_quality:
                 break
         else:
             audio_quality = 30280
 
-        res = spider.get(
-            play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=quality)
-        )
+        res = spider.get(play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=quality))
 
         if res.json()["data"]["dash"]["video"]:
             videos = res.json()["data"]["dash"]["video"]
@@ -187,9 +168,7 @@ def get_acg_video_playurl(
         return result
     elif type == "mp4":
         play_api_mp4 = play_api + "&platform=html5&high_quality=1"
-        play_info = spider.get(
-            play_api_mp4.format(avid=avid, bvid=bvid, cid=cid, quality=120)
-        ).json()
+        play_info = spider.get(play_api_mp4.format(avid=avid, bvid=bvid, cid=cid, quality=120)).json()
         if play_info["code"] != 0:
             raise CannotDownloadError(play_info["code"], play_info["message"])
         return [
@@ -212,14 +191,10 @@ def get_acg_video_playurl(
 def get_acg_video_subtitle(avid: str = "", bvid: str = "", cid: str = ""):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
-    subtitle_api = (
-        "https://api.bilibili.com/x/player.so?id=cid:{cid}&aid={avid}&bvid={bvid}"
-    )
+    subtitle_api = "https://api.bilibili.com/x/player.so?id=cid:{cid}&aid={avid}&bvid={bvid}"
     subtitle_url = subtitle_api.format(avid=avid, cid=cid, bvid=bvid)
     res = spider.get(subtitle_url)
-    subtitles_info = json.loads(
-        re.search(r"<subtitle>(.+)</subtitle>", res.text).group(1)
-    )
+    subtitles_info = json.loads(re.search(r"<subtitle>(.+)</subtitle>", res.text).group(1))
     return [
         # fmt: off
         {

@@ -1,14 +1,14 @@
 import os
+from typing import List
 
-from bilili.handlers.base import Handler
-from bilili.utils.ffmpeg import FFmpeg
-
+from ..handlers.base import Handler
+from ..utils.ffmpeg import FFmpeg
 
 ffmpeg = FFmpeg()
 
 
 class MergingFile(Handler):
-    def __init__(self, type, src_path_list=[], dst_path=""):
+    def __init__(self, type: str, src_path_list: List[str] = [], dst_path: str = ""):
         super().__init__(["before_merge", "merged"])
         self.type = type
         self.src_path_list = src_path_list
@@ -25,9 +25,7 @@ class MergingFile(Handler):
             ffmpeg.join_videos(self.src_path_list, self.dst_path)
         elif self.type == "dash":
             if len(self.src_path_list) == 2:
-                ffmpeg.join_video_audio(
-                    self.src_path_list[0], self.src_path_list[1], self.dst_path
-                )
+                ffmpeg.join_video_audio(self.src_path_list[0], self.src_path_list[1], self.dst_path)
             else:
                 ffmpeg.convert(self.src_path_list[0], self.dst_path)
         else:

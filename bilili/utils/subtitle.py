@@ -1,4 +1,4 @@
-from bilili.utils.base import Text
+from ..utils.base import Text
 
 
 class Subtitle(Text):

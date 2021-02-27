@@ -1,10 +1,4 @@
-import os
-from bilili.api.acg_video import (
-    get_acg_video_title,
-    get_acg_video_list,
-    get_acg_video_playurl,
-    get_acg_video_subtitle,
-)
+from ..api.acg_video import get_acg_video_list, get_acg_video_playurl, get_acg_video_subtitle, get_acg_video_title
 
 
 def get_title(resource_id):

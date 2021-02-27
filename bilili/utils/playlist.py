@@ -1,6 +1,7 @@
 import os
+from typing import Union
 
-from bilili.utils.base import Text
+from ..utils.base import Text
 
 
 class Playlist(Text):
@@ -10,7 +11,7 @@ class Playlist(Text):
         super().__init__(path)
         self.path_type = path_type
 
-    def switch_path(self, path: str) -> None:
+    def switch_path(self, path: str) -> str:
         path = os.path.normpath(path)
         if self.path_type == "AP":
             path = os.path.abspath(path)

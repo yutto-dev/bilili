@@ -1,8 +1,8 @@
 import os
-import re
 import random
+import re
+from typing import Any, Tuple, Union
 
-from typing import Any
 
 class Ref():
     """ 引用类
@@ -27,7 +27,7 @@ class Writer():
     def flush(self):
         self._f.flush()
 
-    def write(self, content):
+    def write(self, content: str):
         self._f.write(content)
 
 
@@ -56,7 +56,7 @@ def touch_file(path: str) -> str:
     return os.path.normpath(path)
 
 
-def touch_url(url: str, spider):
+def touch_url(url: str, spider) -> Tuple[Union[int, None], bool]:
     """ 与资源进行测试连接，并获取该资源的 size 与 是否可以断点续传 """
     # 某些资源 head 无法获得真实 size
     methods = [spider.head, spider.get]

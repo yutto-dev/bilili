@@ -1,21 +1,12 @@
-from bilili.api.bangumi import (
-    get_bangumi_title,
-    get_bangumi_list,
-    get_bangumi_playurl,
-    get_bangumi_subtitle,
-)
+from ..api.bangumi import get_bangumi_list, get_bangumi_playurl, get_bangumi_subtitle, get_bangumi_title
 
 
 def get_title(resource_id):
-    return get_bangumi_title(
-        season_id=resource_id.season_id, episode_id=resource_id.episode_id
-    )
+    return get_bangumi_title(season_id=resource_id.season_id, episode_id=resource_id.episode_id)
 
 
 def get_list(resource_id):
-    video_list = get_bangumi_list(
-        season_id=resource_id.season_id, episode_id=resource_id.episode_id
-    )
+    video_list = get_bangumi_list(season_id=resource_id.season_id, episode_id=resource_id.episode_id)
     return [
         {
             "id": video["id"],

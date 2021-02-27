@@ -1,8 +1,11 @@
 import os
-import requests
 import random
+from typing import List, Tuple, Union
 
-from bilili.handlers.base import Handler
+import requests
+
+from ..handlers.base import Handler
+from ..utils.crawler import Crawler
 
 
 class RemoteFile(Handler):
@@ -12,7 +15,9 @@ class RemoteFile(Handler):
     download 支持断点续传
     """
 
-    def __init__(self, url, local_path, mirrors=[], range=(0, "")):
+    def __init__(
+        self, url: str, local_path: str, mirrors: List[str] = [], range: Tuple[int, Union[int, str]] = (0, "")
+    ):
         super().__init__(["before_download", "before_update", "updated", "downloaded"])
         self.url = url
         self.mirrors = mirrors
@@ -22,7 +27,7 @@ class RemoteFile(Handler):
         self.size = self.get_local_size()
         self.range = range
 
-    def get_local_size(self):
+    def get_local_size(self) -> int:
         """ 通过 os.path.getsize 获取本地文件大小 """
         try:
             if os.path.exists(self.tmp_path):
@@ -35,7 +40,7 @@ class RemoteFile(Handler):
             size = 0
         return size
 
-    def download(self, thread_spider, stream=True, chunk_size=1024):
+    def download(self, thread_spider: Crawler, stream: bool = True, chunk_size: int = 1024):
         """[summary]
 
         Args:
@@ -50,20 +55,12 @@ class RemoteFile(Handler):
             while not downloaded:
                 # 设置 headers
                 headers = dict(spider.headers)
-                headers["Range"] = "bytes={}-{}".format(
-                    self.size + self.range[0], self.range[1]
-                )
-                url = (
-                    random.choice([self.url] + self.mirrors)
-                    if self.mirrors
-                    else self.url
-                )
+                headers["Range"] = "bytes={}-{}".format(self.size + self.range[0], self.range[1])
+                url = random.choice([self.url] + self.mirrors) if self.mirrors else self.url
 
                 try:
                     # 尝试建立连接
-                    res = spider.get(
-                        url, stream=stream, headers=headers, timeout=(5, 10)
-                    )
+                    res = spider.get(url, stream=stream, headers=headers, timeout=(5, 10))
                     # 下载到临时路径
                     with open(self.tmp_path, "ab") as f:
                         if stream:
@@ -77,18 +74,12 @@ class RemoteFile(Handler):
                         else:
                             f.write(res.content)
                     # size 检验，因为有时明明没下完仍然会停止下载
-                    if self.range[1] and (
-                        self.range[1] - self.range[0] + 1 != self.size
-                    ):
+                    if self.range[1] and (self.range[1] - self.range[0] + 1 != self.size):
                         downloaded = False
                     else:
                         downloaded = True
                 except requests.exceptions.RequestException:
-                    print(
-                        "[warn] file {}, request timeout, trying again...".format(
-                            self.name
-                        )
-                    )
+                    print("[warn] file {}, request timeout, trying again...".format(self.name))
 
             # 从临时文件迁移，并删除临时文件
             if os.path.exists(self.path):

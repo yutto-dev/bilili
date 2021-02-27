@@ -3,7 +3,7 @@ import queue
 import threading
 
 
-from bilili.utils.base import Ref
+from ..utils.base import Ref
 
 
 class Flag(Ref):
