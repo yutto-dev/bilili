@@ -79,7 +79,7 @@ def touch_url(url: str, spider) -> Tuple[Union[int, None], bool]:
 
 def repair_filename(filename: str) -> str:
     """ 修复不合法的文件名 """
-    def to_full_width_chr(matchobj):
+    def to_full_width_chr(matchobj: 're.Match[str]') -> str:
         char = matchobj.group(0)
         full_width_char = chr(ord(char) + ord('？') - ord('?'))
         return full_width_char
@@ -113,7 +113,7 @@ def get_size(path: str) -> int:
         return 0
 
 
-def size_format(size: int, ndigits:int=2) -> str:
+def size_format(size: float, ndigits: int=2) -> str:
     """ 输入数据字节数，与保留小数位数，返回数据量字符串 """
     flag = '-' if size < 0 else ''
     size = abs(size)

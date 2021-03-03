@@ -3,10 +3,11 @@ import requests
 
 from typing import Dict
 
+
 class Crawler(requests.Session):
 
     header = {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36",
     }
 
     def __init__(self):
@@ -19,7 +20,9 @@ class Crawler(requests.Session):
         self.cookies_dict = cookies
         requests.utils.add_dict_to_cookiejar(self.cookies, cookies)
 
-    def download_bin(self, url: str, file_path: str, stream:bool=True, chunk_size:int=1024, **kw: Dict[str, str]) -> None:
+    def download_bin(
+        self, url: str, file_path: str, stream: bool = True, chunk_size: int = 1024, **kw: Dict[str, str]
+    ) -> None:
         """下载二进制文件"""
 
         res = self.get(url, stream=stream, **kw)

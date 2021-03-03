@@ -363,7 +363,7 @@ def main():
             )
         )
         console.add_component(Line(left=ColorString(fore="blue"), fillchar=" "))
-        console.add_component(LineList(Line(left=String(), right=DynamicSymbol(), fillchar=" ")))
+        console.add_component(LineList(Line(left=String(), fillchar=" ")))
         console.add_component(
             Line(
                 left=ColorString(fore="yellow", back="white", subcomponent=ProgressBar(symbols=" ▏▎▍▌▋▊▉█", width=65),),
