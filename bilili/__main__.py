@@ -87,6 +87,8 @@ def main():
         help="视频清晰度 120:4K, 116:1080P60, 112:1080P+, 80:1080P, 74:720P60, 64:720P, 32:480P, 16:360P",
     )
     parser.add_argument("-n", "--num-threads", default=16, type=int, help="最大下载线程数")
+    parser.add_argument(
+        "-s", "--with-section", action="store_true", help="同时下载附加剧集（PV 或预告或特别篇等）")
     parser.add_argument("-p", "--episodes", default="^~$", help="选集")
     parser.add_argument("-w", "--overwrite", action="store_true", help="强制覆盖已下载视频")
     parser.add_argument("-c", "--sess-data", default=None, help="输入 cookies")
@@ -119,6 +121,7 @@ def main():
         "dir": args.dir,
         "quality": args.quality,
         "audio_quality": args.audio_quality,
+        "with_section": "1" if args.with_section else "0",
         "episodes": args.episodes,
         "playlist_type": args.playlist_type,
         "playlist_path_type": "AP" if args.abs_path else "RP",
@@ -191,7 +194,7 @@ def main():
     video_dir = touch_dir(os.path.join(base_dir, "Videos"))
 
     # 获取需要的信息
-    containers = [BililiContainer(video_dir=video_dir, type=args.type, **video) for video in get_list(resource_id)]
+    containers = [BililiContainer(video_dir=video_dir, type=args.type, **video) for video in get_list(resource_id, config["with_section"])]
 
     # 解析并过滤不需要的选集
     episodes = parse_episodes(config["episodes"], len(containers))
