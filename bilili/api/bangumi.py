@@ -44,7 +44,7 @@ def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str =
 
 
 @export_api(route="/bangumi/list")
-def get_bangumi_list(episode_id: str = "", season_id: str = "", with_section: str = ""):
+def get_bangumi_list(episode_id: str = "", season_id: str = "", with_section: bool = False):
     if not (season_id or episode_id):
         raise ArgumentsError("season_id", "episode_id")
     list_api = "http://api.bilibili.com/pgc/view/web/season?season_id={season_id}&ep_id={episode_id}"
@@ -52,8 +52,8 @@ def get_bangumi_list(episode_id: str = "", season_id: str = "", with_section: st
     result = res.json()["result"]
     section_episodes = []
 
-    if with_section and not with_section == "0":
-        for section in result.get("section", []):
+    if with_section and result.get("section", []):
+        for section in result["section"]:
             section_episodes += section["episodes"]
 
     return [

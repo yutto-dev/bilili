@@ -121,7 +121,7 @@ def main():
         "dir": args.dir,
         "quality": args.quality,
         "audio_quality": args.audio_quality,
-        "with_section": "1" if args.with_section else "0",
+        "with_section": args.with_section,
         "episodes": args.episodes,
         "playlist_type": args.playlist_type,
         "playlist_path_type": "AP" if args.abs_path else "RP",
