@@ -5,7 +5,7 @@ def get_title(resource_id):
     return get_acg_video_title(avid=resource_id.avid, bvid=resource_id.bvid)
 
 
-def get_list(resource_id):
+def get_list(resource_id, with_section: bool=False):
     video_list = get_acg_video_list(avid=resource_id.avid, bvid=resource_id.bvid)
     return [
         {

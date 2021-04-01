@@ -44,11 +44,18 @@ def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str =
 
 
 @export_api(route="/bangumi/list")
-def get_bangumi_list(episode_id: str = "", season_id: str = ""):
+def get_bangumi_list(episode_id: str = "", season_id: str = "", with_section: bool = False):
     if not (season_id or episode_id):
         raise ArgumentsError("season_id", "episode_id")
     list_api = "http://api.bilibili.com/pgc/view/web/season?season_id={season_id}&ep_id={episode_id}"
     res = spider.get(list_api.format(episode_id=episode_id, season_id=season_id))
+    result = res.json()["result"]
+    section_episodes = []
+
+    if with_section and result.get("section", []):
+        for section in result["section"]:
+            section_episodes += section["episodes"]
+
     return [
         {
             "id": i + 1,
@@ -63,7 +70,7 @@ def get_bangumi_list(episode_id: str = "", season_id: str = ""):
             "avid": str(item["aid"]),
             "bvid": item["bvid"],
         }
-        for i, item in enumerate(res.json()["result"]["episodes"])
+        for i, item in enumerate(result["episodes"] + section_episodes)
     ]
 
 

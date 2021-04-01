@@ -22,7 +22,7 @@ def test_get_title():
 
 def test_get_list():
     season_id = "28770"
-    video_list = get_bangumi_list(season_id=season_id)
+    video_list = get_bangumi_list(season_id=season_id, with_section=False)
     assert video_list[0]["cid"] == "144541892"
     assert video_list[0]["avid"] == "84271171"
     assert video_list[0]["bvid"] == "BV1q7411v7Vd"
@@ -30,7 +30,7 @@ def test_get_list():
 
 
 @pytest.mark.parametrize("type", ["flv", "dash"])
-def test_get_playurl(type):
+def test_get_playurl(type: str):
     avid = "84271171"
     bvid = "BV1q7411v7Vd"
     cid = "144541892"

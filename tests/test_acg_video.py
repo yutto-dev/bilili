@@ -27,7 +27,7 @@ def test_get_list():
 
 
 @pytest.mark.parametrize("type", ["flv", "mp4", "dash"])
-def test_get_playurl(type):
+def test_get_playurl(type: str):
     bvid = "BV1vZ4y1M7mQ"
     cid = "222190584"
     play_list = get_acg_video_playurl(
