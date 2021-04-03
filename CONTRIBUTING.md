@@ -28,7 +28,7 @@ pytest                                                      # 测试
 
 ## 提交 PR
 
-提交 PR 的最佳实践是 fork 一个新的 repo 到你的账户下，并创建一个新的分支，在该分支下进行改动后提交到 GitHub 上，并发起 PR
+提交 PR 的最佳实践是 fork 一个新的 repo 到你的账户下，并创建一个新的分支，在该分支下进行改动后提交到 GitHub 上，并发起 PR（请注意在发起 PR 时不要取消勾选 `Allow edits from maintainers`）
 
 ```bash
 # 首先 fork

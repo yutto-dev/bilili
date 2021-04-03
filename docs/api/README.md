@@ -56,7 +56,7 @@
 
 -  Python 调用： `bilili.api.bangumi.get_bangumi_list`
 -  WSGI 调用： <https://bilipi.sigure.xyz/api/v0/bangumi/list>
--  参数： `episode_id`, `season_id`
+-  参数： `episode_id`, `season_id`, `with_section`
 
 ### 获取视频播放地址
 

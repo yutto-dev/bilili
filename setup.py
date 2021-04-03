@@ -73,7 +73,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=True,
-    python_requires=">=3.6.0",
+    python_requires=">=3.8.0",
     setup_requires=["wheel"],
     install_requires=[
         "requests",

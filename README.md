@@ -5,22 +5,22 @@
 </p>
 
 <p align="center">
-   <a href="https://bilibili.com" target="_blank"><img src="https://img.shields.io/badge/bilibili-1eabc9.svg?logo=bilibili&logoColor=white" alt="Bilibili"></a>
-   <a href="https://python.org/" target="_blank"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/bilili?logo=python"></a>
-   <a href="https://pypi.org/project/bilili/" target="_blank"><img src="https://img.shields.io/pypi/v/bilili" alt="pypi"></a>
-   <a href="https://pypi.org/project/bilili/" target="_blank"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/bilili"></a>
-   <a href="https://github.com/SigureMo/bilili/actions?query=workflow%3A%22API+Test%22" target="_blank"><img alt="Test Crawler" src="https://github.com/SigureMo/bilili/workflows/API%20Test/badge.svg"></a>
-   <a href="LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/SigureMo/bilili"></a>
-   <a href="https://gitmoji.carloscuesta.me"><img src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg" alt="Gitmoji"></a>
+   <a href="https://bilibili.com" target="_blank"><img src="https://img.shields.io/badge/bilibili-1eabc9.svg?logo=bilibili&logoColor=white&style=flat-square" alt="Bilibili"></a>
+   <a href="https://python.org/" target="_blank"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/bilili?logo=python&style=flat-square"></a>
+   <a href="https://pypi.org/project/bilili/" target="_blank"><img src="https://img.shields.io/pypi/v/bilili?style=flat-square" alt="pypi"></a>
+   <a href="https://pypi.org/project/bilili/" target="_blank"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/bilili?style=flat-square"></a>
+   <a href="https://actions-badge.atrox.dev/SigureMo/bilili/goto?ref=main"><img alt="Build Status" src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FSigureMo%2Fbilili%2Fbadge%3Fref%3Dmain&label=API%20Test&style=flat-square" /></a>
+   <a href="LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/SigureMo/bilili?style=flat-square"></a>
+   <a href="https://gitmoji.carloscuesta.me"><img src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67?style=flat-square" alt="Gitmoji"></a>
 </p>
 
-<p align="center"><strong>🍻 𝓫𝓲𝓵𝓲𝓵𝓲，可以帮你快速下载 <a href="https://www.bilibili.com">B 站</a>投稿视频以及番剧视频的 CLI～～～</strong></p>
+<p align="center"><strong>🍻 𝓫𝓲𝓵𝓲𝓵𝓲，一个可以帮你快速下载 <a href="https://www.bilibili.com">B 站</a>投稿视频以及番剧视频的 CLI～～～</strong></p>
 
 **全新文档请访问 <https://bilili.sigure.xyz>**
 
 ## 特性
 
--  支持 ACG 视频（也即原 AV 号视频）和番剧下载
+-  支持投稿视频（也即原 AV 号视频）和番剧下载
 -  多线程 + 分块下载，轻松跑满你的带宽
 -  断点续传，即便一次没下完也可以接着下载
 -  弹幕支持，自动下载弹幕并转换为 ass 弹幕，本地播放器也可以体验 B 站的看视频体验
@@ -52,7 +52,7 @@ Windows 请[手动下载](https://ffmpeg.org/download.html)后，存放到任意
 
 你可以通过直接在终端运行 `ffmpeg -version` 测试是否安装成功
 
-### 安装 Bilili
+### 安装 bilili
 
 #### pip 安装
 
@@ -92,6 +92,7 @@ bilili <url>
 -  `-q`/`--quality` 指定清晰度，默认为 `120`（4K）
 -  `-n`/`--num-threads` 指定最大下载线程数，默认为 16
 -  `-p`/`--episodes` 选集，默认为 `^~$`（全选）
+-  `-s`/`--with-section` 同时下载附加剧集（ PV、预告以及特别篇内容）
 -  `-w`/`--overwrite` 强制覆盖已下载视频
 -  `-c`/`--sess-data` 传入 `cookies` 中的 `SESSDATA`
 -  `-y`/`--yes` 跳过下载询问
@@ -100,7 +101,7 @@ bilili <url>
 -  `--danmaku` 指定弹幕类型，支持 `xml` 和 `ass`，如果设置为 `no` 则不下载弹幕，默认为 `xml` 弹幕
 -  `--block-size` 分块下载器的块大小，单位为 MB，默认为 128MB，设置为 0 时禁用分块下载
 -  `--abs-path` 修改播放列表路径类型为绝对路径
--  `--use-mirrors` 启用从多个镜像下载功能 「Beta」
+-  `--use-mirrors` 启用从多个镜像下载功能
 -  `--disable-proxy` 禁用系统代理 「Beta」
 -  `--debug` 开启 `debug` 模式
 

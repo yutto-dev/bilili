@@ -115,16 +115,16 @@ bilili <url>
 
 ::: details 示例
 
-比如下载我的 bilili 演示视频只需要
+比如下载我的 [bilili 演示视频](https://www.bilibili.com/video/BV1vZ4y1M7mQ/)只需要
 
 ```bash
 bilili https://www.bilibili.com/video/BV1vZ4y1M7mQ
 ```
 
-下载番剧《雾山五行》只需要
+下载番剧[《关于我转生变成史莱姆这档事》](https://www.bilibili.com/bangumi/media/md139252/)只需要
 
 ```bash
-bilili https://www.bilibili.com/bangumi/media/md28228714
+bilili https://www.bilibili.com/bangumi/media/md139252/
 ```
 
 :::
