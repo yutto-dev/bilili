@@ -44,18 +44,6 @@ module.exports = {
         recoverTime: 2000
       }
     ],
-    // Vssue
-    [
-      '@vssue/vuepress-plugin-vssue',
-      {
-        platform: 'github',
-        owner: 'SigureMo',
-        repo: 'bilili',
-        clientId: '913b8e73e5c2ad957b42',
-        clientSecret: '6cab2f1bf1afb0c25a87a45ab778863c464d8864',
-        prefix: '💬 '
-      }
-    ],
     // bilili player
     [
       require('./plugins/bilili-player/index.js'),
@@ -112,7 +100,7 @@ module.exports = {
     editLinkText: '啊，我说错了？你可以帮我纠正哦～'
   },
 
-  // 作为插件的额外路由
+  // 插件 API 提供的额外路由
   additionalPages: [
     {
       path: '/guide/cli.html',

@@ -8,8 +8,6 @@
     "serve": "vuepress build --no-cache && npx serve .vuepress/dist"
   },
   "devDependencies": {
-    "@vssue/api-github-v3": "^1.4.7",
-    "@vssue/vuepress-plugin-vssue": "^1.4.7",
     "@vuepress/plugin-back-to-top": "^1.8.2",
     "dplayer": "^1.26.0",
     "vuepress": "^1.8.2",
