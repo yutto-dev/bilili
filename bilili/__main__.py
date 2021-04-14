@@ -12,7 +12,7 @@ from .handlers.merger import MergingFile
 from .tools import ass, global_status, regex, spider
 from .utils.attrdict import AttrDict
 from .utils.base import repair_filename, size_format, touch_dir
-from .utils.console import (ColorString, Console, DynamicSymbol, Line,
+from .utils.console import (ColorString, Console, Line,
                             LineList, ProgressBar, String)
 from .utils.playlist import Dpl, M3u
 from .utils.subtitle import Subtitle
@@ -81,10 +81,10 @@ def main():
     parser.add_argument(
         "-q",
         "--quality",
-        default=120,
-        choices=[120, 116, 112, 80, 74, 64, 32, 16],
+        default=125,
+        choices=[125, 120, 116, 112, 80, 74, 64, 32, 16],
         type=int,
-        help="视频清晰度 120:4K, 116:1080P60, 112:1080P+, 80:1080P, 74:720P60, 64:720P, 32:480P, 16:360P",
+        help="视频清晰度 125:HDR, 120:4K, 116:1080P60, 112:1080P+, 80:1080P, 74:720P60, 64:720P, 32:480P, 16:360P",
     )
     parser.add_argument("-n", "--num-threads", default=16, type=int, help="最大下载线程数")
     parser.add_argument("-p", "--episodes", default="^~$", help="选集")

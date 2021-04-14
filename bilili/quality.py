@@ -7,48 +7,53 @@ class Media(Enum):
     AUDIO = 30200
 
 
-video_quality_sequence_default = [120, 116, 112, 80, 74, 64, 32, 16]
+video_quality_sequence_default = [125, 120, 116, 112, 80, 74, 64, 32, 16]
 audio_quality_sequence_default = [30280, 30232, 30216]
 
 video_quality_map = {
+    125: {
+        "description": "HDR 真彩",
+        "width": 3840,
+        "height": 1920,
+    },
     120: {
         "description": "4K 超清",
-        "width": 4096,
-        "height": 2160,
+        "width": 3840,
+        "height": 1920,
     },
     116: {
         "description": "1080P 60帧",
-        "width": 1920,
+        "width": 2160,
         "height": 1080,
     },
     112: {
         "description": "1080P 高码率",
-        "width": 1920,
+        "width": 2160,
         "height": 1080,
     },
     80: {
         "description": "1080P 高清",
-        "width": 1920,
+        "width": 2160,
         "height": 1080,
     },
     74: {
         "description": "720P 60帧",
-        "width": 1280,
+        "width": 1440,
         "height": 720,
     },
     64: {
         "description": "720P 高清",
-        "width": 1280,
+        "width": 1440,
         "height": 720,
     },
     32: {
         "description": "480P 清晰",
-        "width": 640,
+        "width": 960,
         "height": 480,
     },
     16: {
         "description": "360P 流畅",
-        "width": 480,
+        "width": 720,
         "height": 360,
     },
     6: {

@@ -80,7 +80,7 @@ def get_bangumi_playurl(
     bvid: str = "",
     episode_id: str = "",
     cid: str = "",
-    quality: int = 120,
+    quality: int = 125,
     audio_quality: int = 30280,
     type: str = "dash",
 ):
@@ -142,7 +142,7 @@ def get_bangumi_playurl(
             if video_quality in accept_video_quality:
                 break
         else:
-            video_quality = 120
+            video_quality = 125
 
         accept_audio_quality = set([audio["id"] for audio in play_info["result"]["dash"]["audio"]])
         for audio_quality in audio_quality_sequence:
