@@ -5,8 +5,10 @@ def get_title(resource_id):
     return get_bangumi_title(season_id=resource_id.season_id, episode_id=resource_id.episode_id)
 
 
-def get_list(resource_id, with_section: bool=False):
-    video_list = get_bangumi_list(season_id=resource_id.season_id, episode_id=resource_id.episode_id, with_section=with_section)
+def get_list(resource_id, with_section: bool = False):
+    video_list = get_bangumi_list(
+        season_id=resource_id.season_id, episode_id=resource_id.episode_id, with_section=with_section
+    )
     return [
         {
             "id": video["id"],

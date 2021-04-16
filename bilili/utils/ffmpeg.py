@@ -16,7 +16,7 @@ class FFmpegNotFoundError(Exception):
 
 
 class FFmpeg:
-    def __init__(self, ffmpeg_path:str="ffmpeg"):
+    def __init__(self, ffmpeg_path: str="ffmpeg"):
         try:
             if subprocess.run([ffmpeg_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE).returncode != 1:
                 raise FFmpegNotFoundError()
