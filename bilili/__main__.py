@@ -181,6 +181,9 @@ def main():
         from .parser.bangumi import (get_list, get_playurl, get_subtitle,
                                            get_title)
         bili_type = "bangumi"
+    else:
+        print("未知视频类型")
+        sys.exit(1)
 
     # 获取标题
     spider.set_cookies(config["cookies"])
@@ -259,23 +262,23 @@ def main():
     # 准备下载
     if containers:
         # 状态检查与校正
-        for i, container in enumerate(containers):
+        for i, container in enumerate(containers, 1):
             container_downloaded = not container.check_needs_download(args.overwrite)
             symbol = " " if container_downloaded else "*"
             if container_downloaded:
                 container._.merged = True
-            print("{} {}".format(symbol, str(container)))
+            print("{}{} {:>3} {}".format("    "*0, symbol, i, str(container)))
             for media in container.medias:
                 media_downloaded = not media.check_needs_download(args.overwrite) or container_downloaded
                 symbol = " " if media_downloaded else "*"
-                if not container_downloaded:
-                    print("    {} {}".format(symbol, media.name))
+                if not container_downloaded and args.debug:
+                    print("{}{} {}".format("    "*1, symbol, media.name))
                 for block in media.blocks:
                     block_downloaded = not block.check_needs_download(args.overwrite) or media_downloaded
                     symbol = " " if block_downloaded else "*"
                     block._.downloaded = block_downloaded
                     if not media_downloaded and args.debug:
-                        print("        {} {}".format(symbol, block.name))
+                        print("{}{} {}".format("    "*2, symbol, block.name))
 
         # 询问是否下载，通过参数 -y 可以跳过
         if not args.yes:
