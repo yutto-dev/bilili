@@ -446,7 +446,8 @@ def main():
                 refresh_rate = 2
                 time.sleep(max(1 / refresh_rate - (time.time() - now_t), 0.01))
             except (SystemExit, KeyboardInterrupt):
-                raise
+                print("已终止下载，再次运行即可继续下载～")
+                sys.exit(1)
         print("已全部下载完成！")
     else:
         print("没有需要下载的视频！")
