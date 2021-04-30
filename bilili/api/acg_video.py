@@ -58,6 +58,7 @@ def get_acg_video_list(avid: str = "", bvid: str = ""):
             'cid': str(item['cid'])
         }
         for i, item in enumerate(res.json()['data'])
+        # fmt: on
     ]
 
 

@@ -1,3 +1,5 @@
+from typing import Any
+
 from ..api.exports import export_api
 from ..tools import spider
 
@@ -11,7 +13,7 @@ def get_danmaku(cid: str) -> str:
 
 
 @export_api(route="/danmaku/dplayer")
-def get_danmaku_for_dplayer(cid: str) -> any:
+def get_danmaku_for_dplayer(cid: str) -> Any:
     from bs4 import BeautifulSoup
 
     xml_text = get_danmaku(cid)
@@ -31,4 +33,5 @@ def get_danmaku_for_dplayer(cid: str) -> any:
                 text
             ]
         )
+        # fmt: on
     return data

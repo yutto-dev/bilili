@@ -311,4 +311,5 @@ if __name__ == "__main__":
                 'right': "100MB/123MB 11.2 MB/s ⚡"
             }
         ])
+        # fmt: on
         time.sleep(0.1)

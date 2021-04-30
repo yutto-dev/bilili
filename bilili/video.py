@@ -43,6 +43,7 @@ class BililiContainer:
                     }[media.type][media.quality]["description"]
                     for media in self.medias
                 ]
+                # fmt: on
             )
         else:
             quality_description = video_quality_map[self.quality]["description"]

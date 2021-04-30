@@ -8,16 +8,17 @@ def get_title(resource_id):
 def get_list(resource_id, with_section: bool = False):
     video_list = get_acg_video_list(avid=resource_id.avid, bvid=resource_id.bvid)
     return [
+        # fmt: off
         {
             "id": video["id"],
             "name": video["name"],
-            # fmt: off
             "meta": {
                 "avid": resource_id.avid,
                 "bvid": resource_id.bvid,
                 "cid": video["cid"]
             },
         }
+        # fmt: on
         for video in video_list
     ]
 

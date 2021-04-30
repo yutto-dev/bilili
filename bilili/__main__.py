@@ -12,8 +12,7 @@ from .handlers.merger import MergingFile
 from .tools import ass, global_status, regex, spider
 from .utils.attrdict import AttrDict
 from .utils.base import repair_filename, size_format, touch_dir
-from .utils.console import (ColorString, Console, Line,
-                            LineList, ProgressBar, String)
+from .utils.console import ColorString, Console, Line, LineList, ProgressBar, String
 from .utils.playlist import Dpl, M3u
 from .utils.subtitle import Subtitle
 from .utils.thread import Flag, ThreadPool
@@ -75,7 +74,11 @@ def main():
     parser = argparse.ArgumentParser(description="bilili B 站视频、弹幕下载器")
     parser.add_argument("url", help="视频主页地址")
     parser.add_argument(
-        "-t", "--type", default="dash", choices=["flv", "dash", "mp4"], help="选择下载源类型（dash 或 flv 或 mp4）",
+        "-t",
+        "--type",
+        default="dash",
+        choices=["flv", "dash", "mp4"],
+        help="选择下载源类型（dash 或 flv 或 mp4）",
     )
     parser.add_argument("-d", "--dir", default=r"", help="下载目录")
     parser.add_argument(
@@ -88,25 +91,34 @@ def main():
     )
     parser.add_argument("-n", "--num-threads", default=16, type=int, help="最大下载线程数")
     parser.add_argument("-p", "--episodes", default="^~$", help="选集")
-    parser.add_argument(
-        "-s", "--with-section", action="store_true", help="同时下载附加剧集（PV、预告以及特别篇等）")
+    parser.add_argument("-s", "--with-section", action="store_true", help="同时下载附加剧集（PV、预告以及特别篇等）")
     parser.add_argument("-w", "--overwrite", action="store_true", help="强制覆盖已下载视频")
     parser.add_argument("-c", "--sess-data", default=None, help="输入 cookies")
     parser.add_argument("-y", "--yes", action="store_true", help="跳过下载询问")
     parser.add_argument(
-        "--audio-quality", default=30280,
+        "--audio-quality",
+        default=30280,
         choices=[30280, 30232, 30216],
         type=int,
         help="音频码率等级 30280:320kbps, 30232:128kbps, 30216:64kbps",
     )
     parser.add_argument(
-        "--playlist-type", default="dpl", choices=["dpl", "m3u", "no"], help="播放列表类型，支持 dpl 和 m3u，输入 no 不生成播放列表",
+        "--playlist-type",
+        default="dpl",
+        choices=["dpl", "m3u", "no"],
+        help="播放列表类型，支持 dpl 和 m3u，输入 no 不生成播放列表",
     )
     parser.add_argument(
-        "--danmaku", default="xml", choices=["xml", "ass", "no"], help="弹幕类型，支持 xml 和 ass，如果设置为 no 则不下载弹幕",
+        "--danmaku",
+        default="xml",
+        choices=["xml", "ass", "no"],
+        help="弹幕类型，支持 xml 和 ass，如果设置为 no 则不下载弹幕",
     )
     parser.add_argument(
-        "--block-size", default=128, type=int, help="分块下载器的块大小，单位为 MB，默认为 128MB，设置为 0 时禁用分块下载",
+        "--block-size",
+        default=128,
+        type=int,
+        help="分块下载器的块大小，单位为 MB，默认为 128MB，设置为 0 时禁用分块下载",
     )
     parser.add_argument("--abs-path", action="store_true", help="修改播放列表路径类型为绝对路径")
     parser.add_argument("--use-mirrors", action="store_true", help="启用从多个镜像下载功能")
@@ -139,6 +151,7 @@ def main():
         "episode_id": "",
         "season_id": "",
     } >> AttrDict()
+    # fmt: on
 
     # fmt: off
     if (avid_match := regex.acg_video.av.origin.match(args.url)) or \
@@ -172,14 +185,15 @@ def main():
     else:
         print("视频地址有误！")
         sys.exit(1)
+    # fmt: on
 
     if resource_id.avid or resource_id.bvid:
-        from .parser.acg_video import (get_list, get_playurl,
-                                             get_subtitle, get_title)
+        from .parser.acg_video import get_list, get_playurl, get_subtitle, get_title
+
         bili_type = "acg_video"
     elif resource_id.season_id or resource_id.episode_id:
-        from .parser.bangumi import (get_list, get_playurl, get_subtitle,
-                                           get_title)
+        from .parser.bangumi import get_list, get_playurl, get_subtitle, get_title
+
         bili_type = "bangumi"
     else:
         print("未知视频类型")
@@ -197,7 +211,10 @@ def main():
     video_dir = touch_dir(os.path.join(base_dir, "Videos"))
 
     # 获取需要的信息
-    containers = [BililiContainer(video_dir=video_dir, type=args.type, **video) for video in get_list(resource_id, config["with_section"])]
+    containers = [
+        BililiContainer(video_dir=video_dir, type=args.type, **video)
+        for video in get_list(resource_id, config["with_section"])
+    ]
 
     # 解析并过滤不需要的选集
     episodes = parse_episodes(config["episodes"], len(containers))
@@ -220,20 +237,18 @@ def main():
     # 解析片段信息及视频 url
     for i, container in enumerate(containers):
         print(
-            "{:02}/{:02} 正在努力解析视频信息～".format(i + 1, len(containers)), end="\r",
+            "{:02}/{:02} 正在努力解析视频信息～".format(i + 1, len(containers)),
+            end="\r",
         )
 
         # 解析视频 url
         try:
             for playinfo in get_playurl(container, config["quality"], config["audio_quality"]):
-                container.append_media(
-                    block_size=config["block_size"],
-                    **playinfo
-                )
+                container.append_media(block_size=config["block_size"], **playinfo)
         except CannotDownloadError as e:
-            print('[warn] {} 无法下载，原因：{}'.format(container.name, e.message))
+            print("[warn] {} 无法下载，原因：{}".format(container.name, e.message))
         except IsPreviewError:
-            print('[warn] {} 是预览视频'.format(container.name))
+            print("[warn] {} 是预览视频".format(container.name))
 
         # 写入播放列表
         if playlist is not None:
@@ -241,20 +256,22 @@ def main():
 
         # 下载字幕
         for sub_info in get_subtitle(container):
-            sub_path = '{}_{}.srt'.format(os.path.splitext(container.path)[0], sub_info['lang'])
+            sub_path = "{}_{}.srt".format(os.path.splitext(container.path)[0], sub_info["lang"])
             subtitle = Subtitle(sub_path)
-            for sub_line in sub_info['lines']:
+            for sub_line in sub_info["lines"]:
                 subtitle.write_line(sub_line["content"], sub_line["from"], sub_line["to"])
 
         # 生成弹幕
         if args.danmaku != "no":
-            with open(os.path.splitext(container.path)[0] + ".xml", 'w', encoding='utf-8') as f:
-                f.write(get_danmaku(container.meta['cid']))
+            with open(os.path.splitext(container.path)[0] + ".xml", "w", encoding="utf-8") as f:
+                f.write(get_danmaku(container.meta["cid"]))
 
         # 转换弹幕为 ASS
         if args.danmaku == "ass":
             ass.convert_danmaku_from_xml(
-                os.path.splitext(container.path)[0] + ".xml", container.height, container.width,
+                os.path.splitext(container.path)[0] + ".xml",
+                container.height,
+                container.width,
             )
     if playlist is not None:
         playlist.flush()
@@ -267,18 +284,18 @@ def main():
             symbol = " " if container_downloaded else "*"
             if container_downloaded:
                 container._.merged = True
-            print("{}{} {:>3} {}".format("    "*0, symbol, i, str(container)))
+            print("{}{} {:>3} {}".format("    " * 0, symbol, i, str(container)))
             for media in container.medias:
                 media_downloaded = not media.check_needs_download(args.overwrite) or container_downloaded
                 symbol = " " if media_downloaded else "*"
                 if not container_downloaded and args.debug:
-                    print("{}{} {}".format("    "*1, symbol, media.name))
+                    print("{}{} {}".format("    " * 1, symbol, media.name))
                 for block in media.blocks:
                     block_downloaded = not block.check_needs_download(args.overwrite) or media_downloaded
                     symbol = " " if block_downloaded else "*"
                     block._.downloaded = block_downloaded
                     if not media_downloaded and args.debug:
-                        print("{}{} {}".format("    "*2, symbol, block.name))
+                        print("{}{} {}".format("    " * 2, symbol, block.name))
 
         # 询问是否下载，通过参数 -y 可以跳过
         if not args.yes:
@@ -298,12 +315,20 @@ def main():
         merge_wait_flag = Flag(False)  # 合并线程池不能因为没有任务就结束
         # 因此要设定一个 flag，待最后合并结束后改变其值
         merge_pool = ThreadPool(3, wait=merge_wait_flag, daemon=True)
-        download_pool = ThreadPool(args.num_threads, daemon=True, thread_globals_creator={
-            "thread_spider":spider.clone            # 为每个线程创建一个全新的 Session，因为 requests.Session 不是线程安全的
-                                                    # https://github.com/psf/requests/issues/1871
-        })
+        download_pool = ThreadPool(
+            args.num_threads,
+            daemon=True,
+            thread_globals_creator={
+                "thread_spider": spider.clone  # 为每个线程创建一个全新的 Session，因为 requests.Session 不是线程安全的
+                # https://github.com/psf/requests/issues/1871
+            },
+        )
         for container in containers:
-            merging_file = MergingFile(container.type, [media.path for media in container.medias], container.path,)
+            merging_file = MergingFile(
+                container.type,
+                [media.path for media in container.medias],
+                container.path,
+            )
             for media in container.medias:
 
                 block_merging_file = MergingFile(None, [block.path for block in media.blocks], media.path)
@@ -322,7 +347,9 @@ def main():
                         status.size = file.size
 
                     @remote_file.on("downloaded")
-                    def downloaded(file, status=block._, merging_file=merging_file, block_merging_file=block_merging_file):
+                    def downloaded(
+                        file, status=block._, merging_file=merging_file, block_merging_file=block_merging_file
+                    ):
                         status.downloaded = True
 
                         if status.parent.downloaded:
@@ -363,7 +390,11 @@ def main():
         console.add_component(LineList(Line(left=String(), right=String(), fillchar="-")))
         console.add_component(
             Line(
-                left=ColorString(fore="green", back="white", subcomponent=ProgressBar(symbols=" ▏▎▍▌▋▊▉█", width=65),),
+                left=ColorString(
+                    fore="green",
+                    back="white",
+                    subcomponent=ProgressBar(symbols=" ▏▎▍▌▋▊▉█", width=65),
+                ),
                 right=String(),
                 fillchar=" ",
             )
@@ -372,7 +403,11 @@ def main():
         console.add_component(LineList(Line(left=String(), fillchar=" ")))
         console.add_component(
             Line(
-                left=ColorString(fore="yellow", back="white", subcomponent=ProgressBar(symbols=" ▏▎▍▌▋▊▉█", width=65),),
+                left=ColorString(
+                    fore="yellow",
+                    back="white",
+                    subcomponent=ProgressBar(symbols=" ▏▎▍▌▋▊▉█", width=65),
+                ),
                 right=String(),
                 fillchar=" ",
             )
@@ -433,6 +468,7 @@ def main():
                         ),
                     } if global_status.merging else None,
                 ]
+                # fmt: on
             )
 
             # 检查是否已经全部完成

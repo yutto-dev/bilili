@@ -55,3 +55,4 @@ regex = {
         },
     },
 } >> AttrDict()
+# fmt: on
