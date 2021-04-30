@@ -1,11 +1,5 @@
 <template>
-  <a
-    :href="link"
-    :alt="username"
-    :title="username"
-    target="_blank"
-    class="user"
-  >
+  <a :href="link" :title="username" target="_blank" class="user">
     <img :src="avatarUrl" :title="username" class="avatar" />
   </a>
 </template>

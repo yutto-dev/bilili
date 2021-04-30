@@ -42,7 +42,9 @@ export default {
       .then(res => {
         this.contributors = res
       })
-  }
+  },
+
+  components: { GithubUser }
 }
 </script>
 
