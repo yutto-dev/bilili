@@ -12,8 +12,8 @@ def get_season_id(media_id: str) -> str:
     home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
     season_id = ""
     regex_season_id = re.compile(r'"param":{"season_id":(\d+),"season_type":\d+}')
-    if regex_season_id.search(spider.get(home_url).text):
-        season_id = regex_season_id.search(spider.get(home_url).text).group(1)
+    if match_obj := regex_season_id.search(spider.get(home_url).text):
+        season_id = match_obj.group(1)
     return str(season_id)
 
 
@@ -21,14 +21,13 @@ def get_season_id(media_id: str) -> str:
 def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str = "") -> str:
     if not (media_id or season_id or episode_id):
         raise ArgumentsError("media_id", "season_id", "episode_id")
+    title = "呐，我也不知道是什么标题呢～"
     if media_id:
         home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
         res = spider.get(home_url)
         regex_title = re.compile(r'<span class="media-info-title-t">(.*?)</span>')
-        if regex_title.search(res.text):
-            title = regex_title.search(res.text).group(1)
-        else:
-            title = "呐，我也不知道是什么标题呢～"
+        if match_obj := regex_title.search(res.text):
+            title = match_obj.group(1)
     elif season_id or episode_id:
         if season_id:
             play_url = "https://www.bilibili.com/bangumi/play/ss{season_id}".format(season_id=season_id)
@@ -36,10 +35,8 @@ def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str =
             play_url = "https://www.bilibili.com/bangumi/play/ep{episode_id}".format(episode_id=episode_id)
         res = spider.get(play_url)
         regex_title = re.compile(r'<a href=".+" target="_blank" title="(.*?)" class="media-title">(?P<title>.*?)</a>')
-        if regex_title.search(res.text):
-            title = regex_title.search(res.text).group("title")
-        else:
-            title = "呐，我也不知道是什么标题呢～"
+        if match_obj := regex_title.search(res.text):
+            title = match_obj.group("title")
     return title
 
 
@@ -189,7 +186,7 @@ def get_bangumi_playurl(
     elif type == "mp4":
         raise UnsupportTypeError("mp4")
     else:
-        raise UnknownTypeError()
+        raise UnknownTypeError(type)
 
 
 @export_api(route="/bangumi/subtitle")
@@ -206,4 +203,5 @@ def get_bangumi_subtitle(avid: str = "", bvid: str = "", cid: str = ""):
             "lines": spider.get("https:" + sub_info["subtitle_url"]).json()["body"]
         }
         for sub_info in subtitles_info["subtitles"]
+        # fmt: on
     ]

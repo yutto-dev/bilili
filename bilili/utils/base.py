@@ -117,7 +117,7 @@ def size_format(size: float, ndigits: int=2) -> str:
     """ 输入数据字节数，与保留小数位数，返回数据量字符串 """
     flag = '-' if size < 0 else ''
     size = abs(size)
-    units = ["Bytes", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "BB"]
+    units = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB", "BiB"]
     idx = len(units) - 1
     unit = ""
     unit_size = 0
