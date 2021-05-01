@@ -16,9 +16,10 @@ def get_video_info(avid: str = "", bvid: str = ""):
     res = spider.get(info_api.format(avid=avid, bvid=bvid))
     res_json_data = res.json()["data"]
     episode_id = ""
-    match_obj = regex_bangumi_ep.match(res_json_data["redirect_url"])
-    if res_json_data.get("redirect_url") and match_obj:
-        episode_id = match_obj.group("episode_id")
+    if res_json_data.get("redirect_url"):
+        match_obj = regex_bangumi_ep.match(res_json_data["redirect_url"])
+        if match_obj:
+            episode_id = match_obj.group("episode_id")
     return {
         "avid": str(res_json_data["aid"]),
         "bvid": res_json_data["bvid"],
