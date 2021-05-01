@@ -26,7 +26,6 @@ regex_bangumi_ss_short = re.compile(r"https?://b23\.tv/ss(?P<season_id>\d+)")
 
 spider = BililiCrawler()
 global_status = DownloaderStatus()
-logger = None
 # fmt: off
 regex = {
     "acg_video": {

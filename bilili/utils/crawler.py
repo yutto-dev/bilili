@@ -3,7 +3,9 @@ from typing import Dict
 
 import requests
 
-from .console.logger import Logger
+
+class DownloadFailureError(Exception):
+    pass
 
 
 class Crawler(requests.Session):
@@ -40,7 +42,7 @@ class Crawler(requests.Session):
                     f.write(res.content)
         except:
             os.remove(tmp_path)
-            Logger.warning("下载 {} 失败".format(file_path))
+            raise DownloadFailureError()
         if os.path.exists(file_path):
             with open(tmp_path, "rb") as fr:
                 with open(file_path, "wb") as fw:
