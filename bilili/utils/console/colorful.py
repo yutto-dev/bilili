@@ -1,22 +1,12 @@
-from typing import Optional, TypedDict, Dict
+from typing import Optional, Dict
 
 
 Fore = str
 Back = str
 Style = str
-
-# Python3.8+ 才能用，暂时移除
-# Fore = Literal["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
-# Back = Literal["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
-# Style = Literal["reset", "bold", "italic", "underline", "defaultfg", "defaultbg"]
+CodeMap = Dict[str, Dict[str, int]]
 
 NO_COLOR = False
-
-
-class CodeMap(TypedDict):
-    fore: Dict[Fore, int]
-    back: Dict[Back, int]
-    style: Dict[Style, int]
 
 
 code_map: CodeMap = {
