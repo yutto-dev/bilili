@@ -1,4 +1,4 @@
-from typing import Literal, Optional, TypedDict
+from typing import Literal, Optional, TypedDict, Dict
 
 Fore = Literal["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
 Back = Literal["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
@@ -8,9 +8,9 @@ NO_COLOR = False
 
 
 class CodeMap(TypedDict):
-    fore: dict[Fore, int]
-    back: dict[Back, int]
-    style: dict[Style, int]
+    fore: Dict[Fore, int]
+    back: Dict[Back, int]
+    style: Dict[Style, int]
 
 
 code_map: CodeMap = {
