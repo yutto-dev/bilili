@@ -1,8 +1,14 @@
-from typing import Literal, Optional, TypedDict, Dict
+from typing import Optional, TypedDict, Dict
 
-Fore = Literal["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
-Back = Literal["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
-Style = Literal["reset", "bold", "italic", "underline", "defaultfg", "defaultbg"]
+
+Fore = str
+Back = str
+Style = str
+
+# Python3.8+ 才能用，暂时移除
+# Fore = Literal["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
+# Back = Literal["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
+# Style = Literal["reset", "bold", "italic", "underline", "defaultfg", "defaultbg"]
 
 NO_COLOR = False
 
