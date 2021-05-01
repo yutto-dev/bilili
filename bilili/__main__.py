@@ -4,6 +4,7 @@ import re
 import sys
 import time
 from typing import List
+from urllib.parse import quote, unquote
 
 from .api.danmaku import get_danmaku
 from .api.exceptions import CannotDownloadError, IsPreviewError
@@ -126,7 +127,9 @@ def main():
     parser.add_argument("--debug", action="store_true", help="debug 模式")
 
     args = parser.parse_args()
-    cookies = {"SESSDATA": args.sess_data}
+    # 先解码后编码是防止获取到的 SESSDATA 是已经解码后的（包含「,」）
+    # 经过测试，番剧无法使用解码后的 SESSDATA
+    cookies = {"SESSDATA": quote(unquote(args.sess_data))}
 
     config = {
         "url": args.url,
