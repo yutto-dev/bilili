@@ -27,3 +27,15 @@ pip install --upgrade bilili
 ```
 
 而如果你是使用 git 直接安装，直接重新运行安装时所使用的命令即可。
+
+## 定义命令别名
+
+可能你不想每次运行 bilili 都输入各种各样参数，所以这里我建议你将常用的参数都记录成在一条 alias 里，比如我就是这样做的
+
+```bash
+alias bll='bilili -d ~/Movies/bilili/ -c `cat ~/.sessdata` --disable-proxy --danmaku=ass --playlist-type=m3u -y --use-mirrors'
+```
+
+由于我使用的是 zsh，将其存到 `~/.zshrc` 就好了，如果你使用的是 bash 的话，存到 `~/.bashrc` 就好。
+
+当然，我是将自己 Cookie 里的 SESSDATA 存到了 `~/.sessdata`，这样每次只需运行 bll 就可以省去定义存储目录、Cookie 等等的参数啦。
