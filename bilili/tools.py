@@ -1,10 +1,8 @@
 import re
 
-from .utils.crawler import BililiCrawler
-from .utils.danmaku import ASS
 from .handlers.status import DownloaderStatus
-from .utils.attrdict import AttrDict
-
+from .utils.crawler import BililiCrawler
+from .utils.functiontools.attrdict import AttrDict
 
 # avid
 regex_acg_video_av = re.compile(r"https?://(www\.|m\.)?bilibili\.com/video/av(?P<avid>\d+)")
@@ -27,8 +25,8 @@ regex_bangumi_ss_short = re.compile(r"https?://b23\.tv/ss(?P<season_id>\d+)")
 
 
 spider = BililiCrawler()
-ass = ASS()
 global_status = DownloaderStatus()
+logger = None
 # fmt: off
 regex = {
     "acg_video": {

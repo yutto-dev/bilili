@@ -5,6 +5,7 @@ from typing import List, Tuple, Union
 import requests
 
 from ..handlers.base import Handler
+from ..utils.console.logger import Logger
 from ..utils.crawler import Crawler
 
 
@@ -79,7 +80,7 @@ class RemoteFile(Handler):
                     else:
                         downloaded = True
                 except requests.exceptions.RequestException:
-                    print("[warn] file {}, request timeout, trying again...".format(self.name))
+                    Logger.warning("文件 {} 请求超时，正在重试...".format(self.name))
 
             # 从临时文件迁移，并删除临时文件
             if os.path.exists(self.path):

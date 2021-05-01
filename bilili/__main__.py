@@ -10,10 +10,13 @@ from .api.danmaku import get_danmaku
 from .api.exceptions import CannotDownloadError, IsPreviewError
 from .handlers.downloader import RemoteFile
 from .handlers.merger import MergingFile
-from .tools import ass, global_status, regex, spider
-from .utils.attrdict import AttrDict
+from .tools import global_status, regex, spider
 from .utils.base import repair_filename, size_format, touch_dir
-from .utils.console import ColorString, Console, Line, LineList, ProgressBar, String
+from .utils.console.colorful import set_no_color
+from .utils.console.logger import Logger, set_logger_debug
+from .utils.console.ui import ColorString, Line, LineList, ProgressBar, String, View
+from .utils.danmaku import convert_xml_danmaku_to_ass
+from .utils.functiontools.attrdict import AttrDict
 from .utils.playlist import Dpl, M3u
 from .utils.subtitle import Subtitle
 from .utils.thread import Flag, ThreadPool
@@ -27,7 +30,7 @@ def parse_episodes(episodes_str: str, total: int) -> List[int]:
         return value if value > 0 else value + total + 1
 
     # 解析字符串为列表
-    print("全 {} 话".format(total))
+    Logger.print("全 {} 话".format(total))
     if re.match(r"([\-\d\^\$]+(~[\-\d\^\$]+)?)(,[\-\d\^\$]+(~[\-\d\^\$]+)?)*", episodes_str):
         episodes_str = episodes_str.replace("^", "1")
         episodes_str = episodes_str.replace("$", "-1")
@@ -58,9 +61,9 @@ def parse_episodes(episodes_str: str, total: int) -> List[int]:
         else:
             out_of_range.append(episode)
     if out_of_range:
-        print("warn: 剧集 {} 不存在".format(",".join(list(map(str, out_of_range)))))
+        Logger.warning("剧集 {} 不存在".format(",".join(list(map(str, out_of_range)))))
 
-    print("已选择第 {} 话".format(",".join(list(map(str, episodes)))))
+    Logger.print("已选择第 {} 话".format(",".join(list(map(str, episodes)))))
     assert episodes, "没有选中任何剧集"
     return episodes
 
@@ -69,7 +72,7 @@ def main():
     """ 解析命令行参数并调用相关模块进行下载 """
 
     if (sys.version_info.major, sys.version_info.minor) < (3, 8):
-        print("请使用 Python3.8 及以上版本哦～")
+        Logger.error("请使用 Python3.8 及以上版本哦～")
         sys.exit(1)
 
     parser = argparse.ArgumentParser(description="bilili B 站视频、弹幕下载器")
@@ -119,17 +122,23 @@ def main():
         "--block-size",
         default=128,
         type=int,
-        help="分块下载器的块大小，单位为 MB，默认为 128MB，设置为 0 时禁用分块下载",
+        help="分块下载器的块大小，单位为 MiB，默认为 128MiB，设置为 0 时禁用分块下载",
     )
     parser.add_argument("--abs-path", action="store_true", help="修改播放列表路径类型为绝对路径")
     parser.add_argument("--use-mirrors", action="store_true", help="启用从多个镜像下载功能")
     parser.add_argument("--disable-proxy", action="store_true", help="禁用系统代理")
+    parser.add_argument("--no-color", action="store_true", help="不使用颜色")
     parser.add_argument("--debug", action="store_true", help="debug 模式")
 
     args = parser.parse_args()
     # 先解码后编码是防止获取到的 SESSDATA 是已经解码后的（包含「,」）
-    # 经过测试，番剧无法使用解码后的 SESSDATA
+    # 而番剧无法使用解码后的 SESSDATA
     cookies = {"SESSDATA": quote(unquote(args.sess_data))}
+    if args.debug:
+        set_logger_debug()
+    # 使用 --no-color 或者 NO_COLOR 环境变量非空均不显示颜色
+    if args.no_color or os.environ.get("NO_COLOR") is not None:
+        set_no_color()
 
     config = {
         "url": args.url,
@@ -186,7 +195,7 @@ def main():
         season_id = season_id_match.group("season_id")
         resource_id.season_id = season_id
     else:
-        print("视频地址有误！")
+        Logger.error("视频地址有误！")
         sys.exit(1)
     # fmt: on
 
@@ -199,7 +208,7 @@ def main():
 
         bili_type = "bangumi"
     else:
-        print("未知视频类型")
+        Logger.error("未知视频类型")
         sys.exit(1)
 
     # 获取标题
@@ -207,7 +216,7 @@ def main():
     if args.disable_proxy:
         spider.trust_env = False
     title = get_title(resource_id)
-    print(title)
+    Logger.print(title)
 
     # 创建所需目录结构
     base_dir = touch_dir(os.path.join(config["dir"], repair_filename(title + " - bilibili")))
@@ -239,7 +248,7 @@ def main():
 
     # 解析片段信息及视频 url
     for i, container in enumerate(containers):
-        print(
+        Logger.print(
             "{:02}/{:02} 正在努力解析视频信息～".format(i + 1, len(containers)),
             end="\r",
         )
@@ -249,9 +258,9 @@ def main():
             for playinfo in get_playurl(container, config["quality"], config["audio_quality"]):
                 container.append_media(block_size=config["block_size"], **playinfo)
         except CannotDownloadError as e:
-            print("[warn] {} 无法下载，原因：{}".format(container.name, e.message))
+            Logger.warning("{} 无法下载，原因：{}".format(container.name, e.message))
         except IsPreviewError:
-            print("[warn] {} 是预览视频".format(container.name))
+            Logger.warning("{} 是预览视频".format(container.name))
 
         # 写入播放列表
         if playlist is not None:
@@ -271,7 +280,7 @@ def main():
 
         # 转换弹幕为 ASS
         if args.danmaku == "ass":
-            ass.convert_danmaku_from_xml(
+            convert_xml_danmaku_to_ass(
                 os.path.splitext(container.path)[0] + ".xml",
                 container.height,
                 container.width,
@@ -287,18 +296,18 @@ def main():
             symbol = " " if container_downloaded else "*"
             if container_downloaded:
                 container._.merged = True
-            print("{}{} {:>3} {}".format("    " * 0, symbol, i, str(container)))
+            Logger.print("{}{} {:>2} {}".format("    " * 0, symbol, i, str(container)))
             for media in container.medias:
                 media_downloaded = not media.check_needs_download(args.overwrite) or container_downloaded
                 symbol = " " if media_downloaded else "*"
                 if not container_downloaded and args.debug:
-                    print("{}{} {}".format("    " * 1, symbol, media.name))
+                    Logger.print("{}{} {}".format("    " * 1, symbol, media.name))
                 for block in media.blocks:
                     block_downloaded = not block.check_needs_download(args.overwrite) or media_downloaded
                     symbol = " " if block_downloaded else "*"
                     block._.downloaded = block_downloaded
                     if not media_downloaded and args.debug:
-                        print("{}{} {}".format("    " * 2, symbol, block.name))
+                        Logger.print("{}{} {}".format("    " * 2, symbol, block.name))
 
         # 询问是否下载，通过参数 -y 可以跳过
         if not args.yes:
@@ -322,8 +331,9 @@ def main():
             args.num_threads,
             daemon=True,
             thread_globals_creator={
-                "thread_spider": spider.clone  # 为每个线程创建一个全新的 Session，因为 requests.Session 不是线程安全的
+                # 为每个线程创建一个全新的 Session，因为 requests.Session 不是线程安全的
                 # https://github.com/psf/requests/issues/1871
+                "thread_spider": spider.clone
             },
         )
         for container in containers:
@@ -387,7 +397,7 @@ def main():
         download_pool.run()
 
         # 初始化界面
-        console = Console(debug=args.debug)
+        console = View(debug=args.debug)
         console.add_component(Line(center=String(), fillchar=" "))
         console.add_component(Line(left=ColorString(fore="cyan"), fillchar=" "))
         console.add_component(LineList(Line(left=String(), right=String(), fillchar="-")))
@@ -485,11 +495,11 @@ def main():
                 refresh_rate = 2
                 time.sleep(max(1 / refresh_rate - (time.time() - now_t), 0.01))
             except (SystemExit, KeyboardInterrupt):
-                print("已终止下载，再次运行即可继续下载～")
+                Logger.info("已终止下载，再次运行即可继续下载～")
                 sys.exit(1)
-        print("已全部下载完成！")
+        Logger.info("已全部下载完成！")
     else:
-        print("没有需要下载的视频！")
+        Logger.info("没有需要下载的视频！")
 
 
 if __name__ == "__main__":

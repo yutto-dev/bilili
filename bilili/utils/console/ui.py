@@ -1,11 +1,13 @@
 import math
 import os
-from typing import Any, List, Union
+from typing import Any, List, Optional, Union
 
-from ..utils.base import get_string_width
+from ..base import get_string_width
+from .colorful import Back, Fore, Style, colored_string
+from .logger import Logger
 
 
-class Console:
+class View:
     max_width = 100
 
     def __init__(self, debug: bool = False):
@@ -27,7 +29,7 @@ class Console:
     def refresh(self, data: Any):
         if not self.debug:
             self.clear()
-        print(self.render(data))
+        Logger.print(self.render(data))
 
     def clear(self):
         os.system("cls" if os.name == "nt" else "clear")
@@ -62,7 +64,7 @@ class EndLine(Component):
 
 
 class Font(Component):
-    def __init__(self, char_a: str = "ａ", char_A: Union[str, None] = None):
+    def __init__(self, char_a: str = "ａ", char_A: Optional[str] = None):
         super().__init__()
         self.char_a = char_a
         self.char_A = char_A
@@ -85,74 +87,32 @@ class Font(Component):
 
 
 class ColorString(Component):
-
-    code_map = {
-        "fore": {
-            "black": 30,
-            "red": 31,
-            "green": 32,
-            "yellow": 33,
-            "blue": 34,
-            "magenta": 35,
-            "cyan": 36,
-            "white": 37,
-        },
-        "back": {
-            "black": 40,
-            "red": 41,
-            "green": 42,
-            "yellow": 43,
-            "blue": 44,
-            "magenta": 45,
-            "cyan": 46,
-            "white": 47,
-        },
-        "style": {
-            "reset": 0,
-            "bold": 1,
-            "italic": 3,
-            "underline": 4,
-            "defaultfg": 39,
-            "defaultbg": 49,
-        },
-    }
-
-    template = "\033[{code}m"
-
     def __init__(
         self,
-        fore: Union[str, None] = None,
-        back: Union[str, None] = None,
-        style: Union[str, None] = None,
-        subcomponent: Union[Component, None] = None,
+        fore: Optional[Fore] = None,
+        back: Optional[Back] = None,
+        style: Optional[Style] = None,
+        subcomponent: Optional[Component] = None,
     ):
         super().__init__()
-        self.fore = fore
-        self.back = back
-        self.style = style
-        self.subcomponent = subcomponent
+        self.fore: Optional[Fore] = fore
+        self.back: Optional[Back] = back
+        self.style: Optional[Style] = style
+        self.subcomponent: Optional[Component] = subcomponent
 
     def render(self, data: Any) -> str:
         if data is None:
             return ""
-        result = ""
-        if self.fore is not None:
-            result += ColorString.template.format(code=ColorString.code_map["fore"][self.fore])
-        if self.back is not None:
-            result += ColorString.template.format(code=ColorString.code_map["back"][self.back])
-        if self.style is not None:
-            result += ColorString.template.format(code=ColorString.code_map["style"][self.style])
-        result += self.subcomponent.render(data) if self.subcomponent is not None else data
-        result += ColorString.template.format(code=ColorString.code_map["style"]["reset"])
-        return result
+        subcomponet_string = self.subcomponent.render(data) if self.subcomponent is not None else data
+        return colored_string(subcomponet_string, self.fore, self.back, self.style)
 
 
 class Line(Component):
     def __init__(
         self,
-        left: Union[Component, None] = None,
-        center: Union[Component, None] = None,
-        right: Union[Component, None] = None,
+        left: Optional[Component] = None,
+        center: Optional[Component] = None,
+        right: Optional[Component] = None,
         fillchar: str = " ",
     ):
         super().__init__()
@@ -185,10 +145,8 @@ class Line(Component):
             center_width: int = get_string_width(center_result)
 
         if self.center is not None:
-            left_placeholder_width = (Console.max_width - center_width) // 2 - left_width
-            right_placeholder_width = (
-                Console.max_width - left_width - left_placeholder_width - center_width - right_width
-            )
+            left_placeholder_width = (View.max_width - center_width) // 2 - left_width
+            right_placeholder_width = View.max_width - left_width - left_placeholder_width - center_width - right_width
 
             return (
                 left_result
@@ -199,7 +157,7 @@ class Line(Component):
                 + "\n"
             )
         else:
-            left_placeholder_width = Console.max_width - left_width - right_width
+            left_placeholder_width = View.max_width - left_width - right_width
             return left_result + left_placeholder_width * self.fillchar + right_result + "\n"
 
 
@@ -211,11 +169,11 @@ class Center(Component):
     def render(self, data: Any) -> str:
         if data is None:
             return ""
-        return data.center(Console.max_width, self.fillchar) + "\n"
+        return data.center(View.max_width, self.fillchar) + "\n"
 
 
 class ProgressBar(Component):
-    def __init__(self, symbols: Union[str, List[str]] = "░▏▎▍▌▋▊▉█", width: int = Console.max_width):
+    def __init__(self, symbols: Union[str, List[str]] = "░▏▎▍▌▋▊▉█", width: int = View.max_width):
         super().__init__()
         self.width = width
         self.symbols = symbols
@@ -269,7 +227,7 @@ class LineList(Component):
 if __name__ == "__main__":
     import time
 
-    console = Console()
+    console = View()
     console.add_component(Line(center=Font(char_a="𝓪", char_A="𝓐"), fillchar="="))
     console.add_component(Line(left=ColorString(fore="cyan", style="italic"), fillchar=" "))
     console.add_component(LineList(Line(left=String(), right=String(), fillchar="-")))

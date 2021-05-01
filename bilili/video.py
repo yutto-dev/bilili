@@ -4,6 +4,8 @@ from .handlers.status import DownloaderStatus
 from .quality import audio_quality_map, video_quality_map
 from .tools import global_status
 from .utils.base import repair_filename
+from .utils.console.logger import Logger
+from .utils.console.colorful import colored_string
 
 
 class BililiContainer:
@@ -46,8 +48,11 @@ class BililiContainer:
                 # fmt: on
             )
         else:
+            assert self.quality is not None, "quality 仍然为 None"
             quality_description = video_quality_map[self.quality]["description"]
-        return "{} 「{}」".format(self.name, quality_description)
+        return "{} 「{}」".format(
+            colored_string(self.name, fore="magenta"), colored_string(quality_description, fore="cyan")
+        )
 
     def check_needs_download(self, overwrite: bool = False):
         """ 检查是否需要下载 """
@@ -96,7 +101,7 @@ class BililiMedia:
         elif self.container.type == "mp4":
             self.path += "_dl.mp4"
         else:
-            print("[warn] Unknown container type: {}".format(self.container.type))
+            Logger.warning("未知的容器类型：{}".format(self.container.type))
         self.name = os.path.split(self.path)[-1]
         self._ = DownloaderStatus(parent=self.container._)
         self._.total_size = size
@@ -108,10 +113,10 @@ class BililiMedia:
         if self.container.height is None:
             self.container.height = height
         if self._.total_size == 0:
-            print("[warn] {} 获取 size 为 0".format(self.name))
+            Logger.warning("{} 获取 size 为 0".format(self.name))
             self._.total_size = 0
         if self._.total_size is None:
-            print("[warn] {} 无法获取 size".format(self.name))
+            Logger.warning("{} 无法获取 size".format(self.name))
             self._.total_size = 0
 
         self.blocks = self.chunking()

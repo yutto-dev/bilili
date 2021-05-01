@@ -102,6 +102,7 @@ bilili 还支持很多参数，但参数使用方法等内容此处不作赘述�
 -  `--abs-path` 修改播放列表路径类型为绝对路径
 -  `--use-mirrors` 启用从多个镜像下载功能
 -  `--disable-proxy` 禁用系统代理 「Beta」
+-  `--no-color` 不使用任何颜色
 -  `--debug` 开启 `debug` 模式
 
 ## 参与贡献

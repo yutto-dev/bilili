@@ -1,7 +1,9 @@
 import os
+from typing import Dict
+
 import requests
 
-from typing import Dict
+from .console.logger import Logger
 
 
 class Crawler(requests.Session):
@@ -38,7 +40,7 @@ class Crawler(requests.Session):
                     f.write(res.content)
         except:
             os.remove(tmp_path)
-            print("[warn] {} failed to download".format(file_path))
+            Logger.warning("下载 {} 失败".format(file_path))
         if os.path.exists(file_path):
             with open(tmp_path, "rb") as fr:
                 with open(file_path, "wb") as fw:

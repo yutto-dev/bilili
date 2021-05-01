@@ -2,6 +2,7 @@ import os
 from typing import List
 
 from ..handlers.base import Handler
+from ..utils.console.logger import Logger
 from ..utils.ffmpeg import FFmpeg
 
 ffmpeg = FFmpeg()
@@ -29,7 +30,7 @@ class MergingFile(Handler):
             else:
                 ffmpeg.convert(self.src_path_list[0], self.dst_path)
         else:
-            print("Unknown type {}".format(self.type))
+            Logger.error("未知类型： {}".format(self.type))
         for src_path in self.src_path_list:
             os.remove(src_path)
         self.merged(self)

@@ -1,5 +1,5 @@
 import os
-from typing import Union
+from typing import Optional
 
 from ..utils.base import Text
 
@@ -39,7 +39,7 @@ class Dpl(Playlist):
         self.write_string("DAUMPLAYLIST\n")
         self._count = 0
 
-    def write_path(self, path: str, name: Union[str, None] = None):
+    def write_path(self, path: str, name: Optional[str] = None):
         self._count += 1
         path = self.switch_path(path)
         self.write_string("{}*file*{}".format(self._count, path))

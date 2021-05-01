@@ -1,4 +1,6 @@
-from typing import Union, List
+from typing import List, Union
+
+from ..utils.console.logger import Logger
 
 
 class Status:
@@ -56,7 +58,7 @@ class DownloaderStatus(Status):
         if self.is_leaf:
             self.__total_size = value
         else:
-            print("[warn] 无法设定非叶子结点的 total_size")
+            Logger.error("无法设定非叶子结点的 total_size")
 
     @property
     def size(self) -> int:
@@ -72,7 +74,7 @@ class DownloaderStatus(Status):
         if self.is_leaf:
             self.__size = value
         else:
-            print("[warn] 无法设定非叶子结点的 size")
+            Logger.error("无法设定非叶子结点的 size")
 
     @property
     def downloading(self) -> bool:
@@ -87,7 +89,7 @@ class DownloaderStatus(Status):
             self.__downloading = value
         else:
             if value:
-                print("[warn] 无法设定非叶子结点的 downloading 为 True")
+                Logger.error("无法设定非叶子结点的 downloading 为 True")
             else:
                 for child in self.children:
                     child.downloading = False
@@ -108,7 +110,7 @@ class DownloaderStatus(Status):
                 for child in self.children:
                     child.downloaded = True
             else:
-                print("[warn] 无法设定非叶子结点的 downloaded 为 False")
+                Logger.error("无法设定非叶子结点的 downloaded 为 False")
 
     @property
     def merging(self) -> bool:
@@ -146,4 +148,4 @@ class DownloaderStatus(Status):
                 for child in self.children:
                     child.merged = True
             else:
-                print("[warn] 无法设定非叶子结点的 merged 为 False")
+                Logger.error("无法设定非叶子结点的 merged 为 False")
