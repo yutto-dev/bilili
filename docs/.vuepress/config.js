@@ -10,7 +10,7 @@ module.exports = {
   },
 
   head: [
-    ['meta', { property: 'og:url', content: 'https://bilili.sigure.xyz' }],
+    ['meta', { property: 'og:url', content: 'https://bilili.nyakku.moe' }],
     ['meta', { property: 'og:site_name', content: 'bilili' }],
     ['meta', { property: 'og:image', content: '/logo.png' }],
     [

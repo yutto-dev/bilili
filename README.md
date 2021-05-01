@@ -16,15 +16,14 @@
 
 <p align="center"><strong>🍻 𝓫𝓲𝓵𝓲𝓵𝓲，一个可以帮你快速下载 <a href="https://www.bilibili.com">B 站</a>投稿视频以及番剧视频的 CLI～～～</strong></p>
 
-**全新文档请访问 <https://bilili.sigure.xyz>**
+**文档戳这里啦 → <https://bilili.nyakku.moe>**
 
 ## 特性
 
 -  支持投稿视频（也即原 AV 号视频）和番剧下载
 -  多线程 + 分块下载，轻松跑满你的带宽
 -  断点续传，即便一次没下完也可以接着下载
--  弹幕支持，自动下载弹幕并转换为 ass 弹幕，本地播放器也可以获得 B 站的看视频体验
--  全清晰度支持，本地可以看任意在线看到的清晰度，而且本地播放不受限于带宽
+-  弹幕支持，自动下载弹幕并转换为 ASS 弹幕
 
 ## 快速开始
 
@@ -46,11 +45,11 @@
 
 由于大多数格式需要合并，所以 bilili 依赖于 FFmpeg，你需要事先安装好它
 
-Windows 请[手动下载](https://ffmpeg.org/download.html)后，存放到任意目录下，并将 `ffmpeg.exe` 所在目录**添加到环境变量**
+Windows 请[手动下载](https://ffmpeg.org/download.html)并解压后，存放到任意文件夹下，之后将 `ffmpeg.exe` 所在文件夹**添加到环境变量**
 
-而如果是 `*nix`，可以很方便地通过包管理器一键完成
+而如果是 macOS 或者 Linux 发行版，这一步可以很方便地通过包管理器一键完成啦～
 
-你可以通过直接在终端运行 `ffmpeg -version` 测试是否安装成功
+最后你可以通过直接在终端运行 `ffmpeg -version` 测试是否安装成功
 
 ### 安装 bilili
 
@@ -75,7 +74,7 @@ python setup.py install
 
 ### 运行
 
-运行非常简单～
+你只需要这样就可以运行 bilili 啦～
 
 ```bash
 bilili <url>
@@ -85,14 +84,14 @@ bilili <url>
 
 ## 参数
 
-`bilili` 还支持很多参数，但参数使用方法等内容此处不作赘述，详情请访问[文档](https://bilili.sigure.xyz/cli/)
+bilili 还支持很多参数，但参数使用方法等内容此处不作赘述，详情请访问[文档](https://bilili.nyakku.moe/cli/)
 
 -  `-t`/`--type` 选择下载类型（`flv` or `dash` or `mp4`），默认为 dash 类型，注意该参数仅代表下载源格式，所有格式最后均会转为 mp4
 -  `-d`/`--dir` 指定存储目录，默认为项目根目录
 -  `-q`/`--quality` 指定清晰度，默认为 `125`（HDR 真彩）
 -  `-n`/`--num-threads` 指定最大下载线程数，默认为 16
 -  `-p`/`--episodes` 选集，默认为 `^~$`（全选）
--  `-s`/`--with-section` 同时下载附加剧集（ PV、预告以及特别篇内容）
+-  `-s`/`--with-section` 同时下载附加剧集（ PV、预告以及特别篇等专区内容）
 -  `-w`/`--overwrite` 强制覆盖已下载视频
 -  `-c`/`--sess-data` 传入 `cookies` 中的 `SESSDATA`
 -  `-y`/`--yes` 跳过下载询问

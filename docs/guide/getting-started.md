@@ -24,9 +24,9 @@
 
 为了能够正常与你交流，你需要先安装 Python 前辈，当然一定要是 3.8 以上的版本，不然她可能也不知道我在说什么。
 
-如果你是 Windows，请自行去 [Python 官网](https://www.python.org/)下载并安装，安装时记得要勾选 「Add to PATH」选项，不然可能需要你手动添加到环境变量。
+如果你是 Windows，请自行去 [Python 官网](https://www.python.org/)下载并安装，安装时记得要勾选「Add to PATH」选项，不然可能需要你手动添加到环境变量。
 
-`*nix` 的话一般都自带 python 环境，但要注意版本。
+macOS 及 Linux 发行版一般都自带 python 环境，但要注意版本。
 
 ## 我的依赖：FFmpeg
 
@@ -36,7 +36,7 @@
 
 ::: details 详细操作
 
-打开下载链接后，在 「Get packages & executable files」 部分选择 Windows 徽标，在 「Windows EXE Files」 下找到 「Windows builds by Zeranoe」 并点击，点击新页面的 「Download Build」 按钮，就开始下载啦～
+打开下载链接后，在 「Get packages & executable files」 部分选择 Windows 徽标，在 「Windows EXE Files」 下找到 「Windows builds by BtbN」 并点击，会跳转到一个 GitHub Releases 页面，在 「Latest release」 里就能看到最新的构建版本了～
 
 下载后解压，并随便放到一个安全的地方，然后在文件夹中找到 `ffmpeg.exe`，复制其所在文件夹路径。
 
@@ -46,7 +46,7 @@
 
 :::
 
-当然，如果你使用的是 `*nix` 系统的话，直接使用自己的包管理器就能一键完成该过程。
+当然，如果你使用的是 macOS 或者 Linux 发行版的话，直接使用自己的包管理器就能一键完成该过程。
 
 ::: details 示例
 
@@ -68,7 +68,7 @@ Manjaro 等 Arch 系可以使用
 pacman -S ffmpeg
 ```
 
-如此种种，不一一列举。
+大多都很简单的，其他就不一一列举啦～
 
 :::
 
@@ -115,7 +115,7 @@ bilili <url>
 
 ::: details 示例
 
-比如下载我的 [bilili 演示视频](https://www.bilibili.com/video/BV1vZ4y1M7mQ/)只需要
+比如下载我的 [演示视频](https://www.bilibili.com/video/BV1vZ4y1M7mQ/)只需要
 
 ```bash
 bilili https://www.bilibili.com/video/BV1vZ4y1M7mQ
