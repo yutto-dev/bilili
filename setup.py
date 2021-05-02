@@ -69,7 +69,7 @@ setup(
     author="SigureMo",
     author_email="sigure.qaq@gmail.com",
     url="https://github.com/SigureMo/bilili",
-    license="MIT",
+    license="GPLv3",
     packages=find_packages(),
     include_package_data=True,
     zip_safe=True,

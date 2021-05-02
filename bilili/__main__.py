@@ -135,7 +135,7 @@ def main():
     args = parser.parse_args()
     # 先解码后编码是防止获取到的 SESSDATA 是已经解码后的（包含「,」）
     # 而番剧无法使用解码后的 SESSDATA
-    cookies = {"SESSDATA": quote(unquote(args.sess_data))}
+    cookies = {"SESSDATA": quote(unquote(args.sess_data)) if args.sess_data is not None else None}
     if args.debug:
         set_logger_debug()
     # 使用 --no-color 或者 NO_COLOR 环境变量非空均不显示颜色
