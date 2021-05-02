@@ -21,6 +21,7 @@ from .utils.playlist import Dpl, M3u
 from .utils.subtitle import Subtitle
 from .utils.thread import Flag, ThreadPool
 from .video import BililiContainer
+from .__version__ import __version__
 
 
 def parse_episodes(episodes_str: str, total: int) -> List[int]:
@@ -75,7 +76,8 @@ def main():
         Logger.error("请使用 Python3.8 及以上版本哦～")
         sys.exit(1)
 
-    parser = argparse.ArgumentParser(description="bilili B 站视频、弹幕下载器")
+    parser = argparse.ArgumentParser(description="bilili B 站视频、弹幕下载器", prog="bilili")
+    parser.add_argument("-v", "--version", action="version", version="%(prog)s {}".format(__version__))
     parser.add_argument("url", help="视频主页地址")
     parser.add_argument(
         "-t",
