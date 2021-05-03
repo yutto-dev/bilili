@@ -1,3 +1,4 @@
+import xml.etree.ElementTree as ET
 from typing import Any
 
 from ..api.exports import export_api
@@ -14,15 +15,14 @@ def get_danmaku(cid: str) -> str:
 
 @export_api(route="/danmaku/dplayer")
 def get_danmaku_for_dplayer(cid: str) -> Any:
-    from bs4 import BeautifulSoup
-
-    xml_text = get_danmaku(cid)
-    soup = BeautifulSoup(xml_text, "lxml-xml")
-    items = soup.find_all("d")
+    xml = get_danmaku(cid)
+    root = ET.fromstring(xml)
     data = []
-    for item in items:
-        attrs = item.attrs["p"].split(",")
-        text = item.text
+    for child in root:
+        if child.tag != "d":
+            continue
+        attrs = child.attrib["p"].split(",")
+        text = child.text
         # fmt: off
         data.append(
             [
