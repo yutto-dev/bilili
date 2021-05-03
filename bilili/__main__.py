@@ -277,16 +277,25 @@ def main():
 
         # 生成弹幕
         if args.danmaku != "no":
-            with open(os.path.splitext(container.path)[0] + ".xml", "w", encoding="utf-8") as f:
-                f.write(get_danmaku(container.meta["cid"]))
+            xml_danmaku = get_danmaku(container.meta["cid"])
+            if args.danmaku == "ass":
+                with open(
+                    os.path.splitext(container.path)[0] + ".ass",
+                    "w",
+                    encoding="utf-8-sig",
+                    errors="replace",
+                ) as f:
+                    f.write(
+                        convert_xml_danmaku_to_ass(
+                            xml_danmaku,
+                            container.height,
+                            container.width,
+                        )
+                    )
+            else:
+                with open(os.path.splitext(container.path)[0] + ".xml", "w", encoding="utf-8") as f:
+                    f.write(xml_danmaku)
 
-        # 转换弹幕为 ASS
-        if args.danmaku == "ass":
-            convert_xml_danmaku_to_ass(
-                os.path.splitext(container.path)[0] + ".xml",
-                container.height,
-                container.width,
-            )
     if playlist is not None:
         playlist.flush()
 
