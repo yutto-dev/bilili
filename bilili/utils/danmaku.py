@@ -6,6 +6,7 @@ def convert_xml_danmaku_to_ass(xml_text: str, height: int, width: int) -> str:
         xml_text,
         width,
         height,
+        input_format="xml",
         reserve_blank=0,
         font_face="sans-serif",
         font_size=width / 40,
