@@ -1,6 +1,6 @@
 import math
 import os
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Union, Tuple
 
 from ..base import get_string_width
 from .colorful import Back, Fore, Style, colored_string
@@ -9,10 +9,12 @@ from .logger import Logger
 
 class View:
     max_width = 100
+    min_width = 50
 
     def __init__(self, debug: bool = False):
         self.debug = debug
         self.components = []
+        self.rendered_area = (0, 0)
 
     def add_component(self, component: "Component"):
         self.components.append(component)
@@ -24,6 +26,7 @@ class View:
         result = ""
         for component, component_data in zip(self.components, data):
             result += component.render(component_data)
+        self.rendered_area = View.calc_area_size(result)
         return result
 
     def refresh(self, data: Any):
@@ -33,6 +36,30 @@ class View:
 
     def clear(self):
         os.system("cls" if os.name == "nt" else "clear")
+        # 暂时无法判断什么终端支持什么终端不支持（如 cmd），暂时不使用
+        # if self.rendered_area == (0, 0):
+        #     return
+        # clear_str = ""
+        # clear_str += "\x1b[1A" * self.rendered_area[0]
+        # clear_str += "\r"
+        # # 这里不应该使用 Logger 打印，因为可能被去除颜色控制符（虽然现在不会）
+        # print(clear_str, end="")
+
+    @classmethod
+    def get_width(cls) -> int:
+        width = os.get_terminal_size().columns
+        width = min(width, View.max_width)
+        width = max(width, View.min_width)
+        return width
+
+    @classmethod
+    def get_height(cls) -> int:
+        return os.get_terminal_size().lines
+
+    @classmethod
+    def calc_area_size(cls, string: str) -> Tuple[int, int]:
+        lines = string.split("\n")
+        return (len(lines), get_string_width(lines[0]))
 
 
 class Component:
@@ -145,8 +172,10 @@ class Line(Component):
             center_width: int = get_string_width(center_result)
 
         if self.center is not None:
-            left_placeholder_width = (View.max_width - center_width) // 2 - left_width
-            right_placeholder_width = View.max_width - left_width - left_placeholder_width - center_width - right_width
+            left_placeholder_width = (View.get_width() - center_width) // 2 - left_width
+            right_placeholder_width = (
+                View.get_width() - left_width - left_placeholder_width - center_width - right_width
+            )
 
             return (
                 left_result
@@ -157,7 +186,7 @@ class Line(Component):
                 + "\n"
             )
         else:
-            left_placeholder_width = View.max_width - left_width - right_width
+            left_placeholder_width = View.get_width() - left_width - right_width
             return left_result + left_placeholder_width * self.fillchar + right_result + "\n"
 
 
@@ -169,11 +198,11 @@ class Center(Component):
     def render(self, data: Any) -> str:
         if data is None:
             return ""
-        return data.center(View.max_width, self.fillchar) + "\n"
+        return data.center(View.get_width(), self.fillchar) + "\n"
 
 
 class ProgressBar(Component):
-    def __init__(self, symbols: Union[str, List[str]] = "░▏▎▍▌▋▊▉█", width: int = View.max_width):
+    def __init__(self, symbols: Union[str, List[str]] = "░▏▎▍▌▋▊▉█", width: int = View.get_width()):
         super().__init__()
         self.width = width
         self.symbols = symbols
