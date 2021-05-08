@@ -6,7 +6,7 @@ Back = str
 Style = str
 CodeMap = Dict[str, Dict[str, int]]
 
-NO_COLOR = False
+_no_color = False
 
 
 code_map: CodeMap = {
@@ -44,7 +44,7 @@ code_map: CodeMap = {
 def colored_string(
     string: str, fore: Optional[Fore] = None, back: Optional[Back] = None, style: Optional[Style] = None
 ) -> str:
-    if NO_COLOR:
+    if _no_color:
         return string
     template = "\033[{code}m"
     result = ""
@@ -60,5 +60,5 @@ def colored_string(
 
 
 def set_no_color():
-    global NO_COLOR
-    NO_COLOR = True
+    global _no_color
+    _no_color = True

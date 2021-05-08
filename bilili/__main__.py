@@ -6,14 +6,16 @@ import time
 from typing import List
 from urllib.parse import quote, unquote
 
+from .__version__ import __version__
 from .api.danmaku import get_danmaku
 from .api.exceptions import CannotDownloadError, IsPreviewError
+from .api.vip import is_vip
 from .handlers.downloader import RemoteFile
 from .handlers.merger import MergingFile
 from .tools import global_status, regex, spider
 from .utils.base import repair_filename, size_format, touch_dir
 from .utils.console.colorful import set_no_color
-from .utils.console.logger import Logger, set_logger_debug
+from .utils.console.logger import Badge, Logger, set_logger_debug
 from .utils.console.ui import ColorString, Line, LineList, ProgressBar, String, View
 from .utils.danmaku import convert_xml_danmaku_to_ass
 from .utils.functiontools.attrdict import AttrDict
@@ -21,7 +23,6 @@ from .utils.playlist import Dpl, M3u
 from .utils.subtitle import Subtitle
 from .utils.thread import Flag, ThreadPool
 from .video import BililiContainer
-from .__version__ import __version__
 
 
 def parse_episodes(episodes_str: str, total: int) -> List[int]:
@@ -69,6 +70,32 @@ def parse_episodes(episodes_str: str, total: int) -> List[int]:
     return episodes
 
 
+def check_arguments_and_set_global(args: argparse.Namespace):
+    # 先解码后编码是防止获取到的 SESSDATA 是已经解码后的（包含「,」）
+    # 而番剧无法使用解码后的 SESSDATA
+    cookies = {"SESSDATA": quote(unquote(args.sess_data))}
+    spider.set_cookies(cookies)
+
+    if args.debug:
+        set_logger_debug()
+
+    # 使用 --no-color 或者 NO_COLOR 环境变量非空均不显示颜色
+    if args.no_color or os.environ.get("NO_COLOR") is not None:
+        set_no_color()
+
+    if args.disable_proxy:
+        spider.trust_env = False
+
+    # 大会员身份校验
+    if not args.sess_data:
+        Logger.info("未提供 SESSDATA，无法下载会员专享剧集")
+    else:
+        if is_vip():
+            Logger.custom("成功以大会员身份登录～", badge=Badge("大会员", fore="white", back="magenta", style="bold"))
+        else:
+            Logger.warning("以非大会员身份登录，无法下载会员专享剧集")
+
+
 def main():
     """ 解析命令行参数并调用相关模块进行下载 """
 
@@ -99,7 +126,7 @@ def main():
     parser.add_argument("-p", "--episodes", default="^~$", help="选集")
     parser.add_argument("-s", "--with-section", action="store_true", help="同时下载附加剧集（PV、预告以及特别篇等专区内容）")
     parser.add_argument("-w", "--overwrite", action="store_true", help="强制覆盖已下载视频")
-    parser.add_argument("-c", "--sess-data", default=None, help="输入 cookies")
+    parser.add_argument("-c", "--sess-data", default="", help="输入 cookies")
     parser.add_argument("-y", "--yes", action="store_true", help="跳过下载询问")
     parser.add_argument(
         "--audio-quality",
@@ -133,14 +160,7 @@ def main():
     parser.add_argument("--debug", action="store_true", help="debug 模式")
 
     args = parser.parse_args()
-    # 先解码后编码是防止获取到的 SESSDATA 是已经解码后的（包含「,」）
-    # 而番剧无法使用解码后的 SESSDATA
-    cookies = {"SESSDATA": quote(unquote(args.sess_data)) if args.sess_data is not None else None}
-    if args.debug:
-        set_logger_debug()
-    # 使用 --no-color 或者 NO_COLOR 环境变量非空均不显示颜色
-    if args.no_color or os.environ.get("NO_COLOR") is not None:
-        set_no_color()
+    check_arguments_and_set_global(args)
 
     config = {
         "url": args.url,
@@ -152,7 +172,6 @@ def main():
         "playlist_type": args.playlist_type,
         "playlist_path_type": "AP" if args.abs_path else "RP",
         "overwrite": args.overwrite,
-        "cookies": cookies,
         "type": args.type.lower(),
         "block_size": int(args.block_size * 1024 * 1024),
     } >> AttrDict()
@@ -214,9 +233,6 @@ def main():
         sys.exit(1)
 
     # 获取标题
-    spider.set_cookies(config["cookies"])
-    if args.disable_proxy:
-        spider.trust_env = False
     title = get_title(resource_id)
     Logger.print(title)
 
