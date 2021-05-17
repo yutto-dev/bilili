@@ -11,12 +11,12 @@
    <a href="https://pypi.org/project/bilili/" target="_blank"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/bilili?style=flat-square"></a>
    <a href="https://actions-badge.atrox.dev/SigureMo/bilili/goto?ref=main"><img alt="Build Status" src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FSigureMo%2Fbilili%2Fbadge%3Fref%3Dmain&label=API%20Test&style=flat-square" /></a>
    <a href="LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/SigureMo/bilili?style=flat-square"></a>
-   <a href="https://gitmoji.carloscuesta.me"><img src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67?style=flat-square" alt="Gitmoji"></a>
+   <a href="https://gitmoji.dev"><img src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67?style=flat-square" alt="Gitmoji"></a>
 </p>
 
 <p align="center"><strong>🍻 𝓫𝓲𝓵𝓲𝓵𝓲，一个可以帮你快速下载 <a href="https://www.bilibili.com">B 站</a>投稿视频以及番剧视频的 CLI～～～</strong></p>
 
-**文档戳这里啦 → <https://bilili.nyakku.moe>**
+**文档戳这里啦 → [bilili の可愛い自己紹介](https://bilili.nyakku.moe)**
 
 ## 特性
 
