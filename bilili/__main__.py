@@ -99,10 +99,6 @@ def check_arguments_and_set_global(args: argparse.Namespace):
 def main():
     """ 解析命令行参数并调用相关模块进行下载 """
 
-    if (sys.version_info.major, sys.version_info.minor) < (3, 8):
-        Logger.error("请使用 Python3.8 及以上版本哦～")
-        sys.exit(1)
-
     parser = argparse.ArgumentParser(description="bilili B 站视频、弹幕下载器", prog="bilili")
     parser.add_argument("-v", "--version", action="version", version="%(prog)s {}".format(__version__))
     parser.add_argument("url", help="视频主页地址")
