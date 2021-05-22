@@ -58,7 +58,6 @@ module.exports = {
       { text: '首页', link: '/' },
       { text: '指南', link: '/guide/' },
       { text: '参数', link: '/cli/' },
-      { text: 'API', link: '/api/' },
       {
         text: '支持我',
         items: [
@@ -83,7 +82,7 @@ module.exports = {
           title: '深入',
           collapsable: false,
           sidebarDepth: 1,
-          children: ['cli', 'api', 'work-process']
+          children: ['cli', 'work-process']
         },
         'faq',
         'feedback',
@@ -105,10 +104,6 @@ module.exports = {
     {
       path: '/guide/cli.html',
       filePath: path.resolve(__dirname, '../cli/README.md')
-    },
-    {
-      path: '/guide/api.html',
-      filePath: path.resolve(__dirname, '../api/README.md')
     }
   ]
 }

@@ -2,13 +2,11 @@ import json
 import re
 
 from ..api.exceptions import ArgumentsError, CannotDownloadError, UnknownTypeError, UnsupportTypeError
-from ..api.exports import export_api
 from ..quality import Media, gen_quality_sequence, video_quality_map
 from ..tools import regex_bangumi_ep, spider
 from ..utils.base import touch_url
 
 
-@export_api(route="/video_info")
 def get_video_info(avid: str = "", bvid: str = ""):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
@@ -28,7 +26,6 @@ def get_video_info(avid: str = "", bvid: str = ""):
     }
 
 
-@export_api(route="/acg_video/title")
 def get_acg_video_title(avid: str = "", bvid: str = "") -> str:
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
@@ -47,7 +44,6 @@ def get_acg_video_title(avid: str = "", bvid: str = "") -> str:
     return title
 
 
-@export_api(route="/acg_video/list")
 def get_acg_video_list(avid: str = "", bvid: str = ""):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
@@ -65,7 +61,6 @@ def get_acg_video_list(avid: str = "", bvid: str = ""):
     ]
 
 
-@export_api(route="/acg_video/playurl")
 def get_acg_video_playurl(
     avid: str = "",
     bvid: str = "",
@@ -191,7 +186,6 @@ def get_acg_video_playurl(
         raise UnknownTypeError(type)
 
 
-@export_api(route="/acg_video/subtitle")
 def get_acg_video_subtitle(avid: str = "", bvid: str = "", cid: str = ""):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")

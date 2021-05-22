@@ -1,13 +1,11 @@
 import re
 
 from ..api.exceptions import ArgumentsError, CannotDownloadError, IsPreviewError, UnknownTypeError, UnsupportTypeError
-from ..api.exports import export_api
 from ..quality import Media, gen_quality_sequence, video_quality_map
 from ..tools import spider
 from ..utils.base import touch_url
 
 
-@export_api(route="/get_season_id")
 def get_season_id(media_id: str) -> str:
     home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
     season_id = ""
@@ -18,7 +16,6 @@ def get_season_id(media_id: str) -> str:
     return str(season_id)
 
 
-@export_api(route="/bangumi/title")
 def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str = "") -> str:
     if not (media_id or season_id or episode_id):
         raise ArgumentsError("media_id", "season_id", "episode_id")
@@ -43,7 +40,6 @@ def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str =
     return title
 
 
-@export_api(route="/bangumi/list")
 def get_bangumi_list(episode_id: str = "", season_id: str = "", with_section: bool = False):
     if not (season_id or episode_id):
         raise ArgumentsError("season_id", "episode_id")
@@ -74,7 +70,6 @@ def get_bangumi_list(episode_id: str = "", season_id: str = "", with_section: bo
     ]
 
 
-@export_api(route="/bangumi/playurl")
 def get_bangumi_playurl(
     avid: str = "",
     bvid: str = "",
@@ -192,7 +187,6 @@ def get_bangumi_playurl(
         raise UnknownTypeError(type)
 
 
-@export_api(route="/bangumi/subtitle")
 def get_bangumi_subtitle(avid: str = "", bvid: str = "", cid: str = ""):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
