@@ -82,7 +82,7 @@ module.exports = {
           title: '深入',
           collapsable: false,
           sidebarDepth: 1,
-          children: ['cli', 'work-process']
+          children: ['cli', 'work-process', 'next-version']
         },
         'faq',
         'feedback',
