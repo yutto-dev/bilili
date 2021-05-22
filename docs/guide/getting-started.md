@@ -1,8 +1,12 @@
 # 快速上手
 
+<!--
+
 ## 视频速览
 
 <BililiPlayer bvid="BV1vZ4y1M7mQ" cid="222200470" :page=2 />
+
+-->
 
 ## 我所支持的 url
 
