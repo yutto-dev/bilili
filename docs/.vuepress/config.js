@@ -89,8 +89,7 @@ module.exports = {
         'notice',
         'thanks'
       ],
-      '/cli/': 'auto',
-      '/api/': 'auto'
+      '/cli/': 'auto'
     },
     repo: 'SigureMo/bilili',
     docsDir: 'docs',

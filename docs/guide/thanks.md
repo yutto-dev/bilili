@@ -9,7 +9,7 @@
 我的正常运作离不开以下项目的支持
 
 -  [FFmpeg](https://github.com/FFmpeg/FFmpeg) 用于视频的合并
--  [danmaku-ass](https://github.com/m13253/danmaku2ass) 用于 xml 弹幕转换为 ass 弹幕
+-  [danmaku2ass](https://github.com/m13253/danmaku2ass) 用于 xml 弹幕转换为 ass 弹幕
 -  [VuePress](https://github.com/vuejs/vuepress) 本文档的生成器
 -  [DPlayer](https://dplayer.js.org/) 文档外链播放器
 
@@ -23,7 +23,7 @@
 
 ## 云服务
 
--  [Vercel](https://vercel.com/) 提供[文档托管](https://vercel.com/siguremo/bilili)以及 [API 托管](https://vercel.com/siguremo/bilipi)
+-  [Vercel](https://vercel.com/) 提供[文档托管](https://vercel.com/siguremo/bilili)
 
 ## 贡献者
 
