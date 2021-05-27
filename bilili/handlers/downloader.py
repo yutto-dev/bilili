@@ -1,6 +1,6 @@
 import os
 import random
-from typing import List, Tuple, Union
+from typing import Callable, List, Tuple, Union
 
 import requests
 
@@ -15,6 +15,11 @@ class RemoteFile(Handler):
     网络 url 与本地文件的绑定，可调用 download 进行下载
     download 支持断点续传
     """
+
+    before_download: Callable[..., None]
+    downloaded: Callable[..., None]
+    before_update: Callable[..., None]
+    updated: Callable[..., None]
 
     def __init__(
         self, url: str, local_path: str, mirrors: List[str] = [], range: Tuple[int, Union[int, str]] = (0, "")

@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import Callable, List
 
 from ..handlers.base import Handler
 from ..utils.console.logger import Logger
@@ -9,6 +9,9 @@ ffmpeg = FFmpeg()
 
 
 class MergingFile(Handler):
+    before_merge: Callable[..., None]
+    merged: Callable[..., None]
+
     def __init__(self, type: str, src_path_list: List[str] = [], dst_path: str = ""):
         super().__init__(["before_merge", "merged"])
         self.type = type
