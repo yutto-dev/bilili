@@ -28,6 +28,10 @@ from .video import BililiContainer
 def parse_episodes(episodes_str: str, total: int) -> List[int]:
     """ 将选集字符串转为列表 """
 
+    if total == 0:
+        Logger.warning("该剧集列表无任何剧集，猜测正片尚未上线，如果想要下载 PV 等特殊剧集，请添加参数 -s")
+        return []
+
     def reslove_negetive(value: int) -> int:
         return value if value > 0 else value + total + 1
 
