@@ -7,7 +7,7 @@ class APIException(Exception):
 
 class ArgumentsError(APIException):
     def __init__(self, *args):
-        message = ",".join(args) + " are all empty"
+        message = "参数 " + ",".join(args) + " 均空"
         super().__init__(101, message)
 
 
@@ -19,17 +19,23 @@ class CannotDownloadError(APIException):
 
 class UnknownTypeError(APIException):
     def __init__(self, type):
-        message = "Unknown type {}".format(type)
+        message = "未知类型：{}".format(type)
         super().__init__(103, message)
 
 
 class UnsupportTypeError(APIException):
     def __init__(self, type):
-        message = "Not support {} type".format(type)
+        message = "不受支持的类型：{}".format(type)
         super().__init__(104, message)
 
 
 class IsPreviewError(APIException):
     def __init__(self):
-        message = "This video is preview video"
+        message = "本视频是预览视频"
         super().__init__(105, message)
+
+
+class MaxRetryError(APIException):
+    def __init__(self):
+        message = "超出最大重试次数"
+        super().__init__(106, message)

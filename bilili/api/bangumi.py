@@ -4,25 +4,28 @@ from ..api.exceptions import ArgumentsError, CannotDownloadError, IsPreviewError
 from ..quality import Media, gen_quality_sequence, video_quality_map
 from ..tools import spider
 from ..utils.base import touch_url
+from .utils import MaxRetry
 
 
+@MaxRetry(2)
 def get_season_id(media_id: str) -> str:
     home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
     season_id = ""
     regex_season_id = re.compile(r'"param":{"season_id":(\d+),"season_type":\d+}')
-    match_obj = regex_season_id.search(spider.get(home_url).text)
+    match_obj = regex_season_id.search(spider.get(home_url, timeout=3).text)
     if match_obj:
         season_id = match_obj.group(1)
     return str(season_id)
 
 
+@MaxRetry(2)
 def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str = "") -> str:
     if not (media_id or season_id or episode_id):
         raise ArgumentsError("media_id", "season_id", "episode_id")
     title = "呐，我也不知道是什么标题呢～"
     if media_id:
         home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
-        res = spider.get(home_url)
+        res = spider.get(home_url, timeout=3)
         regex_title = re.compile(r'<span class="media-info-title-t">(.*?)</span>')
         match_obj = regex_title.search(res.text)
         if match_obj:
@@ -32,7 +35,7 @@ def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str =
             play_url = "https://www.bilibili.com/bangumi/play/ss{season_id}".format(season_id=season_id)
         else:
             play_url = "https://www.bilibili.com/bangumi/play/ep{episode_id}".format(episode_id=episode_id)
-        res = spider.get(play_url)
+        res = spider.get(play_url, timeout=3)
         regex_title = re.compile(r'<a href=".+" target="_blank" title="(.*?)" class="media-title">(?P<title>.*?)</a>')
         match_obj = regex_title.search(res.text)
         if match_obj:
@@ -40,11 +43,12 @@ def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str =
     return title
 
 
+@MaxRetry(2)
 def get_bangumi_list(episode_id: str = "", season_id: str = "", with_section: bool = False):
     if not (season_id or episode_id):
         raise ArgumentsError("season_id", "episode_id")
     list_api = "http://api.bilibili.com/pgc/view/web/season?season_id={season_id}&ep_id={episode_id}"
-    res = spider.get(list_api.format(episode_id=episode_id, season_id=season_id))
+    res = spider.get(list_api.format(episode_id=episode_id, season_id=season_id), timeout=3)
     result = res.json()["result"]
     section_episodes = []
 
@@ -70,6 +74,7 @@ def get_bangumi_list(episode_id: str = "", season_id: str = "", with_section: bo
     ]
 
 
+@MaxRetry(2)
 def get_bangumi_playurl(
     avid: str = "",
     bvid: str = "",
@@ -84,7 +89,7 @@ def get_bangumi_playurl(
     play_api = "https://api.bilibili.com/pgc/player/web/playurl?avid={avid}&bvid={bvid}&ep_id={episode_id}&cid={cid}&qn={quality}"
     if type == "flv":
         touch_message = spider.get(
-            play_api.format(avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=80)
+            play_api.format(avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=80), timeout=3
         ).json()
         if touch_message["code"] != 0:
             raise CannotDownloadError(touch_message["code"], touch_message["message"])
@@ -97,7 +102,7 @@ def get_bangumi_playurl(
                 break
 
         play_url = play_api.format(avid=avid, bvid=bvid, episode_id=episode_id, cid=cid, quality=quality)
-        res = spider.get(play_url)
+        res = spider.get(play_url, timeout=3)
 
         return [
             {
@@ -122,7 +127,8 @@ def get_bangumi_playurl(
                 episode_id=episode_id,
                 cid=cid,
                 quality=video_quality_sequence[0],
-            )
+            ),
+            timeout=3,
         ).json()
 
         if play_info["code"] != 0:
@@ -187,17 +193,18 @@ def get_bangumi_playurl(
         raise UnknownTypeError(type)
 
 
+@MaxRetry(2)
 def get_bangumi_subtitle(avid: str = "", bvid: str = "", cid: str = ""):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
     subtitle_api = "https://api.bilibili.com/x/player/v2?cid={cid}&aid={avid}&bvid={bvid}"
     subtitle_url = subtitle_api.format(avid=avid, bvid=bvid, cid=cid)
-    subtitles_info = spider.get(subtitle_url).json()["data"]["subtitle"]
+    subtitles_info = spider.get(subtitle_url, timeout=3).json()["data"]["subtitle"]
     return [
         # fmt: off
         {
             "lang": sub_info["lan_doc"],
-            "lines": spider.get("https:" + sub_info["subtitle_url"]).json()["body"]
+            "lines": spider.get("https:" + sub_info["subtitle_url"], timeout=(3, 10)).json()["body"]
         }
         for sub_info in subtitles_info["subtitles"]
         # fmt: on

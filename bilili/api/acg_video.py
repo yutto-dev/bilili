@@ -5,13 +5,15 @@ from ..api.exceptions import ArgumentsError, CannotDownloadError, UnknownTypeErr
 from ..quality import Media, gen_quality_sequence, video_quality_map
 from ..tools import regex_bangumi_ep, spider
 from ..utils.base import touch_url
+from .utils import MaxRetry
 
 
+@MaxRetry(2)
 def get_video_info(avid: str = "", bvid: str = ""):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
     info_api = "http://api.bilibili.com/x/web-interface/view?aid={avid}&bvid={bvid}"
-    res = spider.get(info_api.format(avid=avid, bvid=bvid))
+    res = spider.get(info_api.format(avid=avid, bvid=bvid), timeout=3)
     res_json_data = res.json()["data"]
     episode_id = ""
     if res_json_data.get("redirect_url"):
@@ -38,11 +40,12 @@ def get_acg_video_title(avid: str = "", bvid: str = "") -> str:
         return title
 
 
+@MaxRetry(2)
 def get_acg_video_list(avid: str = "", bvid: str = ""):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
     list_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&bvid={bvid}&jsonp=jsonp"
-    res = spider.get(list_api.format(avid=avid, bvid=bvid))
+    res = spider.get(list_api.format(avid=avid, bvid=bvid), timeout=3)
     return [
         # fmt: off
         {
@@ -55,6 +58,7 @@ def get_acg_video_list(avid: str = "", bvid: str = ""):
     ]
 
 
+@MaxRetry(2)
 def get_acg_video_playurl(
     avid: str = "",
     bvid: str = "",
@@ -71,7 +75,7 @@ def get_acg_video_playurl(
         "https://api.bilibili.com/x/player/playurl?avid={avid}&bvid={bvid}&cid={cid}&qn={quality}&type=&otype=json"
     )
     if type == "flv":
-        touch_message = spider.get(play_api.format(avid=avid, bvid=bvid, cid=cid, quality=80)).json()
+        touch_message = spider.get(play_api.format(avid=avid, bvid=bvid, cid=cid, quality=80), timeout=3).json()
         if touch_message["code"] != 0:
             raise CannotDownloadError(touch_message["code"], touch_message["message"])
 
@@ -81,7 +85,7 @@ def get_acg_video_playurl(
                 break
 
         play_url = play_api.format(avid=avid, bvid=bvid, cid=cid, quality=quality)
-        res = spider.get(play_url)
+        res = spider.get(play_url, timeout=3)
 
         return [
             {
@@ -100,7 +104,7 @@ def get_acg_video_playurl(
         result = []
         play_api_dash = play_api + "&fnver=0&fnval=80&fourk=1"
         touch_message = spider.get(
-            play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=video_quality_sequence[0])
+            play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=video_quality_sequence[0]), timeout=3
         ).json()
 
         if touch_message["code"] != 0:
@@ -122,7 +126,7 @@ def get_acg_video_playurl(
         else:
             audio_quality = 30280
 
-        res = spider.get(play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=quality))
+        res = spider.get(play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=quality), timeout=3)
 
         if res.json()["data"]["dash"]["video"]:
             videos = res.json()["data"]["dash"]["video"]
@@ -161,7 +165,7 @@ def get_acg_video_playurl(
         return result
     elif type == "mp4":
         play_api_mp4 = play_api + "&platform=html5&high_quality=1"
-        play_info = spider.get(play_api_mp4.format(avid=avid, bvid=bvid, cid=cid, quality=120)).json()
+        play_info = spider.get(play_api_mp4.format(avid=avid, bvid=bvid, cid=cid, quality=120), timeout=3).json()
         if play_info["code"] != 0:
             raise CannotDownloadError(play_info["code"], play_info["message"])
         return [
@@ -180,18 +184,19 @@ def get_acg_video_playurl(
         raise UnknownTypeError(type)
 
 
+@MaxRetry(2)
 def get_acg_video_subtitle(avid: str = "", bvid: str = "", cid: str = ""):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
     subtitle_api = "https://api.bilibili.com/x/player.so?id=cid:{cid}&aid={avid}&bvid={bvid}"
     subtitle_url = subtitle_api.format(avid=avid, cid=cid, bvid=bvid)
-    res = spider.get(subtitle_url)
+    res = spider.get(subtitle_url, timeout=3)
     subtitles_info = json.loads(re.search(r"<subtitle>(.+)</subtitle>", res.text).group(1))
     return [
         # fmt: off
         {
             "lang": sub_info["lan_doc"],
-            "lines": spider.get("https:" + sub_info["subtitle_url"]).json()["body"]
+            "lines": spider.get("https:" + sub_info["subtitle_url"], timeout=(3, 10)).json()["body"]
         }
         for sub_info in subtitles_info["subtitles"]
         # fmt: on
