@@ -21,6 +21,7 @@ def get_video_info(avid: str = "", bvid: str = ""):
     return {
         "avid": str(res_json_data["aid"]),
         "bvid": res_json_data["bvid"],
+        "title": res_json_data["title"],
         "picture": res_json_data["pic"],
         "episode_id": episode_id,
     }
@@ -29,19 +30,12 @@ def get_video_info(avid: str = "", bvid: str = ""):
 def get_acg_video_title(avid: str = "", bvid: str = "") -> str:
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
-    home_url = (
-        "https://www.bilibili.com/video/{bvid}".format(bvid=bvid)
-        if bvid
-        else "https://www.bilibili.com/video/av{avid}".format(avid=avid)
-    )
-    res = spider.get(home_url)
-    regex_title = re.compile(r"<title .*>(.*)_哔哩哔哩 \(゜-゜\)つロ 干杯~-bilibili</title>")
-    match_obj = regex_title.search(res.text)
-    if match_obj:
-        title = match_obj.group(1)
-    else:
+    try:
+        title = get_video_info(avid=avid, bvid=bvid)["title"]
+    except:
         title = "呐，我也不知道是什么标题呢～"
-    return title
+    finally:
+        return title
 
 
 def get_acg_video_list(avid: str = "", bvid: str = ""):
