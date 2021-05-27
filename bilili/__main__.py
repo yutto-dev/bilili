@@ -67,7 +67,7 @@ def parse_episodes(episodes_str: str, total: int) -> List[int]:
         else:
             out_of_range.append(episode)
     if out_of_range:
-        Logger.warning("剧集 {} 不存在".format(",".join(list(map(str, out_of_range)))))
+        Logger.warning("剧集 {} 不存在哟！".format(",".join(list(map(str, out_of_range)))))
 
     Logger.print("已选择第 {} 话".format(",".join(list(map(str, episodes)))))
     assert episodes, "没有选中任何剧集"
@@ -92,12 +92,12 @@ def check_arguments_and_set_global(args: argparse.Namespace):
 
     # 大会员身份校验
     if not args.sess_data:
-        Logger.info("未提供 SESSDATA，无法下载会员专享剧集")
+        Logger.info("未提供 SESSDATA，无法下载会员专享剧集的喔～")
     else:
         if is_vip():
             Logger.custom("成功以大会员身份登录～", badge=Badge("大会员", fore="white", back="magenta", style="bold"))
         else:
-            Logger.warning("以非大会员身份登录，无法下载会员专享剧集")
+            Logger.warning("以非大会员身份登录，无法下载会员专享剧集的喔～")
 
 
 def main():
@@ -216,7 +216,7 @@ def main():
         season_id = season_id_match.group("season_id")
         resource_id.season_id = season_id
     else:
-        Logger.error("视频地址有误！")
+        Logger.error("视频地址有误呀，请仔细检查一下下～")
         sys.exit(1)
     # fmt: on
 
@@ -229,7 +229,7 @@ def main():
 
         bili_type = "bangumi"
     else:
-        Logger.error("未知视频类型")
+        Logger.error("未知的视频类型！")
         sys.exit(1)
 
     # 获取标题
@@ -278,7 +278,7 @@ def main():
         except CannotDownloadError as e:
             Logger.warning("{} 无法下载，原因：{}".format(container.name, e.message))
         except IsPreviewError:
-            Logger.warning("{} 是预览视频".format(container.name))
+            Logger.warning("{} 是预览视频呢～".format(container.name))
 
         # 写入播放列表
         if playlist is not None:
@@ -524,7 +524,7 @@ def main():
             except (SystemExit, KeyboardInterrupt):
                 Logger.info("已终止下载，再次运行即可继续下载～")
                 sys.exit(1)
-        Logger.info("已全部下载完成！")
+        Logger.info("已全部下载完成啦！")
     else:
         Logger.info("没有需要下载的视频！")
 

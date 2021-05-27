@@ -80,7 +80,7 @@ class RemoteFile(Handler):
                     else:
                         downloaded = True
                 except requests.exceptions.RequestException:
-                    Logger.warning("文件 {} 请求超时，正在重试...".format(self.name))
+                    Logger.warning("文件 {} 下载超时，正在重试...".format(self.name))
 
             # 从临时文件迁移，并删除临时文件
             if os.path.exists(self.path):
