@@ -2,7 +2,7 @@ import os
 import sys
 from shutil import rmtree
 
-from bilili.__version__ import __version__
+from bilili.__version__ import VERSION as bilili_version
 from setuptools import setup, find_packages, Command
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -39,7 +39,7 @@ class UploadCommand(Command):
         os.system("twine upload dist/*")
 
         self.status("Pushing git tags…")
-        os.system("git tag v{0}".format(__version__))
+        os.system("git tag v{0}".format(bilili_version))
         os.system("git push --tags")
 
         sys.exit()
@@ -53,17 +53,19 @@ def get_long_description():
 
 setup(
     name="bilili",
-    version=__version__,
+    version=bilili_version,
     description="🍻 bilibili video and danmaku downloader | B站视频、弹幕下载器",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
     classifiers=[
+        "Environment :: Console",
+        "Operating System :: OS Independent",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: Implementation :: CPython",
-        "Programming Language :: Python :: Implementation :: PyPy",
     ],
     keywords="python bilibili video download spider danmaku",
     author="SigureMo",

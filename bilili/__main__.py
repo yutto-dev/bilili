@@ -6,7 +6,7 @@ import time
 from typing import List
 from urllib.parse import quote, unquote
 
-from .__version__ import __version__
+from .__version__ import VERSION as bilili_version
 from .api.danmaku import get_danmaku
 from .api.exceptions import CannotDownloadError, IsPreviewError
 from .api.vip import is_vip
@@ -104,7 +104,7 @@ def main():
     """ 解析命令行参数并调用相关模块进行下载 """
 
     parser = argparse.ArgumentParser(description="bilili B 站视频、弹幕下载器", prog="bilili")
-    parser.add_argument("-v", "--version", action="version", version="%(prog)s {}".format(__version__))
+    parser.add_argument("-v", "--version", action="version", version="%(prog)s {}".format(bilili_version))
     parser.add_argument("url", help="视频主页地址")
     parser.add_argument(
         "-t",
