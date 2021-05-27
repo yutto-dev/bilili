@@ -1,4 +1,4 @@
-from typing import Any, Callable, Coroutine, TypeVar
+from typing import Any, Callable, TypeVar
 
 import requests
 

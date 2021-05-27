@@ -12,8 +12,7 @@ def get_season_id(media_id: str) -> str:
     home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
     season_id = ""
     regex_season_id = re.compile(r'"param":{"season_id":(\d+),"season_type":\d+}')
-    match_obj = regex_season_id.search(spider.get(home_url, timeout=3).text)
-    if match_obj:
+    if match_obj := regex_season_id.search(spider.get(home_url, timeout=3).text):
         season_id = match_obj.group(1)
     return str(season_id)
 
@@ -27,8 +26,7 @@ def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str =
         home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
         res = spider.get(home_url, timeout=3)
         regex_title = re.compile(r'<span class="media-info-title-t">(.*?)</span>')
-        match_obj = regex_title.search(res.text)
-        if match_obj:
+        if match_obj := regex_title.search(res.text):
             title = match_obj.group(1)
     elif season_id or episode_id:
         if season_id:
@@ -37,8 +35,7 @@ def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str =
             play_url = "https://www.bilibili.com/bangumi/play/ep{episode_id}".format(episode_id=episode_id)
         res = spider.get(play_url, timeout=3)
         regex_title = re.compile(r'<a href=".+" target="_blank" title="(.*?)" class="media-title">(?P<title>.*?)</a>')
-        match_obj = regex_title.search(res.text)
-        if match_obj:
+        if match_obj := regex_title.search(res.text):
             title = match_obj.group("title")
     return title
 
