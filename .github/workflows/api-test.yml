@@ -26,4 +26,4 @@ jobs:
       - name: Test bilili API
         run: |
           pip install pytest
-          pytest -m api
+          pytest -m "api and not ci_skip"

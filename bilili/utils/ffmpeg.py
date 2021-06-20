@@ -5,10 +5,6 @@ import shutil
 
 from typing import List
 
-"""
-ref : https://github.com/soimort/you-get
-"""
-
 
 class FFmpegNotFoundError(Exception):
     def __init__(self):
@@ -16,6 +12,10 @@ class FFmpegNotFoundError(Exception):
 
 
 class FFmpeg:
+    """
+    @refs : https://github.com/soimort/you-get
+    """
+
     def __init__(self, ffmpeg_path: str = "ffmpeg"):
         try:
             if subprocess.run([ffmpeg_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE).returncode != 1:

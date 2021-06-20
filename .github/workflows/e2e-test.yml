@@ -28,7 +28,14 @@ jobs:
           sudo apt update
           sudo apt install ffmpeg
 
+      - name: e2e without subprocess
+        run: |
+          python3 -m bilili -v
+          python3 -m bilili -h
+          python3 -m bilili https://www.bilibili.com/video/BV1AZ4y147Yg -w -y
+          find . -name "*- bilibili" -print0 | xargs -0 rm -rf
+
       - name: e2e test
         run: |
           pip install pytest
-          pytest -m e2e
+          pytest -m "e2e and not ci_skip"
