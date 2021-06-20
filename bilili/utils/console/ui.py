@@ -1,10 +1,40 @@
 import math
 import os
-from typing import Any, List, Optional, Union, Tuple
+import platform
+import shutil
+import sys
+from typing import Any, List, Optional, Tuple, Union
 
 from ..base import get_string_width
 from .colorful import Back, Fore, Style, colored_string
 from .logger import Logger
+
+IS_WINDOWS = platform.system() == "Windows"
+
+
+def get_terminal_size() -> tuple[int, int]:
+    """Get the size of the console.
+    @refs: https://github.com/willmcgugan/rich/blob/e5246436cd75de32f3436cc88d6e4fdebe13bd8d/rich/console.py#L918-L951
+    Returns:
+        tuple[int, int]: A named tuple containing the dimensions.
+    """
+
+    width: Optional[int] = None
+    height: Optional[int] = None
+    if IS_WINDOWS:  # pragma: no cover
+        width, height = shutil.get_terminal_size()
+    else:
+        try:
+            width, height = os.get_terminal_size(sys.stdin.fileno())
+        except (AttributeError, ValueError, OSError):
+            try:
+                width, height = os.get_terminal_size(sys.stdout.fileno())
+            except (AttributeError, ValueError, OSError):
+                pass
+
+    width = width or 80
+    height = height or 25
+    return (width, height)
 
 
 class View:
@@ -47,14 +77,14 @@ class View:
 
     @classmethod
     def get_width(cls) -> int:
-        width = os.get_terminal_size().columns
+        width = get_terminal_size()[0]
         width = min(width, View.max_width)
         width = max(width, View.min_width)
         return width
 
     @classmethod
     def get_height(cls) -> int:
-        return os.get_terminal_size().lines
+        return get_terminal_size()[1]
 
     @classmethod
     def calc_area_size(cls, string: str) -> Tuple[int, int]:
