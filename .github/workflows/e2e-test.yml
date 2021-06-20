@@ -23,6 +23,11 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      - name: Install tools
+        run: |
+          sudo apt update
+          sudo apt install ffmpeg
+
       - name: e2e test
         run: |
           pip install pytest
