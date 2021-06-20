@@ -20,6 +20,7 @@ upgrade-pip:
 clean:
   find . -name "*- bilibili" -print0 | xargs -0 rm -rf
   rm -rf tmp/
+  rm -rf .pytest_cache/
 
 clean-builds:
   rm -rf build/
