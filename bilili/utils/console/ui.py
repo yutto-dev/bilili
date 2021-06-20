@@ -329,4 +329,4 @@ if __name__ == "__main__":
             }
         ])
         # fmt: on
-        time.sleep(0.1)
+        time.sleep(0.01)

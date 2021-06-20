@@ -10,16 +10,19 @@ from bilili.api.bangumi import (
 from bilili.api.exceptions import CannotDownloadError
 
 
+@pytest.mark.api
 def test_get_season_id():
     media_id = "28223066"
     assert get_season_id(media_id=media_id) == "28770"
 
 
+@pytest.mark.api
 def test_get_title():
     media_id = "28223066"
     assert get_bangumi_title(media_id=media_id) == "我的三体之章北海传"
 
 
+@pytest.mark.api
 def test_get_list():
     season_id = "28770"
     video_list = get_bangumi_list(season_id=season_id, with_section=False)
@@ -29,6 +32,7 @@ def test_get_list():
     assert video_list[0]["episode_id"] == "300998"
 
 
+@pytest.mark.api
 @pytest.mark.parametrize("type", ["flv", "dash"])
 def test_get_playurl(type: str):
     avid = "84271171"
@@ -50,6 +54,7 @@ def test_get_playurl(type: str):
         pass
 
 
+@pytest.mark.api
 def test_get_subtitle():
     # TODO: 暂未找到需要字幕的番剧（非港澳台）
     pass

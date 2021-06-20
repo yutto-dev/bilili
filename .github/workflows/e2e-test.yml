@@ -1,4 +1,4 @@
-name: API Test
+name: e2e Test
 
 on: [push, pull_request]
 
@@ -23,7 +23,7 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Test bilili API
+      - name: e2e test
         run: |
           pip install pytest
-          pytest -m api
+          pytest -m e2e
