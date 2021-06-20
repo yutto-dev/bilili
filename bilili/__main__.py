@@ -277,7 +277,10 @@ def main():
                 container.append_media(block_size=config["block_size"], **playinfo)
         except CannotDownloadError as e:
             Logger.warning("{} 无法下载，原因：{}".format(container.name, e.message))
+            del containers[i]
+            continue
         except IsPreviewError:
+            # TODO: 现在还有部分预览的视频吗？
             Logger.warning("{} 是预览视频呢～".format(container.name))
 
         # 写入播放列表
