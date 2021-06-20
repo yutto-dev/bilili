@@ -12,7 +12,7 @@ from .logger import Logger
 IS_WINDOWS = platform.system() == "Windows"
 
 
-def get_terminal_size() -> tuple[int, int]:
+def get_terminal_size() -> Tuple[int, int]:
     """Get the size of the console.
     @refs: https://github.com/willmcgugan/rich/blob/e5246436cd75de32f3436cc88d6e4fdebe13bd8d/rich/console.py#L918-L951
     Returns:
