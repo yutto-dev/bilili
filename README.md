@@ -18,6 +18,8 @@
 
 **文档戳这里啦 → [bilili の可愛い自己紹介](https://bilili.nyakku.moe)**
 
+如果想要体验 v2 请戳这里 → [yutto<sup>2.0.0-beta</sup>](https://github.com/SigureMo/yutto)
+
 ## 特性
 
 -  支持投稿视频（也即原 AV 号视频）和番剧下载
