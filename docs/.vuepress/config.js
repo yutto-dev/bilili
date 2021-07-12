@@ -59,6 +59,12 @@ module.exports = {
       { text: '指南', link: '/guide/' },
       { text: '参数', link: '/cli/' },
       {
+        text: 'v1.4.9',
+        items: [
+          { text: 'v2.0.0-beta', link: 'https://github.com/SigureMo/yutto' }
+        ]
+      },
+      {
         text: '支持我',
         items: [
           { text: '赞助', link: '/sponsor' },
