@@ -5,7 +5,7 @@ test:
   python3 -m pytest -m '(api or e2e) and not ci_only'
   just clean
 
-release:
+publish:
   python3 setup.py upload
   just clean-builds
 

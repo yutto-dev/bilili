@@ -16,7 +16,9 @@ class Crawler(requests.Session):
 
     def __init__(self):
         super().__init__()
+        requests.packages.urllib3.disable_warnings()
         self.headers.update(Crawler.header)
+        self.verify = False
 
     def set_cookies(self, cookies: Dict[str, str]):
         """传入一个字典，用于设置 cookies"""
