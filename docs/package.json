@@ -10,7 +10,7 @@
   "devDependencies": {
     "@vuepress/plugin-back-to-top": "^1.8.3",
     "dplayer": "^1.26.0",
-    "vuepress": "^1.8.3",
+    "vuepress": "^1.9.1",
     "vuepress-plugin-cursor-effects": "^1.0.2",
     "vuepress-plugin-dynamic-title": "^1.0.0"
   }
