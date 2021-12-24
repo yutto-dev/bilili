@@ -8,7 +8,7 @@
     "serve": "vuepress build --no-cache && npx serve .vuepress/dist"
   },
   "devDependencies": {
-    "@vuepress/plugin-back-to-top": "^1.8.3",
+    "@vuepress/plugin-back-to-top": "^1.9.4",
     "dplayer": "^1.26.0",
     "vuepress": "^1.9.4",
     "vuepress-plugin-cursor-effects": "^1.0.2",
