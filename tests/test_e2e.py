@@ -43,11 +43,12 @@ def test_acg_video_e2e():
         check=True,
     )
 
+
 @pytest.mark.e2e
-def test_acg_video_e2e():
-    short_acg_video = "https://www.bilibili.com/video/BV1qM4y1w716"
+def test_acg_video_8k_e2e():
+    acg_video_8k = "https://www.bilibili.com/video/BV1qM4y1w716"
     p = subprocess.run(
-        [PYTHON, "-m", "bilili", short_acg_video, "-y", "-w","-c=****"],
+        [PYTHON, "-m", "bilili", acg_video_8k, "-y", "-c=***"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         check=True,
