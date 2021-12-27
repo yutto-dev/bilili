@@ -42,13 +42,3 @@ def test_acg_video_e2e():
         stderr=subprocess.PIPE,
         check=True,
     )
-
-@pytest.mark.e2e
-def test_acg_video_e2e():
-    short_acg_video = "https://www.bilibili.com/video/BV1qM4y1w716"
-    p = subprocess.run(
-        [PYTHON, "-m", "bilili", short_acg_video, "-y", "-w","-c=****"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        check=True,
-    )
