@@ -12,7 +12,7 @@ video_quality_sequence_default = [127, 125, 120, 116, 112, 80, 74, 64, 32, 16]
 audio_quality_sequence_default = [30280, 30232, 30216]
 
 video_quality_map = {
-    127:{
+    127: {
         "description": "超高清 8K",
         "width": 8192,
         "height": 4320,
