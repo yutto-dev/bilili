@@ -68,7 +68,6 @@ def get_acg_video_playurl(
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
     video_quality_sequence = gen_quality_sequence(quality, type=Media.VIDEO)
-    video_quality_sequence[0]=127
     audio_quality_sequence = gen_quality_sequence(audio_quality, type=Media.AUDIO)
     play_api = (
         "https://api.bilibili.com/x/player/playurl?avid={avid}&bvid={bvid}&cid={cid}&qn={quality}&type=&otype=json"
