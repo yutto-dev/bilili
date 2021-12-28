@@ -7,7 +7,6 @@ class Media(Enum):
     AUDIO = 30200
 
 
-
 video_quality_sequence_default = [127, 125, 120, 116, 112, 80, 74, 64, 32, 16]
 audio_quality_sequence_default = [30280, 30232, 30216]
 
@@ -97,7 +96,7 @@ audio_quality_map = {
 
 
 def gen_quality_sequence(quality: int = 127, type: Media = Media.VIDEO) -> List[int]:
-    """ 根据默认先降后升的清晰度机制生成清晰度序列 """
+    """根据默认先降后升的清晰度机制生成清晰度序列"""
     quality_sequence_default = {
         Media.VIDEO: video_quality_sequence_default,
         Media.AUDIO: audio_quality_sequence_default,
