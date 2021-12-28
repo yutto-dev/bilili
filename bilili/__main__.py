@@ -26,7 +26,7 @@ from .video import BililiContainer
 
 
 def parse_episodes(episodes_str: str, total: int) -> List[int]:
-    """ 将选集字符串转为列表 """
+    """将选集字符串转为列表"""
 
     if total == 0:
         Logger.warning("该剧集列表无任何剧集，猜测正片尚未上线，如果想要下载 PV 等特殊剧集，请添加参数 -s")
@@ -101,7 +101,7 @@ def check_arguments_and_set_global(args: argparse.Namespace):
 
 
 def main():
-    """ 解析命令行参数并调用相关模块进行下载 """
+    """解析命令行参数并调用相关模块进行下载"""
 
     parser = argparse.ArgumentParser(description="bilili B 站视频、弹幕下载器", prog="bilili")
     parser.add_argument("-v", "--version", action="version", version="%(prog)s {}".format(bilili_version))
@@ -117,10 +117,10 @@ def main():
     parser.add_argument(
         "-q",
         "--quality",
-        default=125,
-        choices=[125, 120, 116, 112, 80, 74, 64, 32, 16],
+        default=127,
+        choices=[127, 125, 120, 116, 112, 80, 74, 64, 32, 16],
         type=int,
-        help="视频清晰度 125:HDR, 120:4K, 116:1080P60, 112:1080P+, 80:1080P, 74:720P60, 64:720P, 32:480P, 16:360P",
+        help="视频清晰度 127:8K, 125:HDR, 120:4K, 116:1080P60, 112:1080P+, 80:1080P, 74:720P60, 64:720P, 32:480P, 16:360P",
     )
     parser.add_argument("-n", "--num-threads", default=16, type=int, help="最大下载线程数")
     parser.add_argument("-p", "--episodes", default="^~$", help="选集")

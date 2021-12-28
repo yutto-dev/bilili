@@ -77,7 +77,7 @@ def get_bangumi_playurl(
     bvid: str = "",
     episode_id: str = "",
     cid: str = "",
-    quality: int = 125,
+    quality: int = 127,
     audio_quality: int = 30280,
     type: str = "dash",
 ):
@@ -116,7 +116,7 @@ def get_bangumi_playurl(
         ]
     elif type == "dash":
         result = []
-        play_api_dash = play_api + "&fnver=0&fnval=16&fourk=1"
+        play_api_dash = play_api + "&fnver=0&fnval=2000&fourk=1"
         play_info = spider.get(
             play_api_dash.format(
                 avid=avid,
@@ -140,7 +140,7 @@ def get_bangumi_playurl(
             if video_quality in accept_video_quality:
                 break
         else:
-            video_quality = 125
+            video_quality = 127
 
         accept_audio_quality = set([audio["id"] for audio in play_info["result"]["dash"]["audio"]])
         for audio_quality in audio_quality_sequence:

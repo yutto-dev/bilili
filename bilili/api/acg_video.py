@@ -61,7 +61,7 @@ def get_acg_video_playurl(
     avid: str = "",
     bvid: str = "",
     cid: str = "",
-    quality: int = 125,
+    quality: int = 127,
     audio_quality: int = 30280,
     type: str = "dash",
 ):
@@ -100,7 +100,7 @@ def get_acg_video_playurl(
         ]
     elif type == "dash":
         result = []
-        play_api_dash = play_api + "&fnver=0&fnval=80&fourk=1"
+        play_api_dash = play_api + "&fnver=0&fnval=2000&fourk=1"
         touch_message = spider.get(
             play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=video_quality_sequence[0]), timeout=3
         ).json()
@@ -115,7 +115,7 @@ def get_acg_video_playurl(
             if video_quality in video_accept_quality:
                 break
         else:
-            video_quality = 125
+            video_quality = 127
 
         audio_accept_quality = set([audio["id"] for audio in touch_message["data"]["dash"]["audio"]])
         for audio_quality in audio_quality_sequence:
@@ -163,7 +163,7 @@ def get_acg_video_playurl(
         return result
     elif type == "mp4":
         play_api_mp4 = play_api + "&platform=html5&high_quality=1"
-        play_info = spider.get(play_api_mp4.format(avid=avid, bvid=bvid, cid=cid, quality=120), timeout=3).json()
+        play_info = spider.get(play_api_mp4.format(avid=avid, bvid=bvid, cid=cid, quality=127), timeout=3).json()
         if play_info["code"] != 0:
             raise CannotDownloadError(play_info["code"], play_info["message"])
         return [
