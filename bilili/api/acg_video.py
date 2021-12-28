@@ -68,7 +68,6 @@ def get_acg_video_playurl(
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
     video_quality_sequence = gen_quality_sequence(quality, type=Media.VIDEO)
-
     audio_quality_sequence = gen_quality_sequence(audio_quality, type=Media.AUDIO)
     play_api = (
         "https://api.bilibili.com/x/player/playurl?avid={avid}&bvid={bvid}&cid={cid}&qn={quality}&type=&otype=json"
@@ -102,7 +101,9 @@ def get_acg_video_playurl(
     elif type == "dash":
         result = []
         play_api_dash = play_api + "&fnver=0&fnval=2000&fourk=1"
-        touch_message = spider.get(play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=video_quality_sequence[0]), timeout=3).json()
+        touch_message = spider.get(
+            play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=video_quality_sequence[0]), timeout=3
+        ).json()
 
         if touch_message["code"] != 0:
             raise CannotDownloadError(touch_message["code"], touch_message["message"])
