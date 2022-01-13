@@ -1,4 +1,5 @@
 const path = require('path')
+const bilili_versions = JSON.parse(process.env.BILILI_VERSIONS)
 
 module.exports = {
   title: 'bilili',
@@ -59,9 +60,12 @@ module.exports = {
       { text: '指南', link: '/guide/' },
       { text: '参数', link: '/cli/' },
       {
-        text: 'v1.4.10',
+        text: `v${bilili_versions.bilili}`,
         items: [
-          { text: 'v2.0.0-beta', link: 'https://github.com/SigureMo/yutto' }
+          {
+            text: `v${bilili_versions.yutto}`,
+            link: 'https://github.com/SigureMo/yutto'
+          }
         ]
       },
       {
