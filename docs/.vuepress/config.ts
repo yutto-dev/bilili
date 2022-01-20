@@ -1,12 +1,17 @@
-const path = require('path')
+import { ThemeConfig } from 'vuepress-theme-vt'
+import { defineConfig4CustomTheme } from 'vuepress/config'
+import path from 'path'
+
 const bilili_versions = JSON.parse(process.env.BILILI_VERSIONS)
 
-module.exports = {
+export = defineConfig4CustomTheme<ThemeConfig>({
   title: 'bilili',
-  description: '🍻 bilibili video and danmaku downloader | B站视频、弹幕下载器',
+  description: '🍻 bilibili video and danmaku downloader',
   locales: {
     '/': {
-      lang: 'zh-CN'
+      lang: 'zh-CN',
+      title: 'bilili',
+      description: '🍻 B站视频、弹幕下载器'
     }
   },
 
@@ -25,6 +30,7 @@ module.exports = {
     ['meta', { property: 'og:title', content: 'bilili' }]
   ],
 
+  // @ts-ignore
   plugins: [
     // 返回顶部
     ['@vuepress/back-to-top'],
@@ -44,17 +50,19 @@ module.exports = {
         hideText: '(〟-_・)ﾝ?这就走了？',
         recoverTime: 2000
       }
-    ],
-    // bilili player
-    [
-      require('./plugins/bilili-player/index.js'),
-      {
-        // bilipi: 'https://bilipi-git-external-api.siguremo.vercel.app/api/v0'
-      }
     ]
+    // bilili player
+    // [
+    //   require('./plugins/bilili-player/index.js'),
+    //   {
+    //     // bilipi: 'https://bilipi-git-external-api.siguremo.vercel.app/api/v0'
+    //   }
+    // ]
   ],
 
+  theme: 'vt',
   themeConfig: {
+    enableDarkMode: true,
     nav: [
       { text: '首页', link: '/' },
       { text: '指南', link: '/guide/' },
@@ -80,6 +88,7 @@ module.exports = {
       }
     ],
     sidebarDepth: 1,
+    // @ts-ignore
     sidebar: {
       '/guide/': [
         {
@@ -115,4 +124,4 @@ module.exports = {
       filePath: path.resolve(__dirname, '../cli/README.md')
     }
   ]
-}
+})
