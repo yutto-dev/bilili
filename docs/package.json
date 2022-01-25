@@ -10,7 +10,6 @@
   "devDependencies": {
     "@vuepress/plugin-back-to-top": "^1.9.7",
     "cross-env": "^7.0.3",
-    "dplayer": "^1.26.0",
     "node-fetch": "^3.2.0",
     "vuepress": "^1.9.7",
     "vuepress-plugin-cursor-effects": "^1.0.2",

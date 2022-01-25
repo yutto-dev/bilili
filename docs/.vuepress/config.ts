@@ -51,13 +51,6 @@ export = defineConfig4CustomTheme<ThemeConfig>({
         recoverTime: 2000
       }
     ]
-    // bilili player
-    // [
-    //   require('./plugins/bilili-player/index.js'),
-    //   {
-    //     // bilipi: 'https://bilipi-git-external-api.siguremo.vercel.app/api/v0'
-    //   }
-    // ]
   ],
 
   theme: 'vt',
