@@ -5,7 +5,7 @@ specifiers:
   cross-env: ^7.0.3
   node-fetch: ^3.2.0
   vuepress: ^1.9.7
-  vuepress-plugin-cursor-effects: ^1.0.2
+  vuepress-plugin-cursor-effects: ^1.1.1
   vuepress-plugin-dynamic-title: ^1.0.0
   vuepress-theme-vt: ^0.3.4
 
@@ -14,7 +14,7 @@ devDependencies:
   cross-env: 7.0.3
   node-fetch: 3.2.0
   vuepress: 1.9.7
-  vuepress-plugin-cursor-effects: 1.0.2
+  vuepress-plugin-cursor-effects: 1.1.1
   vuepress-plugin-dynamic-title: 1.0.0
   vuepress-theme-vt: 0.3.4
 
@@ -1194,6 +1194,24 @@ packages:
     dependencies:
       '@babel/helper-validator-identifier': 7.16.7
       to-fast-properties: 2.0.0
+    dev: true
+
+  /@moefy-canvas/core/0.2.0:
+    resolution: {integrity: sha512-b1VP1VTXba6fiYqQpQhSjNEYLLbeSRnZqSMk1h8i8cm1cB/zg8qcdlsgJvR40wPJEDo8MED/tJcdg8XjlRYsdg==}
+    dev: true
+
+  /@moefy-canvas/theme-popper/0.2.0:
+    resolution: {integrity: sha512-UXTeQyVhPFmjO2wYtaq3tu3a3SozFmQWGS5ueCTeT+naDbsMSQ0nqr0t3PbpPMxolGveYkdVY1hthRD1VNFKgg==}
+    dependencies:
+      '@moefy-canvas/core': 0.2.0
+      '@moefy-canvas/utils': 0.2.0
+      ts-debounce: 2.3.0
+    dev: true
+
+  /@moefy-canvas/utils/0.2.0:
+    resolution: {integrity: sha512-Gk2KZWNXK0GxhV4PFbi7p9zLmkwl8pKiovNu3QvMl0zKLGUOi6OhSz9dzjGV+ezst9KMBcb/uPYLpK54EkY8MQ==}
+    dependencies:
+      '@moefy-canvas/core': 0.2.0
     dev: true
 
   /@mrmlnc/readdir-enhanced/2.2.1:
@@ -7915,6 +7933,10 @@ packages:
       punycode: 2.1.1
     dev: true
 
+  /ts-debounce/2.3.0:
+    resolution: {integrity: sha512-j63IP7/unAzovrhVHE7U+fNkvDKwIaLH11dCO9TcRbYOZw1chPL054poqq3ZloyRJ5KwJMeB8csN/vGPPpQJjw==}
+    dev: true
+
   /tty-browserify/0.0.0:
     resolution: {integrity: sha1-oVe6QC2iTpv5V/mqadUk7tQpAaY=}
     dev: true
@@ -8302,8 +8324,10 @@ packages:
       markdown-it-container: 2.0.0
     dev: true
 
-  /vuepress-plugin-cursor-effects/1.0.2:
-    resolution: {integrity: sha512-rFV47jvF7vL5tCFt9Whri85Z+Kr95ayV6JtPefWyP4dsSoUiMaxR5HSw8EY+Nb07EdjygQce3u0olTsoOciEFw==}
+  /vuepress-plugin-cursor-effects/1.1.1:
+    resolution: {integrity: sha512-FdCznJI0cADNnAPKizUJp0voWbATA+dnXM8eS61lderqHJWvpOHj/AZ40C2j10cqOyx5s48K6mkNkdFATXqpog==}
+    dependencies:
+      '@moefy-canvas/theme-popper': 0.2.0
     dev: true
 
   /vuepress-plugin-dynamic-title/1.0.0:
