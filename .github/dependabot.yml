@@ -10,10 +10,10 @@ updates:
     schedule:
       interval: "daily"
     commit-message:
-      prefix: "⬆️ build: "
+      prefix: "⬆️ deps: "
   - package-ecosystem: "npm"
     directory: "/docs/"
     schedule:
       interval: "daily"
     commit-message:
-      prefix: "⬆️ build: "
+      prefix: "⬆️ deps: "

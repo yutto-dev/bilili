@@ -12,7 +12,7 @@
     "cross-env": "^7.0.3",
     "node-fetch": "^3.2.0",
     "vuepress": "^1.9.7",
-    "vuepress-plugin-cursor-effects": "^1.0.2",
+    "vuepress-plugin-cursor-effects": "^1.1.0",
     "vuepress-plugin-dynamic-title": "^1.0.0",
     "vuepress-theme-vt": "^0.3.4"
   }

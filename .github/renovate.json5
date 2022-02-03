@@ -1,0 +1,7 @@
+// https://docs.renovatebot.com/configuration-options/
+{
+  extends: ['config:base'],
+  labels: ['dependencies'],
+  pin: false,
+  commitMessagePrefix: '⬆️ deps: ',
+}
