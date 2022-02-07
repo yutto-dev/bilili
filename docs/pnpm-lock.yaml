@@ -7,7 +7,7 @@ specifiers:
   vuepress: ^1.9.7
   vuepress-plugin-cursor-effects: ^1.1.1
   vuepress-plugin-dynamic-title: ^1.0.0
-  vuepress-theme-vt: ^0.3.4
+  vuepress-theme-vt: 0.4.0
 
 devDependencies:
   '@vuepress/plugin-back-to-top': 1.9.7
@@ -16,7 +16,7 @@ devDependencies:
   vuepress: 1.9.7
   vuepress-plugin-cursor-effects: 1.1.1
   vuepress-plugin-dynamic-title: 1.0.0
-  vuepress-theme-vt: 0.3.4
+  vuepress-theme-vt: 0.4.0
 
 packages:
 
@@ -2241,6 +2241,7 @@ packages:
 
   /bindings/1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
+    requiresBuild: true
     dependencies:
       file-uri-to-path: 1.0.0
     dev: true
@@ -4068,6 +4069,7 @@ packages:
 
   /file-uri-to-path/1.0.0:
     resolution: {integrity: sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==}
+    requiresBuild: true
     dev: true
     optional: true
 
@@ -5820,6 +5822,7 @@ packages:
 
   /nan/2.15.0:
     resolution: {integrity: sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==}
+    requiresBuild: true
     dev: true
     optional: true
 
@@ -8340,8 +8343,8 @@ packages:
       smoothscroll-polyfill: 0.4.4
     dev: true
 
-  /vuepress-theme-vt/0.3.4:
-    resolution: {integrity: sha512-2xvbZtFBTCuvfSpfzHDgsqSDxqi55zh/T2tMVcc/F4YPibY0Ga7xQmW7Z6vpDMAeNZHMr+49Hir3Lyqylozcdw==}
+  /vuepress-theme-vt/0.4.0:
+    resolution: {integrity: sha512-+0htiWh55xUMjNhrr9NBvNgqyDm7OgO3oMI0HMkNWivPSh239/GCdu+B644j7bTiu1UqEpgzW1wTcn0aJbJ0DQ==}
     dependencies:
       '@vuepress/plugin-active-header-links': 1.9.7
       '@vuepress/plugin-nprogress': 1.9.7
