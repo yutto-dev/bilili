@@ -7,7 +7,7 @@
 如果你想要本地调试，最佳的方案是从 github 上下载最新的源码来运行
 
 ```bash
-git clone git@github.com:SigureMo/bilili.git
+git clone git@github.com:yutto-dev/bilili.git
 cd bilili/
 pip install -r requirements.txt
 python -m bilili <url>
@@ -34,7 +34,7 @@ pytest                                                      # 测试
 # 首先 fork
 git clone git@github.com:<YOUR_USER_NAME>/bilili.git        # 将你的 repo clone 到本地
 cd bilili/                                                  # cd 到该文件夹
-git remote add upstream git@github.com:SigureMo/bilili.git  # 将原分支绑定在 upstream
+git remote add upstream git@github.com:yutto-dev/bilili.git  # 将原分支绑定在 upstream
 git checkout -b <NEW_BRANCH>                                # 新建一个分支，名称随意，最好含有你本次改动的语义
 git push origin <NEW_BRANCH>                                # 将该分支推送到 origin （也就是你 fork 后的 repo）
 # 对源码进行修改、并通过测试

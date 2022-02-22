@@ -95,7 +95,7 @@ pip install bilili
 如果你想见到我的最新版本体，那么你需要从 github 上将我 clone 下来
 
 ```bash
-git clone git@github.com:SigureMo/bilili.git
+git clone git@github.com:yutto-dev/bilili.git
 cd bilili/
 python setup.py build
 python setup.py install

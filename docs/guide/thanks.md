@@ -29,7 +29,7 @@
 
 感谢每一位贡献者的辛勤付出
 
-<Contributors owner="SigureMo" repo="bilili" />
+<Contributors owner="yutto-dev" repo="bilili" />
 
 ## 赞助者
 

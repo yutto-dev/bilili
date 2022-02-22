@@ -9,8 +9,8 @@
    <a href="https://python.org/" target="_blank"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/bilili?logo=python&style=flat-square"></a>
    <a href="https://pypi.org/project/bilili/" target="_blank"><img src="https://img.shields.io/pypi/v/bilili?style=flat-square" alt="pypi"></a>
    <a href="https://pypi.org/project/bilili/" target="_blank"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/bilili?style=flat-square"></a>
-   <a href="https://actions-badge.atrox.dev/SigureMo/bilili/goto?ref=main"><img alt="Build Status" src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FSigureMo%2Fbilili%2Fbadge%3Fref%3Dmain&label=API%20Test&style=flat-square" /></a>
-   <a href="LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/SigureMo/bilili?style=flat-square"></a>
+   <a href="https://actions-badge.atrox.dev/yutto-dev/bilili/goto?ref=main"><img alt="Build Status" src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fyutto-dev%2Fbilili%2Fbadge%3Fref%3Dmain&label=API%20Test&style=flat-square" /></a>
+   <a href="LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/yutto-dev/bilili?style=flat-square"></a>
    <a href="https://gitmoji.dev"><img src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67?style=flat-square" alt="Gitmoji"></a>
 </p>
 
@@ -18,7 +18,7 @@
 
 **文档戳这里啦 → [bilili の可愛い自己紹介](https://bilili.nyakku.moe)**
 
-如果想要体验 v2 请戳这里 → [yutto<sup>2.0.0-beta</sup>](https://github.com/SigureMo/yutto)
+如果想要体验 v2 请戳这里 → [yutto<sup>2.0.0-beta</sup>](https://github.com/yutto-dev/yutto)
 
 ## 特性
 
@@ -68,7 +68,7 @@ pip install bilili
 此外你还可以从 GitHub 上下载最新的源码进行安装
 
 ```bash
-git clone git@github.com:SigureMo/bilili.git
+git clone git@github.com:yutto-dev/bilili.git
 cd bilili/
 python setup.py build
 python setup.py install

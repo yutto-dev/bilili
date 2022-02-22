@@ -65,7 +65,7 @@ export = defineConfig4CustomTheme<ThemeConfig>({
         items: [
           {
             text: `v${bilili_versions.yutto}`,
-            link: 'https://github.com/SigureMo/yutto'
+            link: 'https://github.com/yutto-dev/yutto'
           }
         ]
       },
@@ -75,7 +75,7 @@ export = defineConfig4CustomTheme<ThemeConfig>({
           { text: '赞助', link: '/sponsor' },
           {
             text: '参与贡献',
-            link: 'https://github.com/SigureMo/bilili/blob/main/CONTRIBUTING.md'
+            link: 'https://github.com/yutto-dev/bilili/blob/main/CONTRIBUTING.md'
           }
         ]
       }
@@ -103,7 +103,7 @@ export = defineConfig4CustomTheme<ThemeConfig>({
       ],
       '/cli/': 'auto'
     },
-    repo: 'SigureMo/bilili',
+    repo: 'yutto-dev/bilili',
     docsDir: 'docs',
     docsBranch: 'main',
     editLinks: true,
