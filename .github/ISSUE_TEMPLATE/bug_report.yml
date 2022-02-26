@@ -1,0 +1,63 @@
+name: "🐛 Bug report"
+description: Report an issue with bilili
+title: "🐛 "
+labels: ["bug: pending triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        非常感谢你的 issue report (๑>؂<๑），为了使我们能够更快地定位错误来源，请尽可能完整地填写本 Issue 表格
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 问题简述
+      description: 详述你所遇到的问题（如有报错也请粘贴在这里）～
+      placeholder: |
+        如果方便，请添加 --debug 参数以提供更加详细的报错信息
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 复现方式
+      description: "请在这里提供你所使用/调用 bilili 的方式。如果与特定 url 有关，请直接在命令中提供该 url。"
+      placeholder: "注意在粘贴的命令中隐去所有隐私信息哦(*/ω＼*)"
+    validations:
+      required: true
+  - type: textarea
+    id: environment-info
+    attributes:
+      label: 环境信息
+      description: 请尽可能详细地供以下信息～
+      placeholder: 你的环境信息～
+      value: |
+        -  OS: 操作系统类型及其版本号
+        -  Python: Python 版本号 (`python --version`)
+        -  bilili: bilili 版本号 (`bilili -v`)
+        -  FFmpeg: FFmpeg 版本号 (`ffmpeg -version`)
+        -  如果是显示相关问题
+            -  Shell: Shell 类型 (`echo $SHELL`)
+            -  Terminal: 终端类型
+        -  Others: 其它信息
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 额外信息
+      description:
+      placeholder: 如有额外的信息，请填写在这里～
+    validations:
+      required: false
+  - type: checkboxes
+    id: checkboxes
+    attributes:
+      label: 一点点的自我检查
+      description: 在你提交 issue 之前，麻烦确认自己是否已经完成了以下检查：
+      options:
+        - label: 充分阅读 [README.md](https://github.com/yutto-dev/bilili) 与[文档](https://bilili.nyakku.moe/)，特别是与本 issue 相关的部分
+          required: true
+        - label: 如果是网络问题，已经检查网络连接、设置是否正常，并经过充分测试认为这是 bilili 本身的问题
+          required: true
+        - label: 本 issue 在 [issues](https://github.com/yutto-dev/bilili/issues) 和 [discussion](https://github.com/yutto-dev/bilili/discussions) 中并没有重复问题
+          required: true
