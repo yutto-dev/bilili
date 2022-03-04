@@ -14,4 +14,4 @@
 
 你可以通过 [Patreon](https://www.patreon.com/SigureMo) 或者[爱发电](https://afdian.net/@siguremo)来为 Nyakku 提供每月的资金支持，以激励 Nyakku 创作更多有趣、实用的开源项目。
 
-你的任何金额的赞助我都会无比珍惜，我会在[项目致谢](./guide/thanks)中标注你的名字（需要在赞助时备注你的名字）。
+你的任何金额的赞助我都会无比珍惜，我会在[项目致谢](./guide/thanks)中标注你的 GitHub ID（需要在赞助时备注你的 GitHub ID，如果有资助后忘记留 ID 的可以联系我～）。
