@@ -14,6 +14,6 @@
     "vuepress": "^1.9.7",
     "vuepress-plugin-cursor-effects": "^1.1.1",
     "vuepress-plugin-dynamic-title": "^1.0.0",
-    "vuepress-theme-vt": "0.4.0"
+    "vuepress-theme-vt": "0.4.2"
   }
 }
