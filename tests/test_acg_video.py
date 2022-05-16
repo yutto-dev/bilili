@@ -30,6 +30,7 @@ def test_get_list():
 
 
 @pytest.mark.api
+@pytest.mark.ci_skip
 @pytest.mark.parametrize("type", ["flv", "mp4", "dash"])
 def test_get_playurl(type: str):
     bvid = "BV1vZ4y1M7mQ"
