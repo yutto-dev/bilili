@@ -1,22 +1,22 @@
-lockfileVersion: 5.3
+lockfileVersion: 5.4
 
 specifiers:
   '@vuepress/plugin-back-to-top': ^1.9.7
   cross-env: ^7.0.3
-  node-fetch: ^3.2.0
+  markdown-it: ^13.0.1
   vuepress: ^1.9.7
-  vuepress-plugin-cursor-effects: ^1.1.1
+  vuepress-plugin-cursor-effects: ^1.1.2
   vuepress-plugin-dynamic-title: ^1.0.0
   vuepress-theme-vt: 0.4.2
 
 devDependencies:
   '@vuepress/plugin-back-to-top': 1.9.7
   cross-env: 7.0.3
-  node-fetch: 3.2.0
+  markdown-it: 13.0.1
   vuepress: 1.9.7
-  vuepress-plugin-cursor-effects: 1.1.1
+  vuepress-plugin-cursor-effects: 1.1.2
   vuepress-plugin-dynamic-title: 1.0.0
-  vuepress-theme-vt: 0.4.2
+  vuepress-theme-vt: 0.4.2_markdown-it@13.0.1
 
 packages:
 
@@ -1196,22 +1196,22 @@ packages:
       to-fast-properties: 2.0.0
     dev: true
 
-  /@moefy-canvas/core/0.2.0:
-    resolution: {integrity: sha512-b1VP1VTXba6fiYqQpQhSjNEYLLbeSRnZqSMk1h8i8cm1cB/zg8qcdlsgJvR40wPJEDo8MED/tJcdg8XjlRYsdg==}
+  /@moefy-canvas/core/0.3.0:
+    resolution: {integrity: sha512-ZWE78QcK4fU3badHXLPQLcORU23b4SQtJFWtHHoXIl8qSxNVmLUUCmGnJ85Rg52/uAMbedZNi/kIIF4fu8I4Pg==}
     dev: true
 
-  /@moefy-canvas/theme-popper/0.2.0:
-    resolution: {integrity: sha512-UXTeQyVhPFmjO2wYtaq3tu3a3SozFmQWGS5ueCTeT+naDbsMSQ0nqr0t3PbpPMxolGveYkdVY1hthRD1VNFKgg==}
+  /@moefy-canvas/theme-popper/0.3.0:
+    resolution: {integrity: sha512-p3KGs/RqCO47oD9mvn3HdTPcVhoyGUOqVyT/vXNBDXLEA/t14RW0a4lhjY6iKNisM23BVQNwjIxZBZrdkBnAUQ==}
     dependencies:
-      '@moefy-canvas/core': 0.2.0
-      '@moefy-canvas/utils': 0.2.0
-      ts-debounce: 2.3.0
+      '@moefy-canvas/core': 0.3.0
+      '@moefy-canvas/utils': 0.3.0
+      ts-debounce: 4.0.0
     dev: true
 
-  /@moefy-canvas/utils/0.2.0:
-    resolution: {integrity: sha512-Gk2KZWNXK0GxhV4PFbi7p9zLmkwl8pKiovNu3QvMl0zKLGUOi6OhSz9dzjGV+ezst9KMBcb/uPYLpK54EkY8MQ==}
+  /@moefy-canvas/utils/0.3.0:
+    resolution: {integrity: sha512-dsdYvQKZg16yd+cvFDtL4zu8lPDJbHYcVBxMR4/MY+N/hSsMF8PMH04cE4szYstoZHrlLBZcB2cZEoxGas5PKw==}
     dependencies:
-      '@moefy-canvas/core': 0.2.0
+      '@moefy-canvas/core': 0.3.0
     dev: true
 
   /@mrmlnc/readdir-enhanced/2.2.1:
@@ -1565,7 +1565,7 @@ packages:
       '@vuepress/shared-utils': 1.9.7
       '@vuepress/types': 1.9.7
       autoprefixer: 9.8.8
-      babel-loader: 8.2.3_2ca4133eaad1ede48c0159d2a9c3555f
+      babel-loader: 8.2.3_fssbgpvk2hw6jdablhjktq2vl4
       bundle-require: 2.1.8_esbuild@0.14.7
       cache-loader: 3.0.1_webpack@4.46.0
       chokidar: 2.1.8
@@ -1586,7 +1586,7 @@ packages:
       toml: 3.0.0
       url-loader: 1.1.2_webpack@4.46.0
       vue: 2.6.14
-      vue-loader: 15.9.8_a021309c4954b2e3e3b6c3a6e1323de2
+      vue-loader: 15.9.8_uaqtbhcjkszohy5wyotocmr54i
       vue-router: 3.5.3
       vue-server-renderer: 2.6.14
       vue-template-compiler: 2.6.14
@@ -2009,6 +2009,10 @@ packages:
       sprintf-js: 1.0.3
     dev: true
 
+  /argparse/2.0.1:
+    resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
+    dev: true
+
   /arr-diff/4.0.0:
     resolution: {integrity: sha1-1kYQdP6/7HHn4VI1dhoyml3HxSA=}
     engines: {node: '>=0.10.0'}
@@ -2132,7 +2136,7 @@ packages:
     resolution: {integrity: sha512-xh1Rl34h6Fi1DC2WWKfxUTVqRsNnr6LsKz2+hfwDxQJWmrx8+c7ylaqBMcHfl1U1r2dsifOvKX3LQuLNZ+XSvA==}
     dev: true
 
-  /babel-loader/8.2.3_2ca4133eaad1ede48c0159d2a9c3555f:
+  /babel-loader/8.2.3_fssbgpvk2hw6jdablhjktq2vl4:
     resolution: {integrity: sha512-n4Zeta8NC3QAsuyiizu0GkmRcQ6clkV9WFUnUf1iXP//IeSKbWjofW3UHyZVwlOB4y039YQKefawyTn64Zwbuw==}
     engines: {node: '>= 8.9'}
     peerDependencies:
@@ -3220,11 +3224,6 @@ packages:
       assert-plus: 1.0.0
     dev: true
 
-  /data-uri-to-buffer/4.0.0:
-    resolution: {integrity: sha512-Vr3mLBA8qWmcuschSLAOogKgQ/Jwxulv3RNE4FXnYWRGujzrRWQI4m12fQqRkwX06C0KanhLr4hK+GydchZsaA==}
-    engines: {node: '>= 12'}
-    dev: true
-
   /de-indent/1.0.2:
     resolution: {integrity: sha1-sgOOhG3DO6pXlhKNCAS0VbjB4h0=}
     dev: true
@@ -3589,6 +3588,11 @@ packages:
 
   /entities/2.2.0:
     resolution: {integrity: sha512-p92if5Nz619I0w+akJrLZH0MX0Pb5DX39XOwQTtXSdQQOaYH03S1uIQp4mhOZtAXrxq4ViO67YTiLBo2638o9A==}
+    dev: true
+
+  /entities/3.0.1:
+    resolution: {integrity: sha512-WiyBqoomrwMdFG1e0kqvASYfnlb0lp8M5o5Fw2OFq1hNZxxcNk8Ik0Xm7LxzBhuidnZB/UtBqVCgUz3kBOP51Q==}
+    engines: {node: '>=0.12'}
     dev: true
 
   /envify/4.1.0:
@@ -4037,14 +4041,6 @@ packages:
       websocket-driver: 0.7.4
     dev: true
 
-  /fetch-blob/3.1.4:
-    resolution: {integrity: sha512-Eq5Xv5+VlSrYWEqKrusxY1C3Hm/hjeAsCGVG3ft7pZahlUAChpGZT/Ms1WmSLnEAisEXszjzu/s+ce6HZB2VHA==}
-    engines: {node: ^12.20 || >= 14.13}
-    dependencies:
-      node-domexception: 1.0.0
-      web-streams-polyfill: 3.2.0
-    dev: true
-
   /figgy-pudding/3.5.2:
     resolution: {integrity: sha512-0btnI/H8f2pavGMN8w40mlSKOfTK2SVJmBfBeVIj3kNw0swwgzyRq0d5TJVOwodFmtvpPeWPN/MCcfuWF0Ezbw==}
     dev: true
@@ -4189,13 +4185,6 @@ packages:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       mime-types: 2.1.34
-    dev: true
-
-  /formdata-polyfill/4.0.10:
-    resolution: {integrity: sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==}
-    engines: {node: '>=12.20.0'}
-    dependencies:
-      fetch-blob: 3.1.4
     dev: true
 
   /forwarded/0.2.0:
@@ -5391,6 +5380,12 @@ packages:
       uc.micro: 1.0.6
     dev: true
 
+  /linkify-it/4.0.1:
+    resolution: {integrity: sha512-C7bfi1UZmoj8+PQx22XyeXCuBlokoyWQL5pWSP+EI6nzRylyThouddufc2c1NDIcP9k5agmN9fLpA7VNJfIiqw==}
+    dependencies:
+      uc.micro: 1.0.6
+    dev: true
+
   /load-script/1.0.0:
     resolution: {integrity: sha1-BJGTngvuVkPuSUp+PaPSuscMbKQ=}
     dev: true
@@ -5541,18 +5536,20 @@ packages:
       markdown-it: 8.4.2
     dev: true
 
-  /markdown-it-attrs/2.4.1:
+  /markdown-it-attrs/2.4.1_markdown-it@13.0.1:
     resolution: {integrity: sha512-BASnIYS+JLpjlhDf7jLV8VOuccxjfDDnQcz5dLfgPsYw8OsgbASexADdIkF7tIdGn+jaQSA4qOZXM3v3W3JBCg==}
     engines: {node: '>=6'}
     peerDependencies:
-      markdown-it: ^8.4.2
+      markdown-it: '*'
+    dependencies:
+      markdown-it: 13.0.1
     dev: true
 
   /markdown-it-chain/1.3.0_markdown-it@8.4.2:
     resolution: {integrity: sha512-XClV8I1TKy8L2qsT9iX3qiV+50ZtcInGXI80CA+DP62sMs7hXlyV/RM3hfwy5O3Ad0sJm9xIwQELgANfESo8mQ==}
     engines: {node: '>=6.9'}
     peerDependencies:
-      markdown-it: '>=5.0.0'
+      markdown-it: '*'
     dependencies:
       markdown-it: 8.4.2
       webpack-chain: 4.12.1
@@ -5569,6 +5566,17 @@ packages:
   /markdown-it-table-of-contents/0.4.4:
     resolution: {integrity: sha512-TAIHTHPwa9+ltKvKPWulm/beozQU41Ab+FIefRaQV1NRnpzwcV9QOe6wXQS5WLivm5Q/nlo0rl6laGkMDZE7Gw==}
     engines: {node: '>6.4.0'}
+    dev: true
+
+  /markdown-it/13.0.1:
+    resolution: {integrity: sha512-lTlxriVoy2criHP0JKRhO2VDG9c2ypWCsT237eDiLqi09rmbKoUetyGHq2uOIRoRS//kfoJckS0eUzzkDR+k2Q==}
+    hasBin: true
+    dependencies:
+      argparse: 2.0.1
+      entities: 3.0.1
+      linkify-it: 4.0.1
+      mdurl: 1.0.1
+      uc.micro: 1.0.6
     dev: true
 
   /markdown-it/8.4.2:
@@ -5860,20 +5868,6 @@ packages:
     resolution: {integrity: sha512-rmTZ9kz+f3rCvK2TD1Ue/oZlns7OGoIWP4fc3llxxRXlOkHKoWPPWJOfFYpITabSow43QJbRIoHQXtt10VldyQ==}
     dependencies:
       lower-case: 1.1.4
-    dev: true
-
-  /node-domexception/1.0.0:
-    resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
-    engines: {node: '>=10.5.0'}
-    dev: true
-
-  /node-fetch/3.2.0:
-    resolution: {integrity: sha512-8xeimMwMItMw8hRrOl3C9/xzU49HV/yE6ORew/l+dxWimO5A4Ra8ld2rerlJvc/O7et5Z1zrWsPX43v1QBjCxw==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-    dependencies:
-      data-uri-to-buffer: 4.0.0
-      fetch-blob: 3.1.4
-      formdata-polyfill: 4.0.10
     dev: true
 
   /node-forge/0.10.0:
@@ -7936,8 +7930,8 @@ packages:
       punycode: 2.1.1
     dev: true
 
-  /ts-debounce/2.3.0:
-    resolution: {integrity: sha512-j63IP7/unAzovrhVHE7U+fNkvDKwIaLH11dCO9TcRbYOZw1chPL054poqq3ZloyRJ5KwJMeB8csN/vGPPpQJjw==}
+  /ts-debounce/4.0.0:
+    resolution: {integrity: sha512-+1iDGY6NmOGidq7i7xZGA4cm8DAa6fqdYcvO5Z6yBevH++Bdo9Qt/mN0TzHUgcCcKv1gmh9+W5dHqz8pMWbCbg==}
     dev: true
 
   /tty-browserify/0.0.0:
@@ -8241,7 +8235,7 @@ packages:
     resolution: {integrity: sha512-BXq3jwIagosjgNVae6tkHzzIk6a8MHFtzAdwhnV5VlvPTFxDCvIttgSiHWjdGoTJvXtmRu5HacExfdarRcFhog==}
     dev: true
 
-  /vue-loader/15.9.8_a021309c4954b2e3e3b6c3a6e1323de2:
+  /vue-loader/15.9.8_uaqtbhcjkszohy5wyotocmr54i:
     resolution: {integrity: sha512-GwSkxPrihfLR69/dSV3+5CdMQ0D+jXg8Ma1S4nQXKJAznYFX14vHdc/NetQc34Dw+rBbIJyP7JOuVb9Fhprvog==}
     peerDependencies:
       cache-loader: '*'
@@ -8327,10 +8321,10 @@ packages:
       markdown-it-container: 2.0.0
     dev: true
 
-  /vuepress-plugin-cursor-effects/1.1.1:
-    resolution: {integrity: sha512-FdCznJI0cADNnAPKizUJp0voWbATA+dnXM8eS61lderqHJWvpOHj/AZ40C2j10cqOyx5s48K6mkNkdFATXqpog==}
+  /vuepress-plugin-cursor-effects/1.1.2:
+    resolution: {integrity: sha512-xzVn55AhSFEL3rXtS3nm6r+ICAc/XktgTIFaYft9DrY5/3nDrwsPsYbKXcAsXbHgkpLRekuuE6LXMPnraSJOBQ==}
     dependencies:
-      '@moefy-canvas/theme-popper': 0.2.0
+      '@moefy-canvas/theme-popper': 0.3.0
     dev: true
 
   /vuepress-plugin-dynamic-title/1.0.0:
@@ -8343,7 +8337,7 @@ packages:
       smoothscroll-polyfill: 0.4.4
     dev: true
 
-  /vuepress-theme-vt/0.4.2:
+  /vuepress-theme-vt/0.4.2_markdown-it@13.0.1:
     resolution: {integrity: sha512-ItgebW/2MnpVvaq5cgb/Lj+N33mHRtk4EinkhJIdBvHhwcV5rwrAK2tZ+6bNf+74veMPrmfr3/dGtSxa21H/BQ==}
     dependencies:
       '@vuepress/plugin-active-header-links': 1.9.7
@@ -8355,7 +8349,7 @@ packages:
       flexsearch: 0.6.32
       html-to-text: 7.1.1
       lodash: 4.17.21
-      markdown-it-attrs: 2.4.1
+      markdown-it-attrs: 2.4.1_markdown-it@13.0.1
       node-google-translate-skidz: 1.1.2
       prism-themes: 1.9.0
       stylus: 0.54.8
@@ -8411,11 +8405,6 @@ packages:
     resolution: {integrity: sha512-O84QOnr0icsbFGLS0O3bI5FswxzRr8/gHwWkDlQFskhSPryQXvrTMxjxGP4+iWYoauLoBvfDpkrOauZ+0iZpDA==}
     dependencies:
       minimalistic-assert: 1.0.1
-    dev: true
-
-  /web-streams-polyfill/3.2.0:
-    resolution: {integrity: sha512-EqPmREeOzttaLRm5HS7io98goBgZ7IVz79aDvqjD0kYXLtFZTc0T/U6wHTPKyIjb+MdN7DFIIX6hgdBEpWmfPA==}
-    engines: {node: '>= 8'}
     dev: true
 
   /webpack-chain/4.12.1:

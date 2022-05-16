@@ -5,15 +5,22 @@
   "scripts": {
     "dev": "cross-env BILILI_VERSIONS=`node scripts/get_latest_version.mjs bilili yutto` vuepress dev",
     "build": "cross-env BILILI_VERSIONS=`node scripts/get_latest_version.mjs bilili yutto` vuepress build",
-    "serve": "yarn build && npx serve .vuepress/dist"
+    "serve": "pnpm build && npx serve .vuepress/dist"
   },
   "devDependencies": {
     "@vuepress/plugin-back-to-top": "^1.9.7",
     "cross-env": "^7.0.3",
-    "node-fetch": "^3.2.0",
+    "markdown-it": "^13.0.1",
     "vuepress": "^1.9.7",
-    "vuepress-plugin-cursor-effects": "^1.1.1",
+    "vuepress-plugin-cursor-effects": "^1.1.2",
     "vuepress-plugin-dynamic-title": "^1.0.0",
     "vuepress-theme-vt": "0.4.2"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "markdown-it": "*"
+      }
+    }
   }
 }
