@@ -9,12 +9,9 @@ from .utils import MaxRetry
 
 @MaxRetry(2)
 def get_season_id(media_id: str) -> str:
-    home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
-    season_id = ""
-    regex_season_id = re.compile(r'"param":{"season_id":(\d+),"season_type":\d+}')
-    if match_obj := regex_season_id.search(spider.get(home_url, timeout=3).text):
-        season_id = match_obj.group(1)
-    return str(season_id)
+    home_url = "https://api.bilibili.com/pgc/review/user?media_id={media_id}".format(media_id=media_id)
+    res_json = spider.get(home_url).json()
+    return str(res_json["result"]["media"]["season_id"])
 
 
 @MaxRetry(2)
