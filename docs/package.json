@@ -13,7 +13,7 @@
     "markdown-it": "^13.0.1",
     "node-fetch": "^3.2.4",
     "vuepress": "^1.9.7",
-    "vuepress-plugin-cursor-effects": "^1.1.2",
+    "vuepress-plugin-cursor-effects": "^1.1.4",
     "vuepress-plugin-dynamic-title": "^1.0.0",
     "vuepress-theme-vt": "0.4.2"
   },
