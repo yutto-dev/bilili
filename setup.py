@@ -78,7 +78,7 @@ setup(
     zip_safe=True,
     python_requires=">=3.8.0",
     setup_requires=["wheel"],
-    install_requires=["requests", "biliass==1.3.4"],
+    install_requires=["requests", "biliass==1.3.5"],
     entry_points={"console_scripts": ["bilili = bilili.__main__:main"]},
     cmdclass={
         "upload": UploadCommand,
