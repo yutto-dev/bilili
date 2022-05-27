@@ -2,17 +2,20 @@ import { ThemeConfig } from 'vuepress-theme-vt'
 import { defineConfig4CustomTheme } from 'vuepress/config'
 import path from 'path'
 
-const bilili_versions = JSON.parse(process.env.BILILI_VERSIONS)
+const bilili_versions: {
+  bilili: string
+  yutto: string
+} = JSON.parse(process.env.BILILI_VERSIONS)
 
-export = defineConfig4CustomTheme<ThemeConfig>({
+export default defineConfig4CustomTheme<ThemeConfig>({
   title: 'bilili',
   description: '🍻 bilibili video and danmaku downloader',
   locales: {
     '/': {
       lang: 'zh-CN',
       title: 'bilili',
-      description: '🍻 B站视频、弹幕下载器'
-    }
+      description: '🍻 B站视频、弹幕下载器',
+    },
   },
 
   head: [
@@ -23,11 +26,10 @@ export = defineConfig4CustomTheme<ThemeConfig>({
       'meta',
       {
         property: 'og:description',
-        content:
-          '🍻 bilibili video and danmaku downloader | B站视频、弹幕下载器'
-      }
+        content: '🍻 bilibili video and danmaku downloader | B站视频、弹幕下载器',
+      },
     ],
-    ['meta', { property: 'og:title', content: 'bilili' }]
+    ['meta', { property: 'og:title', content: 'bilili' }],
   ],
 
   // @ts-ignore
@@ -39,8 +41,8 @@ export = defineConfig4CustomTheme<ThemeConfig>({
       'cursor-effects',
       {
         size: 1.75,
-        shape: 'star'
-      }
+        shape: 'star',
+      },
     ],
     // 离开页面标题变化
     [
@@ -48,9 +50,9 @@ export = defineConfig4CustomTheme<ThemeConfig>({
       {
         showText: '(๑‾᷅^‾᷅๑)哼，还知道回来！',
         hideText: '(〟-_・)ﾝ?这就走了？',
-        recoverTime: 2000
-      }
-    ]
+        recoverTime: 2000,
+      },
+    ],
   ],
 
   theme: 'vt',
@@ -65,9 +67,9 @@ export = defineConfig4CustomTheme<ThemeConfig>({
         items: [
           {
             text: `v${bilili_versions.yutto}`,
-            link: 'https://github.com/yutto-dev/yutto'
-          }
-        ]
+            link: 'https://github.com/yutto-dev/yutto',
+          },
+        ],
       },
       {
         text: '支持我',
@@ -75,46 +77,42 @@ export = defineConfig4CustomTheme<ThemeConfig>({
           { text: '赞助', link: '/sponsor' },
           {
             text: '参与贡献',
-            link: 'https://github.com/yutto-dev/bilili/blob/main/CONTRIBUTING.md'
-          }
-        ]
-      }
+            link: 'https://github.com/yutto-dev/bilili/blob/main/CONTRIBUTING.md',
+          },
+        ],
+      },
     ],
-    sidebarDepth: 1,
     // @ts-ignore
     sidebar: {
       '/guide/': [
         {
           title: '指南',
           collapsable: false,
-          sidebarDepth: 1,
-          children: ['', 'getting-started', 'knack']
+          children: ['', 'getting-started', 'knack'],
         },
         {
           title: '深入',
           collapsable: false,
-          sidebarDepth: 1,
-          children: ['cli', 'work-process']
+          children: ['cli', 'work-process'],
         },
         'faq',
         'feedback',
         'notice',
-        'thanks'
+        'thanks',
       ],
-      '/cli/': 'auto'
     },
     repo: 'yutto-dev/bilili',
     docsDir: 'docs',
     docsBranch: 'main',
     editLinks: true,
-    editLinkText: '啊，我说错了？你可以帮我纠正哦～'
+    editLinkText: '啊，我说错了？你可以帮我纠正哦～',
   },
 
   // 插件 API 提供的额外路由
   additionalPages: [
     {
       path: '/guide/cli.html',
-      filePath: path.resolve(__dirname, '../cli/README.md')
-    }
-  ]
+      filePath: path.resolve(__dirname, '../cli/README.md'),
+    },
+  ],
 })

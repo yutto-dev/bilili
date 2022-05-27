@@ -20,4 +20,4 @@
 
 ## 可以不生成 `- bilibili` 目录吗？
 
-当前也是不可以的，不过 bilili2.x 提供了更加灵活的路径设置方式，如果有兴趣可以尝试 v2 ～
+当前也是不可以的，不过 [bilili v2(yutto)](https://github.com/yutto-dev/yutto) 提供了更加灵活的路径设置方式，如果有兴趣可以尝试 v2 ～

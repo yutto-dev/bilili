@@ -21,5 +21,5 @@ features:
 
 ::: slot footer
 Released under the GPT-3.0 License.<br>
-Copyright © 2020 Nyakku Shigure
+Copyright © 2020-present Nyakku Shigure
 :::
