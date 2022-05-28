@@ -10,7 +10,7 @@ PotPlayer 是一款 Windows 下十分强大的播放器，我默认生成的播�
 
 请尽量使用支持 emoji 的终端，不然在我向你传达信息时可能出现失真问题（「乱码」现象），但这并不会影响下载过程。
 
-Windows 比较推荐使用 「Windows Terminal」，或者如果你有 VSCode 这样的自带终端的编辑器也是可以直接使用其终端的。
+Windows 比较推荐使用 「Windows Terminal」，或者如果你有 VS Code 这样的自带终端的编辑器也是可以直接使用其终端的。
 
 ## 断点续传功能的使用
 
