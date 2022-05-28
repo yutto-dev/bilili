@@ -1,3 +1,5 @@
+import fetch from 'node-fetch'
+
 const defaultVersion = '0.0.0'
 const packageNames = process.argv.slice(2, process.argv.length)
 const api = (packageName) => `https://pypi.org/pypi/${packageName}/json`
