@@ -8,7 +8,7 @@ specifiers:
   vuepress: ^1.9.7
   vuepress-plugin-cursor-effects: ^1.1.4
   vuepress-plugin-dynamic-title: ^1.0.0
-  vuepress-theme-vt: 0.4.2
+  vuepress-theme-vt: 0.5.0
 
 devDependencies:
   '@vuepress/plugin-back-to-top': 1.9.7
@@ -18,7 +18,7 @@ devDependencies:
   vuepress: 1.9.7
   vuepress-plugin-cursor-effects: 1.1.4
   vuepress-plugin-dynamic-title: 1.0.0
-  vuepress-theme-vt: 0.4.2_markdown-it@13.0.1
+  vuepress-theme-vt: 0.5.0_markdown-it@13.0.1
 
 packages:
 
@@ -3157,7 +3157,7 @@ packages:
       lodash: ^4.17.20
       marko: ^3.14.4
       mote: ^0.2.0
-      mustache: ^4.0.1
+      mustache: ^3.0.0
       nunjucks: ^3.2.2
       plates: ~0.4.11
       pug: ^3.0.0
@@ -4889,7 +4889,7 @@ packages:
     optional: true
 
   /glob-to-regexp/0.3.0:
-    resolution: {integrity: sha1-jFoUlNIGbFcMw7/kSWF1rMTVAqs=}
+    resolution: {integrity: sha512-Iozmtbqv0noj0uDDqoL0zNq0VBEfK2YFoMAZoxJe4cwphvLR+JskfF30QhXHOR4m3KrE6NLRYw+U9MRXvifyig==}
     dev: true
 
   /glob/7.2.3:
@@ -5883,7 +5883,7 @@ packages:
     dev: true
 
   /jsonfile/4.0.0:
-    resolution: {integrity: sha1-h3Gq4HmbZAdrdmQPygWPnBDjPss=}
+    resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
     optionalDependencies:
       graceful-fs: 4.2.10
     dev: true
@@ -5916,7 +5916,7 @@ packages:
     dev: true
 
   /kind-of/4.0.0:
-    resolution: {integrity: sha1-IIE989cSkosgc3hpGkUGb65y3Vc=}
+    resolution: {integrity: sha512-24XsCxmEbRwEDbz/qz3stgin8TTzZ1ESR56OMCN0ujYg+vRutNSiOj9bHH9u85DKgXguraugV5sFuvbD4FW/hw==}
     engines: {node: '>=0.10.0'}
     dependencies:
       is-buffer: 1.1.6
@@ -6605,7 +6605,7 @@ packages:
     dev: true
 
   /nprogress/0.2.0:
-    resolution: {integrity: sha1-y480xTIT2JVyP8urkH6UIq28r7E=}
+    resolution: {integrity: sha512-I19aIingLgR1fmhftnbWWO3dXc0hSxqHQHQb3H8m+K3TnEn/iSeTZZOyvKXWqQESMwuUVnatlCnZdLBZZt2VSA==}
     dev: true
 
   /nth-check/1.0.2:
@@ -8291,7 +8291,7 @@ packages:
     dev: true
 
   /stealthy-require/1.1.1:
-    resolution: {integrity: sha1-NbCYdbT/SfJqd35QmzCQoyJr8ks=}
+    resolution: {integrity: sha512-ZnWpYnYugiOVEY5GkcuJK1io5V8QmNYChG62gSit9pQVGErXtrKuPC55ITaVSukmMta5qpMU7vqLt2Lnni4f/g==}
     engines: {node: '>=0.10.0'}
     dev: true
 
@@ -8396,7 +8396,7 @@ packages:
     dev: true
 
   /strip-bom-string/1.0.0:
-    resolution: {integrity: sha1-5SEekiQ2n7uB1jOi8ABE3IztrZI=}
+    resolution: {integrity: sha512-uCC2VHvQRYu+lMh4My/sFNmF2klFymLX1wHJeXnbEJERpV/ZsVuonzerjfrGpIGF7LBVa1O7i9kjiWvJiFck8g==}
     engines: {node: '>=0.10.0'}
     dev: true
 
@@ -9108,8 +9108,8 @@ packages:
       smoothscroll-polyfill: 0.4.4
     dev: true
 
-  /vuepress-theme-vt/0.4.2_markdown-it@13.0.1:
-    resolution: {integrity: sha512-ItgebW/2MnpVvaq5cgb/Lj+N33mHRtk4EinkhJIdBvHhwcV5rwrAK2tZ+6bNf+74veMPrmfr3/dGtSxa21H/BQ==}
+  /vuepress-theme-vt/0.5.0_markdown-it@13.0.1:
+    resolution: {integrity: sha512-AgKfpde9p4uRvARPZ/o1SAes/znTVtELz/n0Xkmxfk3suVPQsNPCbRNmmm9ne31FwSGrLxpnNHugusJoVGqyow==}
     dependencies:
       '@vuepress/plugin-active-header-links': 1.9.7
       '@vuepress/plugin-nprogress': 1.9.7
