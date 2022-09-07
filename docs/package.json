@@ -11,11 +11,11 @@
     "@vuepress/plugin-back-to-top": "^1.9.7",
     "cross-env": "^7.0.3",
     "markdown-it": "^13.0.1",
-    "node-fetch": "^3.2.4",
+    "node-fetch": "^3.2.10",
     "vuepress": "^1.9.7",
     "vuepress-plugin-cursor-effects": "^1.1.4",
     "vuepress-plugin-dynamic-title": "^1.0.0",
-    "vuepress-theme-vt": "0.5.0"
+    "vuepress-theme-vt": "0.5.2"
   },
   "pnpm": {
     "peerDependencyRules": {
