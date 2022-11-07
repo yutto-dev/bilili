@@ -8,7 +8,7 @@ specifiers:
   vuepress: ^1.9.7
   vuepress-plugin-cursor-effects: ^1.1.4
   vuepress-plugin-dynamic-title: ^1.0.0
-  vuepress-theme-vt: 0.5.3
+  vuepress-theme-vt: 0.6.2
 
 devDependencies:
   '@vuepress/plugin-back-to-top': 1.9.7
@@ -18,7 +18,7 @@ devDependencies:
   vuepress: 1.9.7
   vuepress-plugin-cursor-effects: 1.1.4
   vuepress-plugin-dynamic-title: 1.0.0
-  vuepress-theme-vt: 0.5.3_markdown-it@13.0.1
+  vuepress-theme-vt: 0.6.2_markdown-it@13.0.1
 
 packages:
 
@@ -9237,8 +9237,8 @@ packages:
       smoothscroll-polyfill: 0.4.4
     dev: true
 
-  /vuepress-theme-vt/0.5.3_markdown-it@13.0.1:
-    resolution: {integrity: sha512-MPnsm9PX5x5S0OLmz23uIxAxemDtc5UyE79Yuz/c5f+04bfwAr4ad3+hIho27C0fTRnqYNVq9RTJVakzXFUzTA==}
+  /vuepress-theme-vt/0.6.2_markdown-it@13.0.1:
+    resolution: {integrity: sha512-sMcvI+FAlR/E70baURrsIJZuINUeTwk1BwchYT2fsd7j2OLvBj0wy2ZyMJaHlkE8nDKrnitci7Ysr3waIxoD5Q==}
     dependencies:
       '@vuepress/plugin-active-header-links': 1.9.7
       '@vuepress/plugin-nprogress': 1.9.7
