@@ -195,11 +195,9 @@ def get_bangumi_subtitle(avid: str = "", bvid: str = "", cid: str = ""):
     subtitle_url = subtitle_api.format(avid=avid, bvid=bvid, cid=cid)
     subtitles_info = spider.get(subtitle_url, timeout=3).json()["data"]["subtitle"]
     return [
-        # fmt: off
         {
             "lang": sub_info["lan_doc"],
             "lines": spider.get("https:" + sub_info["subtitle_url"], timeout=(3, 10)).json()["body"]
         }
         for sub_info in subtitles_info["subtitles"]
-        # fmt: on
-    ]
+    ]  # fmt: skip

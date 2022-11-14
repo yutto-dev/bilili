@@ -10,7 +10,6 @@ def get_list(resource_id, with_section: bool = False):
         season_id=resource_id.season_id, episode_id=resource_id.episode_id, with_section=with_section
     )
     return [
-        # fmt: off
         {
             "id": video["id"],
             "name": video["name"],
@@ -21,9 +20,8 @@ def get_list(resource_id, with_section: bool = False):
                 "episode_id": video["episode_id"]
             },
         }
-        # fmt: on
         for video in video_list
-    ]
+    ]  # fmt: skip
 
 
 def get_playurl(container, quality, audio_quality):

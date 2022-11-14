@@ -1,6 +1,7 @@
-import pytest
 import subprocess
 import sys
+
+import pytest
 
 from bilili.__version__ import VERSION as bilili_version
 

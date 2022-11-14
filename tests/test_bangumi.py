@@ -1,11 +1,11 @@
 import pytest
 
 from bilili.api.bangumi import (
-    get_season_id,
-    get_bangumi_title,
     get_bangumi_list,
     get_bangumi_playurl,
     get_bangumi_subtitle,
+    get_bangumi_title,
+    get_season_id,
 )
 from bilili.api.exceptions import CannotDownloadError
 

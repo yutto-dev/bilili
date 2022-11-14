@@ -5,7 +5,7 @@ from ..utils.base import Text
 
 
 class Playlist(Text):
-    """ 播放列表类 """
+    """播放列表类"""
 
     def __init__(self, path: str, path_type: str):
         super().__init__(path)
@@ -25,14 +25,14 @@ class Playlist(Text):
 
 
 class M3u(Playlist):
-    """ m3u 播放列表 """
+    """m3u 播放列表"""
 
     def __init__(self, path: str, path_type: str = "RP"):
         super().__init__(path, path_type)
 
 
 class Dpl(Playlist):
-    """ potplayer 播放列表 """
+    """potplayer 播放列表"""
 
     def __init__(self, path: str, path_type: str = "RP"):
         super().__init__(path, path_type)

@@ -45,15 +45,13 @@ def get_acg_video_list(avid: str = "", bvid: str = ""):
     list_api = "https://api.bilibili.com/x/player/pagelist?aid={avid}&bvid={bvid}&jsonp=jsonp"
     res = spider.get(list_api.format(avid=avid, bvid=bvid), timeout=3)
     return [
-        # fmt: off
         {
             'id': i + 1,
             'name': item['part'],
             'cid': str(item['cid'])
         }
         for i, item in enumerate(res.json()['data'])
-        # fmt: on
-    ]
+    ]  # fmt: skip
 
 
 @MaxRetry(2)
@@ -191,11 +189,9 @@ def get_acg_video_subtitle(avid: str = "", bvid: str = "", cid: str = ""):
     res = spider.get(subtitle_url, timeout=3)
     subtitles_info = json.loads(re.search(r"<subtitle>(.+)</subtitle>", res.text).group(1))
     return [
-        # fmt: off
         {
             "lang": sub_info["lan_doc"],
             "lines": spider.get("https:" + sub_info["subtitle_url"], timeout=(3, 10)).json()["body"]
         }
         for sub_info in subtitles_info["subtitles"]
-        # fmt: on
-    ]
+    ]  # fmt: skip

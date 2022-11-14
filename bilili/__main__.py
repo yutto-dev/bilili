@@ -175,16 +175,12 @@ def main():
         "type": args.type.lower(),
         "block_size": int(args.block_size * 1024 * 1024),
     } >> AttrDict()
-
-    # 匹配资源的 id 以及其对应所属类型
-    # fmt: off
     resource_id = {
         "avid": "",
         "bvid": "",
         "episode_id": "",
         "season_id": "",
     } >> AttrDict()
-    # fmt: on
 
     # fmt: off
     if (avid_match := regex.acg_video.av.origin.match(args.url)) or \
@@ -469,7 +465,6 @@ def main():
 
             # 数据传入，界面渲染
             console.refresh(
-                # fmt: off
                 [
                     {
                         "center": " bilili ",
@@ -510,8 +505,7 @@ def main():
                             sum([container._.merged for container in containers]), len(containers),
                         ),
                     } if global_status.merging else None,
-                ]
-                # fmt: on
+                ]  # fmt: skip
             )
 
             # 检查是否已经全部完成

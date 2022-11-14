@@ -304,7 +304,6 @@ if __name__ == "__main__":
         )
     )
     for i in range(100):
-        # fmt: off
         console.refresh([
             {
                 'center': ' 🍻 bilili ',
@@ -327,6 +326,5 @@ if __name__ == "__main__":
                 'left': (i+1) / 100,
                 'right': "100MB/123MB 11.2 MB/s ⚡"
             }
-        ])
-        # fmt: on
+        ])  # fmt: skip
         time.sleep(0.01)

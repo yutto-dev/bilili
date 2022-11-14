@@ -2,7 +2,7 @@ from ..utils.base import Text
 
 
 class Subtitle(Text):
-    """ 播放列表类 """
+    """播放列表类"""
 
     def __init__(self, path: str):
         super().__init__(path)

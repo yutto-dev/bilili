@@ -1,11 +1,11 @@
 import pytest
 
 from bilili.api.acg_video import (
-    get_video_info,
-    get_acg_video_title,
     get_acg_video_list,
     get_acg_video_playurl,
     get_acg_video_subtitle,
+    get_acg_video_title,
+    get_video_info,
 )
 
 

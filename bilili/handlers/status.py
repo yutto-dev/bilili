@@ -4,7 +4,7 @@ from ..utils.console.logger import Logger
 
 
 class Status:
-    """ 多层次状态管理类 """
+    """多层次状态管理类"""
 
     def __init__(self, parent: Union["Status", None] = None, children: List["Status"] = []):
         self.parent = None

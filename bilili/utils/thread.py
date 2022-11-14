@@ -1,7 +1,6 @@
-import time
 import queue
 import threading
-
+import time
 
 from ..utils.base import Ref
 
@@ -12,10 +11,10 @@ class Flag(Ref):
 
 
 class Task:
-    """ 任务对象 """
+    """任务对象"""
 
     def __init__(self, func, args=(), kwargs={}):
-        """ 接受函数与参数以初始化对象 """
+        """接受函数与参数以初始化对象"""
 
         self.func = func
         self.args = args
@@ -45,11 +44,11 @@ class ThreadPool:
         self.thread_globals_creator = thread_globals_creator
 
     def add_task(self, func, args=(), kwargs={}):
-        """ 添加任务　"""
+        """添加任务"""
         self._taskQ.put(Task(func, args, kwargs))
 
     def _run_task(self, **thread_globals):
-        """ 启动任务线程　"""
+        """启动任务线程"""
         while True:
             if not self._taskQ.empty():
                 task = self._taskQ.get(block=True, timeout=1)
@@ -61,7 +60,7 @@ class ThreadPool:
                 break
 
     def run(self):
-        """ 启动线程池　"""
+        """启动线程池"""
         for _ in range(self.num):
             thread_globals = {}
             for key, creator in self.thread_globals_creator.items():
@@ -72,6 +71,6 @@ class ThreadPool:
             th.start()
 
     def join(self):
-        """ 等待所有任务结束　"""
+        """等待所有任务结束"""
         for th in self.threads:
             th.join()

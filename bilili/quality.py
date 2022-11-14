@@ -1,5 +1,5 @@
-from typing import List
 from enum import Enum
+from typing import List
 
 
 class Media(Enum):

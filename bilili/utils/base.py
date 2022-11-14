@@ -1,7 +1,7 @@
 import os
 import random
 import re
-from typing import Any, Tuple, Optional
+from typing import Any, Optional, Tuple
 
 
 class Ref:
@@ -15,7 +15,7 @@ class Ref:
 
 
 class Writer:
-    """ 文件写入器，持续打开文件对象，直到使用完毕后才关闭 """
+    """文件写入器，持续打开文件对象，直到使用完毕后才关闭"""
 
     def __init__(self, path: str, mode: str = "wb", **kwargs: Any):
         self.path = path
@@ -32,7 +32,7 @@ class Writer:
 
 
 class Text(Writer):
-    """ 文本写入器 """
+    """文本写入器"""
 
     def __init__(self, path: str, **kwargs: Any):
         kwargs["encoding"] = kwargs.get("encoding", "utf-8")
@@ -43,21 +43,21 @@ class Text(Writer):
 
 
 def touch_dir(path: str) -> str:
-    """ 若文件夹不存在则新建，并返回标准路径 """
+    """若文件夹不存在则新建，并返回标准路径"""
     if not os.path.exists(path):
         os.makedirs(path)
     return os.path.normpath(path)
 
 
 def touch_file(path: str) -> str:
-    """ 若文件不存在则新建，并返回标准路径 """
+    """若文件不存在则新建，并返回标准路径"""
     if not os.path.exists(path):
         open(path, "w").close()
     return os.path.normpath(path)
 
 
 def touch_url(url: str, spider) -> Tuple[Optional[str], bool]:
-    """ 与资源进行测试连接，并获取该资源的 size 与 是否可以断点续传 """
+    """与资源进行测试连接，并获取该资源的 size 与 是否可以断点续传"""
     # 某些资源 head 无法获得真实 size
     methods = [spider.head, spider.get]
     for method in methods:
@@ -78,7 +78,7 @@ def touch_url(url: str, spider) -> Tuple[Optional[str], bool]:
 
 
 def repair_filename(filename: str) -> str:
-    """ 修复不合法的文件名 """
+    """修复不合法的文件名"""
 
     def to_full_width_chr(matchobj: "re.Match[str]") -> str:
         char = matchobj.group(0)
@@ -104,7 +104,7 @@ def repair_filename(filename: str) -> str:
 
 
 def get_size(path: str) -> int:
-    """ 获取文件夹或文件的字节数 """
+    """获取文件夹或文件的字节数"""
     if os.path.isfile(path):
         return os.path.getsize(path)
     elif os.path.isdir(path):
@@ -117,7 +117,7 @@ def get_size(path: str) -> int:
 
 
 def size_format(size: float, ndigits: int = 2) -> str:
-    """ 输入数据字节数，与保留小数位数，返回数据量字符串 """
+    """输入数据字节数，与保留小数位数，返回数据量字符串"""
     flag = "-" if size < 0 else ""
     size = abs(size)
     units = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB", "BiB"]
@@ -134,8 +134,7 @@ def size_format(size: float, ndigits: int = 2) -> str:
 
 
 def get_char_width(char: str) -> int:
-    """ 计算单个字符的宽度 """
-    # fmt: off
+    """计算单个字符的宽度"""
     widths = [
         (126, 1), (159, 0), (687, 1), (710, 0), (711, 1),
         (727, 0), (733, 1), (879, 0), (1154, 1), (1161, 0),
@@ -145,8 +144,7 @@ def get_char_width(char: str) -> int:
         (55203, 2), (63743, 1), (64106, 2), (65039, 1), (65059, 0),
         (65131, 2), (65279, 1), (65376, 2), (65500, 1), (65510, 2),
         (120831, 1), (262141, 2), (1114109, 1),
-    ]
-    # fmt: on
+    ]  # fmt: skip
 
     o = ord(char)
     if o == 0xE or o == 0xF:
@@ -158,7 +156,7 @@ def get_char_width(char: str) -> int:
 
 
 def get_string_width(string: str) -> int:
-    """ 计算包含中文的字符串宽度 """
+    """计算包含中文的字符串宽度"""
     # 去除颜色码
     regex_color = re.compile(r"\033\[\d+m")
     string = regex_color.sub("", string)

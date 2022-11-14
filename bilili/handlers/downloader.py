@@ -34,7 +34,7 @@ class RemoteFile(Handler):
         self.range = range
 
     def get_local_size(self) -> int:
-        """ 通过 os.path.getsize 获取本地文件大小 """
+        """通过 os.path.getsize 获取本地文件大小"""
         try:
             if os.path.exists(self.tmp_path):
                 size = os.path.getsize(self.tmp_path)

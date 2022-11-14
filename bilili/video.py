@@ -4,8 +4,8 @@ from .handlers.status import DownloaderStatus
 from .quality import audio_quality_map, video_quality_map
 from .tools import global_status
 from .utils.base import repair_filename
-from .utils.console.logger import Logger
 from .utils.console.colorful import colored_string
+from .utils.console.logger import Logger
 
 
 class BililiContainer:
@@ -37,15 +37,13 @@ class BililiContainer:
         quality_description: str = ""
         if self.type == "dash":
             quality_description = " & ".join(
-                # fmt: off
                 [
                     {
                         "dash_video": video_quality_map,
                         "dash_audio": audio_quality_map
                     }[media.type][media.quality]["description"]
                     for media in self.medias
-                ]
-                # fmt: on
+                ]  # fmt: skip
             )
         else:
             assert self.quality is not None, "quality 仍然为 None"
@@ -55,7 +53,7 @@ class BililiContainer:
         )
 
     def check_needs_download(self, overwrite: bool = False):
-        """ 检查是否需要下载 """
+        """检查是否需要下载"""
         if overwrite:
             if os.path.exists(self.path):
                 os.remove(self.path)
@@ -149,7 +147,7 @@ class BililiMedia:
         return blocks
 
     def check_needs_download(self, overwrite=False):
-        """ 检查是否需要下载 """
+        """检查是否需要下载"""
         if overwrite:
             if os.path.exists(self.path):
                 os.remove(self.path)
@@ -178,7 +176,7 @@ class BililiBlock:
         self._.total_size = self.range[1] - self.range[0] + 1
 
     def check_needs_download(self, overwrite=False):
-        """ 检查是否需要下载 """
+        """检查是否需要下载"""
         if overwrite:
             if os.path.exists(self.path):
                 os.remove(self.path)
