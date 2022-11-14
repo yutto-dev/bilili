@@ -2,8 +2,9 @@ import os
 import sys
 from shutil import rmtree
 
+from setuptools import Command, find_packages, setup
+
 from bilili.__version__ import VERSION as bilili_version
-from setuptools import setup, find_packages, Command
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -66,6 +67,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
     keywords="python bilibili video download spider danmaku",
