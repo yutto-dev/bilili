@@ -5,7 +5,7 @@ from ..handlers.base import Handler
 from ..utils.console.logger import Logger
 from ..utils.ffmpeg import FFmpeg
 
-ffmpeg = FFmpeg()
+ffmpeg = FFmpeg(tmp_dir=".bilili_cache")
 
 
 class MergingFile(Handler):

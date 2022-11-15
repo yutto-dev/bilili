@@ -15,14 +15,14 @@ class FFmpeg:
     @refs : https://github.com/soimort/you-get
     """
 
-    def __init__(self, ffmpeg_path: str = "ffmpeg"):
+    def __init__(self, ffmpeg_path: str = "ffmpeg", tmp_dir: str = ".ffmpeg_tmp"):
         try:
             if subprocess.run([ffmpeg_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE).returncode != 1:
                 raise FFmpegNotFoundError()
         except FileNotFoundError:
             raise FFmpegNotFoundError()
         self.path = os.path.normpath(ffmpeg_path)
-        tmp_dir = os.path.join(os.path.dirname(ffmpeg_path), "tmp")
+        tmp_dir = os.path.join(os.path.dirname(ffmpeg_path), tmp_dir)
         if not os.path.exists(tmp_dir):
             os.makedirs(tmp_dir)
         self.tmp_dir = os.path.normpath(tmp_dir)
