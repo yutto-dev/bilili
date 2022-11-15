@@ -4,7 +4,7 @@ from shutil import rmtree
 
 from setuptools import Command, find_packages, setup
 
-from bilili.__version__ import VERSION as bilili_version
+BILILI_VERSION = "1.4.13"
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -40,7 +40,7 @@ class UploadCommand(Command):
         os.system("twine upload dist/*")
 
         self.status("Pushing git tags…")
-        os.system("git tag v{0}".format(bilili_version))
+        os.system("git tag v{0}".format(BILILI_VERSION))
         os.system("git push --tags")
 
         sys.exit()
@@ -54,7 +54,7 @@ def get_long_description():
 
 setup(
     name="bilili",
-    version=bilili_version,
+    version=BILILI_VERSION,
     description="🍻 bilibili video and danmaku downloader | B站视频、弹幕下载器",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
