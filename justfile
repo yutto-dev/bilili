@@ -28,7 +28,7 @@ clean-builds:
   rm -rf bilili.egg-info/
 
 docs:
-  cd docs/ && yarn dev
+  cd docs/ && pnpm dev
 
 fmt:
   black . --line-length=120
