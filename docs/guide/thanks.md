@@ -12,7 +12,6 @@
 -  [danmaku2ass](https://github.com/m13253/danmaku2ass) 用于 xml 弹幕转换为 ass 弹幕
 -  [VuePress](https://github.com/vuejs/vuepress) 本文档的生成器
 -  [vuepress-theme-vt](https://vuepress-theme-vt.vercel.app/) 本文档主题
--  [DPlayer](https://dplayer.js.org/) 文档外链播放器（曾经，现已移除）
 
 ## 参考项目
 
