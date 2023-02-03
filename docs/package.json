@@ -8,14 +8,14 @@
     "serve": "pnpm build && npx serve .vuepress/dist"
   },
   "devDependencies": {
-    "@vuepress/plugin-back-to-top": "^1.9.7",
+    "@vuepress/plugin-back-to-top": "^1.9.8",
     "cross-env": "^7.0.3",
     "markdown-it": "^13.0.1",
     "node-fetch": "^3.3.0",
-    "vuepress": "^1.9.7",
+    "vuepress": "^1.9.8",
     "vuepress-plugin-cursor-effects": "^1.1.6",
     "vuepress-plugin-dynamic-title": "^1.0.0",
-    "vuepress-theme-vt": "0.7.6"
+    "vuepress-theme-vt": "0.8.1"
   },
   "pnpm": {
     "peerDependencyRules": {
