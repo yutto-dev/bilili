@@ -1,21 +1,30 @@
-run:
-  python3 -m bilili
+set positional-arguments
+
+PYTHON := ".venv/bin/python"
+
+create-venv:
+  python3 -m venv .venv
+
+install-deps:
+  {{PYTHON}} -m pip install --upgrade pip
+  {{PYTHON}} -m pip install -r requirements.txt
+  {{PYTHON}} -m pip install -r requirements-dev.txt
+
+run *ARGS:
+  {{PYTHON}} -m bilili {{ARGS}}
 
 test:
-  python3 -m pytest -m '(api or e2e) and not ci_only'
+  {{PYTHON}} -m pytest -m '(api or e2e) and not ci_only'
   just clean
 
 publish:
-  python3 setup.py upload
+  {{PYTHON}} setup.py upload
   just clean-builds
 
 install:
-  python3 setup.py build
-  python3 setup.py install
+  {{PYTHON}} setup.py build
+  {{PYTHON}} setup.py install
   just clean-builds
-
-upgrade-pip:
-  python3 -m pip install --upgrade --pre bilili
 
 clean:
   find . -name "*- bilibili" -print0 | xargs -0 rm -rf
@@ -33,3 +42,11 @@ docs:
 fmt:
   black . --line-length=120
   isort . --profile=black --line-length=120
+
+ci-api-test:
+  {{PYTHON}} -m pytest -m "api and not ci_skip"
+  just clean
+
+ci-e2e-test:
+  {{PYTHON}} -m pytest -m "e2e and not ci_skip"
+  just clean

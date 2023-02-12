@@ -19,11 +19,17 @@ jobs:
           python-version: ${{ matrix.python-version }}
           architecture: x64
 
-      - name: Install packages
+      - name: Install just
+        uses: extractions/setup-just@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Initialize venv and install packages
         run: |
-          pip install -r requirements.txt
+          just create-venv
+          just install-deps
+          just install
 
       - name: Test bilili API
         run: |
-          pip install pytest
-          pytest -m "api and not ci_skip"
+          just ci-api-test
