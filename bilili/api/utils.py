@@ -18,7 +18,7 @@ class MaxRetry:
             while retry:
                 try:
                     return connect_once(*args, **kwargs)
-                except requests.exceptions.Timeout as e:
+                except requests.exceptions.Timeout:
                     Logger.warning("抓取超时，正在尝试重新连接～")
                 finally:
                     retry -= 1

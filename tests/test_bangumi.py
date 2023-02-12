@@ -7,7 +7,6 @@ from bilili.api.bangumi import (
     get_bangumi_title,
     get_season_id,
 )
-from bilili.api.exceptions import CannotDownloadError
 
 
 @pytest.mark.api
