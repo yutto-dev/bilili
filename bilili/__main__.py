@@ -218,12 +218,8 @@ def main():
 
     if resource_id.avid or resource_id.bvid:
         from .parser.acg_video import get_list, get_playurl, get_subtitle, get_title
-
-        bili_type = "acg_video"
     elif resource_id.season_id or resource_id.episode_id:
         from .parser.bangumi import get_list, get_playurl, get_subtitle, get_title
-
-        bili_type = "bangumi"
     else:
         Logger.error("未知的视频类型！")
         sys.exit(1)
@@ -369,10 +365,8 @@ def main():
                 container.path,
             )
             for media in container.medias:
-
                 block_merging_file = MergingFile(None, [block.path for block in media.blocks], media.path)
                 for block in media.blocks:
-
                     mirrors = block.mirrors if args.use_mirrors else []
                     remote_file = RemoteFile(block.url, block.path, mirrors=mirrors, range=block.range)
 

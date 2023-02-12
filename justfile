@@ -40,8 +40,8 @@ docs:
   cd docs/ && pnpm dev
 
 fmt:
-  black . --line-length=120
-  isort . --profile=black --line-length=120
+  {{PYTHON}} -m black . --line-length=120
+  {{PYTHON}} -m isort . --profile=black --line-length=120
 
 ci-api-test:
   {{PYTHON}} -m pytest -m "api and not ci_skip"

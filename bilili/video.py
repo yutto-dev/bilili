@@ -17,7 +17,6 @@ class BililiContainer:
     """
 
     def __init__(self, id, name, meta, type="dash", video_dir=""):
-
         self.id = id
         self.name = name
         self.meta = meta
@@ -81,7 +80,6 @@ class BililiMedia:
         type="dash_video",
         block_size=0,
     ):
-
         self.id = id
         self.quality = quality
         self.height = height
@@ -161,7 +159,6 @@ class BililiBlock:
     """bilibili 媒体块类"""
 
     def __init__(self, id, url, mirrors, media, block_size, range):
-
         self.id = id
         self.url = url
         self.mirrors = mirrors

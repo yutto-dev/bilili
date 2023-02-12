@@ -28,7 +28,6 @@ class Handler:
         assert event in self.events
 
         def on_event(func):
-
             setattr(self, event, func)
 
         return on_event

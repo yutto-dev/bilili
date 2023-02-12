@@ -9,7 +9,6 @@ class DownloadFailureError(Exception):
 
 
 class Crawler(requests.Session):
-
     header = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_3_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36",
     }
@@ -69,7 +68,6 @@ class Crawler(requests.Session):
 
 
 class BililiCrawler(Crawler):
-
     header = {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36",
         "Referer": "https://www.bilibili.com",
