@@ -17,7 +17,7 @@ class FFmpeg:
 
     def __init__(self, ffmpeg_path: str = "ffmpeg", tmp_dir: str = ".ffmpeg_tmp"):
         try:
-            if subprocess.run([ffmpeg_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE).returncode != 1:
+            if subprocess.run([ffmpeg_path], capture_output=True).returncode != 1:
                 raise FFmpegNotFoundError()
         except FileNotFoundError:
             raise FFmpegNotFoundError()
@@ -35,7 +35,7 @@ class FFmpeg:
         """调用 ffmpeg"""
         cmd = [self.path]
         cmd.extend(params)
-        return subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return subprocess.run(cmd, capture_output=True)
 
     def convert(self, input_path: str, output_path: str) -> None:
         """视频格式转换"""

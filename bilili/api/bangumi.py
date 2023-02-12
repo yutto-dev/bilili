@@ -9,7 +9,7 @@ from .utils import MaxRetry
 
 @MaxRetry(2)
 def get_season_id(media_id: str) -> str:
-    home_url = "https://api.bilibili.com/pgc/review/user?media_id={media_id}".format(media_id=media_id)
+    home_url = f"https://api.bilibili.com/pgc/review/user?media_id={media_id}"
     res_json = spider.get(home_url).json()
     return str(res_json["result"]["media"]["season_id"])
 
@@ -20,16 +20,16 @@ def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str =
         raise ArgumentsError("media_id", "season_id", "episode_id")
     title = "呐，我也不知道是什么标题呢～"
     if media_id:
-        home_url = "https://www.bilibili.com/bangumi/media/md{media_id}".format(media_id=media_id)
+        home_url = f"https://www.bilibili.com/bangumi/media/md{media_id}"
         res = spider.get(home_url, timeout=3)
         regex_title = re.compile(r'<span class="media-info-title-t">(.*?)</span>')
         if match_obj := regex_title.search(res.text):
             title = match_obj.group(1)
     elif season_id or episode_id:
         if season_id:
-            play_url = "https://www.bilibili.com/bangumi/play/ss{season_id}".format(season_id=season_id)
+            play_url = f"https://www.bilibili.com/bangumi/play/ss{season_id}"
         else:
-            play_url = "https://www.bilibili.com/bangumi/play/ep{episode_id}".format(episode_id=episode_id)
+            play_url = f"https://www.bilibili.com/bangumi/play/ep{episode_id}"
         res = spider.get(play_url, timeout=3)
         regex_title = re.compile(r'<a href=".+" target="_blank" title="(.*?)" class="media-title">(?P<title>.*?)</a>')
         if match_obj := regex_title.search(res.text):

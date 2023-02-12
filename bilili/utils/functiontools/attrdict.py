@@ -29,7 +29,7 @@ class AttrDict(dict):
         try:
             return self[key]
         except KeyError:
-            raise AttributeError(r"'AttrDict' object has no attribute '{}'".format(key))
+            raise AttributeError(f"'AttrDict' object has no attribute '{key}'")
 
     def __setattr__(self, key, value):
         """将属性的 set 重定向到 dict 的 set"""

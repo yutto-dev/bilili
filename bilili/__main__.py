@@ -36,7 +36,7 @@ def parse_episodes(episodes_str: str, total: int) -> List[int]:
         return value if value > 0 else value + total + 1
 
     # 解析字符串为列表
-    Logger.print("全 {} 话".format(total))
+    Logger.print(f"全 {total} 话")
     if re.match(r"([\-\d\^\$]+(~[\-\d\^\$]+)?)(,[\-\d\^\$]+(~[\-\d\^\$]+)?)*", episodes_str):
         episodes_str = episodes_str.replace("^", "1")
         episodes_str = episodes_str.replace("$", "-1")
@@ -46,7 +46,7 @@ def parse_episodes(episodes_str: str, total: int) -> List[int]:
                 start, end = episode_item.split("~")
                 start, end = int(start), int(end)
                 start, end = reslove_negetive(start), reslove_negetive(end)
-                assert end >= start, "终点值（{}）应不小于起点值（{}）".format(end, start)
+                assert end >= start, f"终点值（{end}）应不小于起点值（{start}）"
                 episode_list.extend(list(range(start, end + 1)))
             else:
                 episode_item = int(episode_item)
@@ -104,7 +104,7 @@ def main():
     """解析命令行参数并调用相关模块进行下载"""
 
     parser = argparse.ArgumentParser(description="bilili B 站视频、弹幕下载器", prog="bilili")
-    parser.add_argument("-v", "--version", action="version", version="%(prog)s {}".format(bilili_version))
+    parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {bilili_version}")
     parser.add_argument("url", help="视频主页地址")
     parser.add_argument(
         "-t",
@@ -259,7 +259,7 @@ def main():
     # 解析片段信息及视频 url
     for i, container in enumerate(containers):
         Logger.print(
-            "{:02}/{:02} 正在努力解析视频信息～".format(i + 1, len(containers)),
+            f"{i + 1:02}/{len(containers):02} 正在努力解析视频信息～",
             end="\r",
         )
 
@@ -268,12 +268,12 @@ def main():
             for playinfo in get_playurl(container, config["quality"], config["audio_quality"]):
                 container.append_media(block_size=config["block_size"], **playinfo)
         except CannotDownloadError as e:
-            Logger.warning("{} 无法下载，原因：{}".format(container.name, e.message))
+            Logger.warning(f"{container.name} 无法下载，原因：{e.message}")
             del containers[i]
             continue
         except IsPreviewError:
             # TODO: 现在还有部分预览的视频吗？
-            Logger.warning("{} 是预览视频呢～".format(container.name))
+            Logger.warning(f"{container.name} 是预览视频呢～")
 
         # 写入播放列表
         if playlist is not None:
@@ -468,7 +468,7 @@ def main():
                     } if global_status.downloading else None,
                     [
                         {
-                            "left": "{} ".format(str(container)),
+                            "left": f"{str(container)} ",
                             "right": " {}/{}".format(
                                 size_format(container._.size), size_format(container._.total_size),
                             ),
@@ -488,7 +488,7 @@ def main():
                     } if global_status.merging else None,
                     [
                         {
-                            "left": "{} ".format(str(container)),
+                            "left": f"{str(container)} ",
                             "right": True
                         } if container._.merging else None
                         for container in containers

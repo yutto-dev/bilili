@@ -33,7 +33,7 @@ class MergingFile(Handler):
             else:
                 ffmpeg.convert(self.src_path_list[0], self.dst_path)
         else:
-            Logger.error("未知类型： {}".format(self.type))
+            Logger.error(f"未知类型： {self.type}")
         for src_path in self.src_path_list:
             os.remove(src_path)
         self.merged(self)

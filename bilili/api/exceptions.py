@@ -13,19 +13,19 @@ class ArgumentsError(APIException):
 
 class CannotDownloadError(APIException):
     def __init__(self, code, message):
-        message = "「{}」 {}".format(code, message)
+        message = f"「{code}」 {message}"
         super().__init__(102, message)
 
 
 class UnknownTypeError(APIException):
     def __init__(self, type):
-        message = "未知类型：{}".format(type)
+        message = f"未知类型：{type}"
         super().__init__(103, message)
 
 
 class UnsupportTypeError(APIException):
     def __init__(self, type):
-        message = "不受支持的类型：{}".format(type)
+        message = f"不受支持的类型：{type}"
         super().__init__(104, message)
 
 

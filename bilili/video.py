@@ -21,7 +21,7 @@ class BililiContainer:
         self.name = name
         self.meta = meta
         self.type = type
-        self.path = os.path.join(video_dir, "{}.mp4".format(repair_filename(self.name)))
+        self.path = os.path.join(video_dir, f"{repair_filename(self.name)}.mp4")
 
         self.medias = []
         self.quality = None
@@ -91,13 +91,13 @@ class BililiMedia:
         self.path = os.path.splitext(self.container.path)[0]
         self.type = type
         if self.container.type == "flv":
-            self.path += "_{:02d}.flv".format(id)
+            self.path += f"_{id:02d}.flv"
         elif self.container.type == "dash":
-            self.path += "_{}.m4s".format(type)
+            self.path += f"_{type}.m4s"
         elif self.container.type == "mp4":
             self.path += "_dl.mp4"
         else:
-            Logger.warning("未知的容器类型：{}".format(self.container.type))
+            Logger.warning(f"未知的容器类型：{self.container.type}")
         self.name = os.path.split(self.path)[-1]
         self._ = DownloaderStatus(parent=self.container._)
         self._.total_size = size
@@ -109,10 +109,10 @@ class BililiMedia:
         if self.container.height is None:
             self.container.height = height
         if self._.total_size == 0:
-            Logger.warning("{} 获取 size 为 0".format(self.name))
+            Logger.warning(f"{self.name} 获取 size 为 0")
             self._.total_size = 0
         if self._.total_size is None:
-            Logger.warning("{} 无法获取 size".format(self.name))
+            Logger.warning(f"{self.name} 无法获取 size")
             self._.total_size = 0
 
         self.blocks = self.chunking()
