@@ -15,7 +15,7 @@
     "vuepress": "^1.9.9",
     "vuepress-plugin-cursor-effects": "^1.1.6",
     "vuepress-plugin-dynamic-title": "^1.0.0",
-    "vuepress-theme-vt": "0.13.1"
+    "vuepress-theme-vt": "0.13.2"
   },
   "pnpm": {
     "peerDependencyRules": {
