@@ -11,7 +11,7 @@
     "@vuepress/plugin-back-to-top": "^1.9.9",
     "cross-env": "^7.0.3",
     "markdown-it": "^13.0.1",
-    "node-fetch": "^3.3.0",
+    "node-fetch": "^3.3.1",
     "vuepress": "^1.9.9",
     "vuepress-plugin-cursor-effects": "^1.1.6",
     "vuepress-plugin-dynamic-title": "^1.0.0",
