@@ -61,7 +61,7 @@ class RemoteFile(Handler):
             while not downloaded:
                 # 设置 headers
                 headers = dict(spider.headers)
-                headers["Range"] = "bytes={}-{}".format(self.size + self.range[0], self.range[1])
+                headers["Range"] = f"bytes={self.size + self.range[0]}-{self.range[1]}"
                 url = random.choice([self.url] + self.mirrors) if self.mirrors else self.url
 
                 try:
@@ -85,7 +85,7 @@ class RemoteFile(Handler):
                     else:
                         downloaded = True
                 except requests.exceptions.RequestException:
-                    Logger.warning("文件 {} 下载超时，正在重试...".format(self.name))
+                    Logger.warning(f"文件 {self.name} 下载超时，正在重试...")
 
             # 从临时文件迁移，并删除临时文件
             if os.path.exists(self.path):

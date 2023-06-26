@@ -51,14 +51,14 @@ class FFmpeg:
     def join_videos(self, video_path_list: List[str], output_path: str) -> None:
         """将视频拼接起来"""
 
-        concat_list_path = os.path.join(self.tmp_dir, "concat_list_{:04}.tmp".format(random.randint(0, 9999))).replace(
+        concat_list_path = os.path.join(self.tmp_dir, f"concat_list_{random.randint(0, 9999):04}.tmp").replace(
             "\\", "/"
         )
         with open(concat_list_path, "w", encoding="utf-8") as f:
             for video_path in video_path_list:
                 if os.path.isfile(video_path):
                     video_relpath = os.path.relpath(video_path, start=self.tmp_dir)
-                    f.write("file '{}'\n".format(video_relpath))
+                    f.write(f"file '{video_relpath}'\n")
         params = [
             "-f", "concat",
             "-safe", "-1",

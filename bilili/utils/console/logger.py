@@ -26,7 +26,7 @@ class Badge:
         self.style: Optional[Style] = style
 
     def __str__(self):
-        return colored_string(" {} ".format(self.text), fore=self.fore, back=self.back, style=self.style)
+        return colored_string(f" {self.text} ", fore=self.fore, back=self.back, style=self.style)
 
     def __repr__(self):
         return str(self)

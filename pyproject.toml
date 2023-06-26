@@ -26,7 +26,14 @@ dependencies = ["requests", "biliass==1.3.7"]
 dynamic = ["version"]
 
 [project.optional-dependencies]
-dev = ["pytest>=7.4.0", "black>=23.3.0", "isort>=5.12.0", "build", "twine"]
+dev = [
+  "pytest>=7.4.0",
+  "black>=23.3.0",
+  "isort>=5.12.0",
+  "ruff==0.0.275",
+  "build",
+  "twine",
+]
 
 [project.urls]
 Homepage = "https://github.com/yutto-dev/bilili"
@@ -48,6 +55,29 @@ line-length = 120
 profile = "black"
 line_length = 120
 known_first_party = ["bilili"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py38"
+select = [
+  # Pyflakes
+  "F",
+  # Pycodestyle
+  "E",
+  "W",
+  # Pyupgrade
+  "UP",
+  # Flake8-pyi
+  "PYI",
+  # Yesqa
+  "RUF100",
+]
+ignore = [
+  "E501", # line too long, duplicate with black
+  "E731", # lambda sometimes is more readable
+  "F401", # imported but unused, duplicate with pyright
+  "F841", # local variable is assigned to but never used, duplicate with pyright
+]
 
 [tool.pytest.ini_options]
 markers = ["api", "e2e", "ci_skip", "ci_only"]

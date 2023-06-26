@@ -42,6 +42,9 @@ clean-builds:
 docs:
   cd docs/ && pnpm dev
 
+lint:
+  {{PYTHON}} -m ruff .
+
 fmt:
   {{PYTHON}} -m black .
   {{PYTHON}} -m isort .

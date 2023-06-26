@@ -1,4 +1,4 @@
-name: API Test
+name: Lint and Format
 
 on:
   push:
@@ -7,11 +7,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-crwaler:
+  lint-and-fmt:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.8"]
     name: Python ${{ matrix.python-version }}
     steps:
       - name: Checkout
@@ -33,6 +33,10 @@ jobs:
           just create-venv
           just install
 
-      - name: Test bilili API
+      - name: lint
         run: |
-          just ci-api-test
+          just lint
+
+      - name: format check
+        run: |
+          just fmt

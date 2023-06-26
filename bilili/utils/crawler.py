@@ -41,7 +41,7 @@ class Crawler(requests.Session):
                         f.write(chunk)
                 else:
                     f.write(res.content)
-        except:
+        except Exception:
             os.remove(tmp_path)
             raise DownloadFailureError()
         if os.path.exists(file_path):
