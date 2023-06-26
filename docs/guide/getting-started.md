@@ -89,8 +89,7 @@ pip install bilili
 ```bash
 git clone git@github.com:yutto-dev/bilili.git
 cd bilili/
-python setup.py build
-python setup.py install
+pip install .
 ```
 
 无论通过哪种方式安装，此时直接使用 `bilili -v` 命令都应该不再是 `Command not found` 之类的提示啦。

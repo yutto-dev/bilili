@@ -70,8 +70,7 @@ pip install bilili
 ```bash
 git clone git@github.com:yutto-dev/bilili.git
 cd bilili/
-python setup.py build
-python setup.py install
+pip install .
 ```
 
 ### 运行
