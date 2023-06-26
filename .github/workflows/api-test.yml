@@ -1,6 +1,10 @@
 name: API Test
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [develop]
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   test-crwaler:
@@ -27,7 +31,6 @@ jobs:
       - name: Initialize venv and install packages
         run: |
           just create-venv
-          just install-deps
           just install
 
       - name: Test bilili API

@@ -1,6 +1,10 @@
 name: e2e Test
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [develop]
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   test-crwaler:
@@ -32,7 +36,6 @@ jobs:
       - name: Initialize venv and install packages
         run: |
           just create-venv
-          just install-deps
           just install
 
       - name: e2e without subprocess

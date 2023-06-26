@@ -9,19 +9,16 @@
 ```bash
 git clone git@github.com:yutto-dev/bilili.git
 cd bilili/
-pip install -r requirements.txt
-python -m bilili <url>
+pip install -e ".[dev]"
+bilili <url>
 ```
-
-注意本地调试请不要直接使用 `bilili` 命令
 
 ## 测试
 
 bilili 有一些已经编写好的测试，虽然 GitHub Action 会帮忙自动测试，但最好你在本地预先测试一遍
 
 ```bash
-pip install pytest                                          # 安装 pytest
-pytest                                                      # 测试
+pytest         # 使用 pytest 运行全量单测
 ```
 
 如果测试不通过，请查找相关错误原因，如果是测试代码过时，也欢迎对该代码进行修改

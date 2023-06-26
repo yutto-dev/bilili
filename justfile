@@ -5,10 +5,8 @@ PYTHON := ".venv/bin/python"
 create-venv:
   python3 -m venv .venv
 
-install-deps:
-  {{PYTHON}} -m pip install --upgrade pip
-  {{PYTHON}} -m pip install -r requirements.txt
-  {{PYTHON}} -m pip install -r requirements-dev.txt
+install:
+  {{PYTHON}} -m pip install -e ".[dev]"
 
 run *ARGS:
   {{PYTHON}} -m bilili {{ARGS}}
@@ -18,12 +16,17 @@ test:
   just clean
 
 publish:
-  {{PYTHON}} setup.py upload
+  rm -rf dist/
+  {{PYTHON}} -m build
+  twine check dist/*
+  twine upload dist/*
   just clean-builds
 
-install:
-  {{PYTHON}} setup.py build
-  {{PYTHON}} setup.py install
+test-publish:
+  rm -rf dist/
+  {{PYTHON}} -m build
+  twine check dist/*
+  twine upload -r testpypi dist/*
   just clean-builds
 
 clean:
@@ -34,7 +37,7 @@ clean:
 clean-builds:
   rm -rf build/
   rm -rf dist/
-  rm -rf bilili.egg-info/
+  rm -rf *.egg-info/
 
 docs:
   cd docs/ && pnpm dev
