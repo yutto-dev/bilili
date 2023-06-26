@@ -1,6 +1,10 @@
 name: API Test
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [develop]
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   test-crwaler:
@@ -8,7 +12,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
-    name: Python ${{ matrix.python-version }} sample
+    name: Python ${{ matrix.python-version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -27,7 +31,6 @@ jobs:
       - name: Initialize venv and install packages
         run: |
           just create-venv
-          just install-deps
           just install
 
       - name: Test bilili API
