@@ -42,6 +42,6 @@ class Dpl(Playlist):
     def write_path(self, path: str, name: Optional[str] = None):
         self._count += 1
         path = self.switch_path(path)
-        self.write_string("{}*file*{}".format(self._count, path))
+        self.write_string(f"{self._count}*file*{path}")
         if name is not None:
-            self.write_string("{}*title*{}\n".format(self._count, name))
+            self.write_string(f"{self._count}*title*{name}\n")

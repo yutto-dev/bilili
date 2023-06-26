@@ -99,7 +99,7 @@ def repair_filename(filename: str) -> str:
     filename = regex_spaces.sub(" ", filename)
     filename = regex_non_printable.sub("", filename)
     filename = filename.strip()
-    filename = filename if filename else "file_{:04}".format(random.randint(0, 9999))
+    filename = filename if filename else f"file_{random.randint(0, 9999):04}"
     return filename
 
 
@@ -162,6 +162,6 @@ def get_string_width(string: str) -> int:
     string = regex_color.sub("", string)
     try:
         length = sum([get_char_width(c) for c in string])
-    except:
+    except Exception:
         length = len(string)
     return length

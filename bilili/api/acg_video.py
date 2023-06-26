@@ -32,7 +32,7 @@ def get_acg_video_title(avid: str = "", bvid: str = "") -> str:
         raise ArgumentsError("avid", "bvid")
     try:
         title = get_video_info(avid=avid, bvid=bvid)["title"]
-    except:
+    except Exception:
         title = "呐，我也不知道是什么标题呢～"
     finally:
         return title
