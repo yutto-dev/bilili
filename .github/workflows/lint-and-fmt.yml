@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.8"]
-    name: Python ${{ matrix.python-version }}
+    name: lint and format - Python ${{ matrix.python-version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
