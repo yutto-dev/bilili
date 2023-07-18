@@ -469,9 +469,7 @@ def main():
                     [
                         {
                             "left": f"{str(container)} ",
-                            "right": " {}/{}".format(
-                                size_format(container._.size), size_format(container._.total_size),
-                            ),
+                            "right": f" {size_format(container._.size)}/{size_format(container._.total_size)}",
                         } if container._.downloading else None
                         for container in containers
                     ] if global_status.downloading else None,
@@ -495,9 +493,7 @@ def main():
                     ] if global_status.merging else None,
                     {
                         "left": sum([container._.merged for container in containers]) / len(containers),
-                        "right": " {}/{}".format(
-                            sum([container._.merged for container in containers]), len(containers),
-                        ),
+                        "right": f" {sum([container._.merged for container in containers])}/{len(containers)}",
                     } if global_status.merging else None,
                 ]  # fmt: skip
             )
