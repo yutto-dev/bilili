@@ -8,7 +8,7 @@
     "serve": "pnpm build && npx serve .vuepress/dist"
   },
   "devDependencies": {
-    "@vuepress/plugin-back-to-top": "^1.9.9",
+    "@vuepress/plugin-back-to-top": "^1.9.10",
     "cross-env": "^7.0.3",
     "markdown-it": "^13.0.1",
     "node-fetch": "^3.3.2",
