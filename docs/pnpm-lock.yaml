@@ -27,8 +27,8 @@ devDependencies:
     specifier: ^1.0.0
     version: 1.0.0
   vuepress-theme-vt:
-    specifier: 0.13.2
-    version: 0.13.2(markdown-it@13.0.1)
+    specifier: 0.14.0
+    version: 0.14.0(markdown-it@13.0.1)
 
 packages:
 
@@ -9176,8 +9176,8 @@ packages:
       smoothscroll-polyfill: 0.4.4
     dev: true
 
-  /vuepress-theme-vt@0.13.2(markdown-it@13.0.1):
-    resolution: {integrity: sha512-igMA8KOp7898pzJ0hVHv60z6KCT7uKARs9/TYkNAKmmzGOlat15rilwqKLIPqa5YmajQf0ecDn6ZC/3awXSLEw==}
+  /vuepress-theme-vt@0.14.0(markdown-it@13.0.1):
+    resolution: {integrity: sha512-VS04lPg7FVDGV57TwzmGenSsEsHCxwd7sq+HDxnceZp97HZTq7mc6RVpWQ0P7TiyY1I7uQ7fDPBUY8DqRpm/Lw==}
     dependencies:
       '@vuepress/plugin-active-header-links': 1.9.9
       '@vuepress/plugin-nprogress': 1.9.9
