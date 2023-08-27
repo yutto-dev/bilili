@@ -20,7 +20,6 @@ jobs:
           lfs: true
 
       - uses: pnpm/action-setup@v2
-        working-directory: ./docs
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
