@@ -19,7 +19,8 @@ jobs:
           submodules: true
           lfs: true
 
-      - uses: pnpm/action-setup@v2
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
         with:
           package_json_file: "docs/package.json"
           version: "latest"
