@@ -3,8 +3,8 @@
   "description": "bilili documentation",
   "license": "CC0-1.0",
   "scripts": {
-    "dev": "cross-env BILILI_VERSIONS=`node scripts/get_latest_version.mjs bilili yutto` vuepress dev",
-    "build": "cross-env BILILI_VERSIONS=`node scripts/get_latest_version.mjs bilili yutto` vuepress build",
+    "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider BILILI_VERSIONS=`node scripts/get_latest_version.mjs bilili yutto` vuepress dev",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider BILILI_VERSIONS=`node scripts/get_latest_version.mjs bilili yutto` vuepress build",
     "serve": "pnpm build && npx serve .vuepress/dist"
   },
   "devDependencies": {
