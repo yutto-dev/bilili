@@ -24,6 +24,8 @@ jobs:
           lfs: true
 
       - uses: pnpm/action-setup@v2
+        with:
+          package_json_file: "docs/package.json"
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
