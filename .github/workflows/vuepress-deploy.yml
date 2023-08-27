@@ -7,10 +7,6 @@ on:
   merge_group:
   workflow_dispatch:
 
-defaults:
-  run:
-    working-directory: ./docs
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
