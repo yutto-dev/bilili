@@ -1,4 +1,10 @@
+import os
+import sys
 from typing import Dict, Optional
+
+# 使部分终端正确显示颜色
+if sys.platform == "win32":
+    os.system("")
 
 Fore = str
 Back = str
