@@ -30,7 +30,7 @@ dev = [
   "pytest>=7.4.0",
   "black>=23.3.0",
   "isort>=5.12.0",
-  "ruff==0.0.287",
+  "ruff==0.0.288",
   "build",
   "twine",
 ]
