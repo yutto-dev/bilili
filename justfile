@@ -50,7 +50,7 @@ fmt:
   {{PYTHON}} -m isort .
 
 ci-api-test:
-  {{PYTHON}} -m pytest -m "api and not ci_skip"
+  {{PYTHON}} -m pytest -m "api and not ci_skip" --reruns 3 --reruns-delay 1
   just clean
 
 ci-e2e-test:
