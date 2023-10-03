@@ -1,6 +1,5 @@
 set positional-arguments
 
-VERSION := `grep -oE '\d+\.\d+\.\d+(.+[^"])?' src/bilili/__version__.py`
 PYTHON := ".venv/bin/python"
 
 create-venv:
@@ -19,8 +18,10 @@ test:
 build:
   {{PYTHON}} -m build
 
-release:
-  git tag v{{VERSION}}
+release version:
+  @echo 'Tagging {{version}}...'
+  git tag {{version}}
+  @echo 'Push to GitHub to trigger publish process...'
   git push --tags
 
 clean:
