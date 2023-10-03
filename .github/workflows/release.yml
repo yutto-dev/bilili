@@ -27,14 +27,16 @@ jobs:
           just install
           just build
 
-      - name: upload windows dists
+      - name: upload dists
         uses: actions/upload-artifact@v3
         with:
           name: release-dists
           path: dist/
 
-  pypi-publish:
+  publish-pypi:
     runs-on: ubuntu-latest
+    name: Publish to PyPI
+    if: "startsWith(github.ref, 'refs/tags/')"
     needs:
       - release-build
     permissions:
@@ -49,3 +51,25 @@ jobs:
 
       - name: Publish release distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+
+  publish-release:
+    runs-on: ubuntu-latest
+    name: Publish to GitHub
+    if: "startsWith(github.ref, 'refs/tags/')"
+    needs:
+      - release-build
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: release-dists
+          path: dist/
+      - name: Get tag name
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Publish to GitHub
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          files: dist/*
+          tag_name: ${{ env.RELEASE_VERSION }}
