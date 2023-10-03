@@ -1,5 +1,6 @@
 set positional-arguments
 
+VERSION := `grep -oE '\d+\.\d+\.\d+(.+[^"])?' src/bilili/__version__.py`
 PYTHON := ".venv/bin/python"
 
 create-venv:
@@ -17,6 +18,10 @@ test:
 
 build:
   {{PYTHON}} -m build
+
+release:
+  git tag v{{VERSION}}
+  git push --tags
 
 clean:
   find . -name "*- bilibili" -print0 | xargs -0 rm -rf
