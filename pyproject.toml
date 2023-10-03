@@ -43,8 +43,8 @@ Documentation = "https://bilili.nyakku.moe/"
 [project.scripts]
 bilili = "bilili.__main__:main"
 
-[tool.setuptools.packages]
-find = {}
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.setuptools.dynamic]
 version = { attr = "bilili.__version__.VERSION" }
