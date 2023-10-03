@@ -35,7 +35,6 @@ jobs:
 
   pypi-publish:
     runs-on: ubuntu-latest
-    if: "startsWith(github.ref, 'refs/tags/')"
     needs:
       - release-build
     permissions:
