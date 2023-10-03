@@ -15,19 +15,8 @@ test:
   {{PYTHON}} -m pytest -m '(api or e2e) and not ci_only'
   just clean
 
-publish:
-  rm -rf dist/
+build:
   {{PYTHON}} -m build
-  twine check dist/*
-  twine upload dist/*
-  just clean-builds
-
-test-publish:
-  rm -rf dist/
-  {{PYTHON}} -m build
-  twine check dist/*
-  twine upload -r testpypi dist/*
-  just clean-builds
 
 clean:
   find . -name "*- bilibili" -print0 | xargs -0 rm -rf

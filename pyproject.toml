@@ -34,7 +34,6 @@ dev = [
   "ruff==0.0.291",
   "pytest-rerunfailures>=11.0",
   "build",
-  "twine",
 ]
 
 [project.urls]

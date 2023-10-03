@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  release-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install just
+        uses: extractions/setup-just@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: build release distributions
+        run: |
+          just create-venv
+          just install
+          just build
+
+      - name: upload windows dists
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-dists
+          path: dist/
+
+  pypi-publish:
+    runs-on: ubuntu-latest
+    # if: "startsWith(github.ref, 'refs/tags/')"
+    needs:
+      - release-build
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Retrieve release distributions
+        uses: actions/download-artifact@v3
+        with:
+          name: release-dists
+          path: dist/
+
+      # - name: Publish release distributions to PyPI
+      #   uses: pypa/gh-action-pypi-publish@release/v1
