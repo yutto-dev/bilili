@@ -7,6 +7,25 @@ from ..tools import regex_bangumi_ep, spider
 from ..utils.base import touch_url
 from .utils import MaxRetry
 
+_TOUCH_SET = set()
+
+
+@MaxRetry(2)
+def touch_homepage(avid: str = "", bvid: str = ""):
+    # cache touched homepage
+    cache_key = f"{avid}-{bvid}"
+    if cache_key in _TOUCH_SET:
+        return
+    _TOUCH_SET.add(cache_key)
+
+    if not (avid or bvid):
+        raise ArgumentsError("avid", "bvid")
+    if bvid:
+        homepage_api = f"https://www.bilibili.com/video/{bvid}/"
+    else:
+        homepage_api = f"https://www.bilibili.com/video/av{avid}/"
+    spider.get(homepage_api, timeout=3)
+
 
 @MaxRetry(2)
 def get_video_info(avid: str = "", bvid: str = ""):
@@ -65,6 +84,7 @@ def get_acg_video_playurl(
 ):
     if not (avid or bvid):
         raise ArgumentsError("avid", "bvid")
+    touch_homepage(avid=avid, bvid=bvid)
     video_quality_sequence = gen_quality_sequence(quality, type=Media.VIDEO)
     audio_quality_sequence = gen_quality_sequence(audio_quality, type=Media.AUDIO)
     play_api = (
@@ -98,7 +118,7 @@ def get_acg_video_playurl(
         ]
     elif type == "dash":
         result = []
-        play_api_dash = play_api + "&fnver=0&fnval=2000&fourk=1"
+        play_api_dash = play_api + "&fnver=0&fnval=4048&fourk=1"
         touch_message = spider.get(
             play_api_dash.format(avid=avid, bvid=bvid, cid=cid, quality=video_quality_sequence[0]), timeout=3
         ).json()

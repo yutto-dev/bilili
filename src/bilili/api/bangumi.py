@@ -31,7 +31,9 @@ def get_bangumi_title(media_id: str = "", season_id: str = "", episode_id: str =
         else:
             play_url = f"https://www.bilibili.com/bangumi/play/ep{episode_id}"
         res = spider.get(play_url, timeout=3)
-        regex_title = re.compile(r'<a href=".+" target="_blank" title="(.*?)" class="media-title">(?P<title>.*?)</a>')
+        regex_title = re.compile(
+            r'<a href=".+" class="mediainfo_mediaTitle.+?" target="_blank" rel="noreferrer" title="(.*?)">(?P<title>.*?)</a>'
+        )
         if match_obj := regex_title.search(res.text):
             title = match_obj.group("title")
     return title
@@ -113,7 +115,7 @@ def get_bangumi_playurl(
         ]
     elif type == "dash":
         result = []
-        play_api_dash = play_api + "&fnver=0&fnval=2000&fourk=1"
+        play_api_dash = play_api + "&fnver=0&fnval=4048&fourk=1"
         play_info = spider.get(
             play_api_dash.format(
                 avid=avid,
