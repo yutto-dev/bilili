@@ -16,9 +16,21 @@ def test_get_season_id():
 
 
 @pytest.mark.api
-def test_get_title():
+def test_get_title_by_media_id():
     media_id = "28223066"
     assert get_bangumi_title(media_id=media_id) == "我的三体之章北海传"
+
+
+@pytest.mark.api
+def test_get_title_by_episode_id():
+    episode_id = "300998"
+    assert get_bangumi_title(episode_id=episode_id) == "我的三体之章北海传"
+
+
+@pytest.mark.api
+def test_get_title_by_season_id():
+    season_id = "28770"
+    assert get_bangumi_title(season_id=season_id) == "我的三体之章北海传"
 
 
 @pytest.mark.api
