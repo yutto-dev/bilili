@@ -60,6 +60,8 @@ known_first_party = ["bilili"]
 [tool.ruff]
 line-length = 120
 target-version = "py38"
+
+[tool.ruff.lint]
 select = [
   # Pyflakes
   "F",
