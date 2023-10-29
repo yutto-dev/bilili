@@ -42,8 +42,8 @@ class BililiContainer:
                         "dash_audio": audio_quality_map
                     }[media.type][media.quality]["description"]
                     for media in self.medias
-                ]  # fmt: skip
-            )
+                ]
+            )  # fmt: skip
         else:
             assert self.quality is not None, "quality 仍然为 None"
             quality_description = video_quality_map[self.quality]["description"]

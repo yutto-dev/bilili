@@ -124,7 +124,9 @@ def main():
     )
     parser.add_argument("-n", "--num-threads", default=16, type=int, help="最大下载线程数")
     parser.add_argument("-p", "--episodes", default="^~$", help="选集")
-    parser.add_argument("-s", "--with-section", action="store_true", help="同时下载附加剧集（PV、预告以及特别篇等专区内容）")
+    parser.add_argument(
+        "-s", "--with-section", action="store_true", help="同时下载附加剧集（PV、预告以及特别篇等专区内容）"
+    )
     parser.add_argument("-w", "--overwrite", action="store_true", help="强制覆盖已下载视频")
     parser.add_argument("-c", "--sess-data", default="", help="输入 cookies")
     parser.add_argument("-y", "--yes", action="store_true", help="跳过下载询问")
@@ -463,16 +465,18 @@ def main():
                     {
                         "center": " bilili ",
                     },
-                    {
-                        "left": "Downloading videos: "
-                    } if global_status.downloading else None,
+                    {"left": "Downloading videos: "} if global_status.downloading else None,
                     [
                         {
                             "left": f"{str(container)} ",
                             "right": f" {size_format(container._.size)}/{size_format(container._.total_size)}",
-                        } if container._.downloading else None
+                        }
+                        if container._.downloading
+                        else None
                         for container in containers
-                    ] if global_status.downloading else None,
+                    ]
+                    if global_status.downloading
+                    else None,
                     {
                         "left": global_status.size / global_status.total_size,
                         "right": " {}/{} {}/s".format(
@@ -480,21 +484,22 @@ def main():
                             size_format(global_status.total_size),
                             size_format(speed),
                         ),
-                    } if global_status.downloading else None,
-                    {
-                        "left": "Merging videos: "
-                    } if global_status.merging else None,
+                    }
+                    if global_status.downloading
+                    else None,
+                    {"left": "Merging videos: "} if global_status.merging else None,
                     [
-                        {
-                            "left": f"{str(container)} ",
-                            "right": True
-                        } if container._.merging else None
+                        {"left": f"{str(container)} ", "right": True} if container._.merging else None
                         for container in containers
-                    ] if global_status.merging else None,
+                    ]
+                    if global_status.merging
+                    else None,
                     {
                         "left": sum([container._.merged for container in containers]) / len(containers),
                         "right": f" {sum([container._.merged for container in containers])}/{len(containers)}",
-                    } if global_status.merging else None,
+                    }
+                    if global_status.merging
+                    else None,
                 ]  # fmt: skip
             )
 

@@ -38,11 +38,10 @@ docs:
   cd docs/ && pnpm dev
 
 lint:
-  {{PYTHON}} -m ruff .
+  {{PYTHON}} -m ruff check .
 
 fmt:
-  {{PYTHON}} -m black .
-  {{PYTHON}} -m isort .
+  {{PYTHON}} -m ruff format .
 
 ci-api-test:
   {{PYTHON}} -m pytest -m "api and not ci_skip" --reruns 3 --reruns-delay 1
