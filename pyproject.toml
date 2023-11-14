@@ -74,7 +74,7 @@ ignore = [
   "F841", # local variable is assigned to but never used, duplicate with pyright
 ]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["bilili"]
 
 [tool.pytest.ini_options]
