@@ -31,7 +31,9 @@ jobs:
 
       - name: Initialize venv and install packages
         run: |
+          pipx install uv
           just create-venv
+          source .venv/bin/activate
           just install
 
       - name: lint

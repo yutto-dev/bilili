@@ -1,22 +1,23 @@
 set positional-arguments
 
-PYTHON := ".venv/bin/python"
-
 create-venv:
-  python3 -m venv .venv
+  uv venv
+
+clean-venv:
+  rm -rf .venv
 
 install:
-  {{PYTHON}} -m pip install -e ".[dev]"
+  uv pip install -e ".[dev]"
 
 run *ARGS:
-  {{PYTHON}} -m bilili {{ARGS}}
+  python -m bilili {{ARGS}}
 
 test:
-  {{PYTHON}} -m pytest -m '(api or e2e) and not ci_only'
+  python -m pytest -m '(api or e2e) and not ci_only'
   just clean
 
 build:
-  {{PYTHON}} -m build
+  python -m build
 
 release version:
   @echo 'Tagging {{version}}...'
@@ -38,15 +39,15 @@ docs:
   cd docs/ && pnpm dev
 
 lint:
-  {{PYTHON}} -m ruff check .
+  python -m ruff check .
 
 fmt:
-  {{PYTHON}} -m ruff format .
+  python -m ruff format .
 
 ci-api-test:
-  {{PYTHON}} -m pytest -m "api and not ci_skip" --reruns 3 --reruns-delay 1
+  python -m pytest -m "api and not ci_skip" --reruns 3 --reruns-delay 1
   just clean
 
 ci-e2e-test:
-  {{PYTHON}} -m pytest -m "e2e and not ci_skip"
+  python -m pytest -m "e2e and not ci_skip"
   just clean
