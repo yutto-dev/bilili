@@ -1,5 +1,7 @@
 set positional-arguments
 
+PYTHON := ".venv/bin/python"
+
 create-venv:
   uv venv
 
@@ -10,14 +12,14 @@ install:
   uv pip install -e ".[dev]"
 
 run *ARGS:
-  python -m bilili {{ARGS}}
+  {{PYTHON}} -m bilili {{ARGS}}
 
 test:
   python -m pytest -m '(api or e2e) and not ci_only'
   just clean
 
 build:
-  python -m build
+  {{PYTHON}} -m build
 
 release version:
   @echo 'Tagging {{version}}...'
@@ -39,15 +41,15 @@ docs:
   cd docs/ && pnpm dev
 
 lint:
-  python -m ruff check .
+  {{PYTHON}} -m ruff check .
 
 fmt:
-  python -m ruff format .
+  {{PYTHON}} -m ruff format .
 
 ci-api-test:
-  python -m pytest -m "api and not ci_skip" --reruns 3 --reruns-delay 1
+  {{PYTHON}} -m pytest -m "api and not ci_skip" --reruns 3 --reruns-delay 1
   just clean
 
 ci-e2e-test:
-  python -m pytest -m "e2e and not ci_skip"
+  {{PYTHON}} -m pytest -m "e2e and not ci_skip"
   just clean
