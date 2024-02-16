@@ -46,7 +46,7 @@ jobs:
         with:
           personal_token: ${{ secrets.PERSONAL_TOKEN }}
           publish_dir: docs/.vuepress/dist
-          external_repository: SigureMo/docs # 编译后直接转发到个人账户的 vercel-docs
+          external_repository: SigureMo/docs # 编译后直接转发到个人账户的 docs
           publish_branch: bilili
           force_orphan: true
           commit_message: ":rocket: deploy: "

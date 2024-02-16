@@ -23,7 +23,9 @@ jobs:
 
       - name: build release distributions
         run: |
+          pipx install uv
           just create-venv
+          source .venv/bin/activate
           just install
           just build
 

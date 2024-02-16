@@ -3,16 +3,19 @@ set positional-arguments
 PYTHON := ".venv/bin/python"
 
 create-venv:
-  python3 -m venv .venv
+  uv venv
+
+clean-venv:
+  rm -rf .venv
 
 install:
-  {{PYTHON}} -m pip install -e ".[dev]"
+  uv pip install -e ".[dev]"
 
 run *ARGS:
   {{PYTHON}} -m bilili {{ARGS}}
 
 test:
-  {{PYTHON}} -m pytest -m '(api or e2e) and not ci_only'
+  python -m pytest -m '(api or e2e) and not ci_only'
   just clean
 
 build:
