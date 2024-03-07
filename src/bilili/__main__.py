@@ -479,11 +479,7 @@ def main():
                     else None,
                     {
                         "left": global_status.size / global_status.total_size,
-                        "right": " {}/{} {}/s".format(
-                            size_format(global_status.size),
-                            size_format(global_status.total_size),
-                            size_format(speed),
-                        ),
+                        "right": f" {size_format(global_status.size)}/{size_format(global_status.total_size)} {size_format(speed)}/s",
                     }
                     if global_status.downloading
                     else None,
