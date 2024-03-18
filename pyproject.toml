@@ -29,7 +29,7 @@ dynamic = ["version"]
 [project.optional-dependencies]
 dev = [
   "pytest>=7.4.0",
-  "ruff==0.3.2",
+  "ruff==0.3.3",
   "pytest-rerunfailures>=11.0",
   "build",
 ] # fmt: skip
