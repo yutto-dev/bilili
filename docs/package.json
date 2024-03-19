@@ -10,7 +10,7 @@
   "devDependencies": {
     "@vuepress/plugin-back-to-top": "^1.9.10",
     "cross-env": "^7.0.3",
-    "markdown-it": "^14.0.0",
+    "markdown-it": "^14.1.0",
     "node-fetch": "^3.3.2",
     "vuepress": "^1.9.10",
     "vuepress-plugin-cursor-effects": "^1.1.6",
