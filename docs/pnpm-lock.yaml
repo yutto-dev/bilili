@@ -12,8 +12,8 @@ devDependencies:
     specifier: ^7.0.3
     version: 7.0.3
   markdown-it:
-    specifier: ^14.0.0
-    version: 14.0.0
+    specifier: ^14.1.0
+    version: 14.1.0
   node-fetch:
     specifier: ^3.3.2
     version: 3.3.2
@@ -28,7 +28,7 @@ devDependencies:
     version: 1.0.0
   vuepress-theme-vt:
     specifier: 0.15.1
-    version: 0.15.1(markdown-it@14.0.0)
+    version: 0.15.1(markdown-it@14.1.0)
 
 packages:
 
@@ -6094,7 +6094,7 @@ packages:
   /linkify-it@5.0.0:
     resolution: {integrity: sha512-5aHCbzQRADcdP+ATqnDuhhJ/MRIqDkZX5pyjFHRRysS8vZ5AbqGEoFIb6pYHPZ+L/OC2Lc+xT8uHVVR5CAK/wQ==}
     dependencies:
-      uc.micro: 2.0.0
+      uc.micro: 2.1.0
     dev: true
 
   /load-script@1.0.0:
@@ -6256,13 +6256,13 @@ packages:
       markdown-it: 8.4.2
     dev: true
 
-  /markdown-it-attrs@2.4.1(markdown-it@14.0.0):
+  /markdown-it-attrs@2.4.1(markdown-it@14.1.0):
     resolution: {integrity: sha512-BASnIYS+JLpjlhDf7jLV8VOuccxjfDDnQcz5dLfgPsYw8OsgbASexADdIkF7tIdGn+jaQSA4qOZXM3v3W3JBCg==}
     engines: {node: '>=6'}
     peerDependencies:
       markdown-it: '*'
     dependencies:
-      markdown-it: 14.0.0
+      markdown-it: 14.1.0
     dev: true
 
   /markdown-it-chain@1.3.0(markdown-it@8.4.2):
@@ -6292,8 +6292,8 @@ packages:
     engines: {node: '>6.4.0'}
     dev: true
 
-  /markdown-it@14.0.0:
-    resolution: {integrity: sha512-seFjF0FIcPt4P9U39Bq1JYblX0KZCjDLFFQPHpL5AzHpqPEKtosxmdq/LTVZnjfH7tjt9BxStm+wXcDBNuYmzw==}
+  /markdown-it@14.1.0:
+    resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
     hasBin: true
     dependencies:
       argparse: 2.0.1
@@ -6301,7 +6301,7 @@ packages:
       linkify-it: 5.0.0
       mdurl: 2.0.0
       punycode.js: 2.3.1
-      uc.micro: 2.0.0
+      uc.micro: 2.1.0
     dev: true
 
   /markdown-it@8.4.2:
@@ -8852,8 +8852,8 @@ packages:
     resolution: {integrity: sha512-8Y75pvTYkLJW2hWQHXxoqRgV7qb9B+9vFEtidML+7koHUFapnVJAZ6cKs+Qjz5Aw3aZWHMC6u0wJE3At+nSGwA==}
     dev: true
 
-  /uc.micro@2.0.0:
-    resolution: {integrity: sha512-DffL94LsNOccVn4hyfRe5rdKa273swqeA5DJpMOeFmEn1wCDc7nAbbB0gXlgBCL7TNzeTv6G7XVWzan7iJtfig==}
+  /uc.micro@2.1.0:
+    resolution: {integrity: sha512-ARDJmphmdvUk6Glw7y9DQ2bFkKBHwQHLi2lsaH6PPmz/Ka9sFOBsBluozhDltWmnv9u/cF6Rt87znRTPV+yp/A==}
     dev: true
 
   /uglify-js@3.4.10:
@@ -9290,7 +9290,7 @@ packages:
       smoothscroll-polyfill: 0.4.4
     dev: true
 
-  /vuepress-theme-vt@0.15.1(markdown-it@14.0.0):
+  /vuepress-theme-vt@0.15.1(markdown-it@14.1.0):
     resolution: {integrity: sha512-0T0w5cINi/wiFyULuwRD/8kejALgQ4uD3n4nzFHF3zinAf6cGxLAN7FGziAcbBQEDh/bKulroc+70tWvuhUYQA==}
     dependencies:
       '@vuepress/plugin-active-header-links': 1.9.9
@@ -9303,7 +9303,7 @@ packages:
       html-to-text: 7.1.3
       inquirer: 7.3.3
       lodash: 4.17.21
-      markdown-it-attrs: 2.4.1(markdown-it@14.0.0)
+      markdown-it-attrs: 2.4.1(markdown-it@14.1.0)
       markdown-it-link-attributes: 2.1.0
       node-google-translate-skidz: 1.1.2
       prism-themes: 1.9.0
