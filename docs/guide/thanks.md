@@ -40,5 +40,6 @@
 <GithubUser username="Ainavo"/>
 <GithubUser username="vaxl029"/>
 <GithubUser username="aheadlead"/>
+<GithubUser username="symant233"/>
 
 ## 以及你的支持～
