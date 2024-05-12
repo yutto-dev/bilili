@@ -41,15 +41,15 @@ docs:
   cd docs/ && pnpm dev
 
 lint:
-  {{PYTHON}} -m ruff check .
+  uv run ruff check .
 
 fmt:
-  {{PYTHON}} -m ruff format .
+  uv run ruff format .
 
 ci-api-test:
-  {{PYTHON}} -m pytest -m "api and not ci_skip" --reruns 3 --reruns-delay 1
+  uv run pytest -m "api and not ci_skip" --reruns 3 --reruns-delay 1
   just clean
 
 ci-e2e-test:
-  {{PYTHON}} -m pytest -m "e2e and not ci_skip"
+  uv run -m pytest -m "e2e and not ci_skip"
   just clean
