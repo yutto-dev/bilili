@@ -51,5 +51,5 @@ ci-api-test:
   just clean
 
 ci-e2e-test:
-  uv run -m pytest -m "e2e and not ci_skip"
+  uv run pytest -m "e2e and not ci_skip"
   just clean
