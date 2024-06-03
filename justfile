@@ -12,14 +12,14 @@ install:
   uv pip install -e ".[dev]"
 
 run *ARGS:
-  {{PYTHON}} -m bilili {{ARGS}}
+  uv run bilili {{ARGS}}
 
 test:
-  python -m pytest -m '(api or e2e) and not ci_only'
+  uv run pytest -m '(api or e2e) and not ci_only'
   just clean
 
 build:
-  {{PYTHON}} -m build
+  uv tool run --from build python -m build --installer uv .
 
 release version:
   @echo 'Tagging {{version}}...'
