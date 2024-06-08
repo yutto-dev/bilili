@@ -32,8 +32,8 @@ source = "registry+https://pypi.org/simple"
 [distribution.dev-dependencies]
 
 [[distribution.dev-dependencies.dev]]
-name = "ruff"
-version = "0.4.8"
+name = "pytest"
+version = "8.2.2"
 source = "registry+https://pypi.org/simple"
 
 [[distribution.dev-dependencies.dev]]
@@ -42,8 +42,8 @@ version = "14.0"
 source = "registry+https://pypi.org/simple"
 
 [[distribution.dev-dependencies.dev]]
-name = "pytest"
-version = "8.2.2"
+name = "ruff"
+version = "0.4.8"
 source = "registry+https://pypi.org/simple"
 
 [[distribution]]

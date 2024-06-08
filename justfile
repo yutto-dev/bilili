@@ -3,7 +3,7 @@ set positional-arguments
 PYTHON := ".venv/bin/python"
 
 setup:
-  uv sync --dev
+  uv sync
 
 clean-venv:
   rm -rf .venv
