@@ -16,8 +16,8 @@ source = "registry+https://pypi.org/simple"
 [[distribution]]
 name = "bilili"
 version = "1.4.15"
-source = "editable+file:///Users/nyakku/Projects/bilili"
-sdist = { url = "file:///Users/nyakku/Projects/bilili" }
+source = "editable+."
+sdist = { path = "." }
 
 [[distribution.dependencies]]
 name = "biliass"
@@ -154,7 +154,6 @@ wheels = [
 name = "colorama"
 version = "0.4.6"
 source = "registry+https://pypi.org/simple"
-marker = "sys_platform == 'win32'"
 sdist = { url = "https://files.pythonhosted.org/packages/d8/53/6f443c9a4a8358a93a6792e2acffb9d9d5cb0a5cfd8802644b7b1c9a02e4/colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44", size = 27697 }
 wheels = [{ url = "https://files.pythonhosted.org/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6", size = 25335 }]
 
@@ -162,7 +161,6 @@ wheels = [{ url = "https://files.pythonhosted.org/packages/d1/d6/3965ed04c63042e
 name = "exceptiongroup"
 version = "1.2.1"
 source = "registry+https://pypi.org/simple"
-marker = "python_version < '3.11'"
 sdist = { url = "https://files.pythonhosted.org/packages/a0/65/d66b7fbaef021b3c954b3bbb196d21d8a4b97918ea524f82cfae474215af/exceptiongroup-1.2.1.tar.gz", hash = "sha256:a4785e48b045528f5bfe627b6ad554ff32def154f42372786903b7abcfe1aa16", size = 28717 }
 wheels = [{ url = "https://files.pythonhosted.org/packages/01/90/79fe92dd413a9cab314ef5c591b5aa9b9ba787ae4cadab75055b0ae00b33/exceptiongroup-1.2.1-py3-none-any.whl", hash = "sha256:5258b9ed329c5bbdd31a309f53cbfb0b155341807f6ff7606a1e801a891b29ad", size = 16458 }]
 
@@ -223,11 +221,13 @@ wheels = [{ url = "https://files.pythonhosted.org/packages/4e/e7/81ebdd666d3bff6
 name = "colorama"
 version = "0.4.6"
 source = "registry+https://pypi.org/simple"
+marker = "sys_platform == 'win32'"
 
 [[distribution.dependencies]]
 name = "exceptiongroup"
 version = "1.2.1"
 source = "registry+https://pypi.org/simple"
+marker = "python_version < '3.11'"
 
 [[distribution.dependencies]]
 name = "iniconfig"
@@ -248,6 +248,7 @@ source = "registry+https://pypi.org/simple"
 name = "tomli"
 version = "2.0.1"
 source = "registry+https://pypi.org/simple"
+marker = "python_version < '3.11'"
 
 [[distribution]]
 name = "pytest-rerunfailures"
@@ -321,7 +322,6 @@ wheels = [
 name = "tomli"
 version = "2.0.1"
 source = "registry+https://pypi.org/simple"
-marker = "python_version < '3.11'"
 sdist = { url = "https://files.pythonhosted.org/packages/c0/3f/d7af728f075fb08564c5949a9c95e44352e23dee646869fa104a3b2060a3/tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f", size = 15164 }
 wheels = [{ url = "https://files.pythonhosted.org/packages/97/75/10a9ebee3fd790d20926a90a2547f0bf78f371b2f13aa822c759680ca7b9/tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc", size = 12757 }]
 
