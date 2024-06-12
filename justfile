@@ -2,14 +2,11 @@ set positional-arguments
 
 PYTHON := ".venv/bin/python"
 
-create-venv:
-  uv venv
+setup:
+  uv sync
 
 clean-venv:
   rm -rf .venv
-
-install:
-  uv pip install -e ".[dev]"
 
 run *ARGS:
   uv run bilili -- {{ARGS}}
