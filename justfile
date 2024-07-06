@@ -9,7 +9,7 @@ clean-venv:
   rm -rf .venv
 
 run *ARGS:
-  uv run bilili -- {{ARGS}}
+  uv run bilili {{ARGS}}
 
 test:
   uv run pytest -m '(api or e2e) and not ci_only'
