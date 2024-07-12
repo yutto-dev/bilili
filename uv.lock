@@ -5,10 +5,10 @@ requires-python = ">=3.8"
 name = "biliass"
 version = "1.3.11"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/cc/15/26a36e1600ec2a2c8d27e382b7cb4392d8f644795d779f06ec57c9a2c221/biliass-1.3.11.tar.gz", hash = "sha256:64c1b185cfbf1560c77516528e76042b9e71ca17b126f9625f08b771abbfc8fb", size = 23716 }
 dependencies = [
     { name = "protobuf" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/cc/15/26a36e1600ec2a2c8d27e382b7cb4392d8f644795d779f06ec57c9a2c221/biliass-1.3.11.tar.gz", hash = "sha256:64c1b185cfbf1560c77516528e76042b9e71ca17b126f9625f08b771abbfc8fb", size = 23716 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/08/bc/792d6683ee3d14ad64988f65efe871cd511d3c85cd7f9d9899dc327313a7/biliass-1.3.11-py3-none-any.whl", hash = "sha256:e84defc6123ad3dd3c47907d91580a42a3e891e1b752a793b5f6794edf6f64b0", size = 24451 },
 ]
@@ -198,7 +198,6 @@ wheels = [
 name = "pytest"
 version = "8.2.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/a6/58/e993ca5357553c966b9e73cb3475d9c935fe9488746e13ebdf9b80fae508/pytest-8.2.2.tar.gz", hash = "sha256:de4bb8104e201939ccdc688b27a89a7be2079b22e2bd2b07f806b6ba71117977", size = 1427980 }
 dependencies = [
     { name = "colorama", marker = "sys_platform == 'win32'" },
     { name = "exceptiongroup", marker = "python_version < '3.11'" },
@@ -207,6 +206,7 @@ dependencies = [
     { name = "pluggy" },
     { name = "tomli", marker = "python_version < '3.11'" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/a6/58/e993ca5357553c966b9e73cb3475d9c935fe9488746e13ebdf9b80fae508/pytest-8.2.2.tar.gz", hash = "sha256:de4bb8104e201939ccdc688b27a89a7be2079b22e2bd2b07f806b6ba71117977", size = 1427980 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/4e/e7/81ebdd666d3bff6670d27349b5053605d83d55548e6bd5711f3b0ae7dd23/pytest-8.2.2-py3-none-any.whl", hash = "sha256:c434598117762e2bd304e526244f67bf66bbd7b5d6cf22138be51ff661980343", size = 339873 },
 ]
@@ -215,11 +215,11 @@ wheels = [
 name = "pytest-rerunfailures"
 version = "14.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/cc/a4/6de45fe850759e94aa9a55cda807c76245af1941047294df26c851dfb4a9/pytest-rerunfailures-14.0.tar.gz", hash = "sha256:4a400bcbcd3c7a4ad151ab8afac123d90eca3abe27f98725dc4d9702887d2e92", size = 21350 }
 dependencies = [
     { name = "packaging" },
     { name = "pytest" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/cc/a4/6de45fe850759e94aa9a55cda807c76245af1941047294df26c851dfb4a9/pytest-rerunfailures-14.0.tar.gz", hash = "sha256:4a400bcbcd3c7a4ad151ab8afac123d90eca3abe27f98725dc4d9702887d2e92", size = 21350 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/dc/e7/e75bd157331aecc190f5f8950d7ea3d2cf56c3c57fb44da70e60b221133f/pytest_rerunfailures-14.0-py3-none-any.whl", hash = "sha256:4197bdd2eaeffdbf50b5ea6e7236f47ff0e44d1def8dae08e409f536d84e7b32", size = 12709 },
 ]
@@ -228,13 +228,13 @@ wheels = [
 name = "requests"
 version = "2.32.3"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/63/70/2bf7780ad2d390a8d301ad0b550f1581eadbd9a20f896afe06353c2a2913/requests-2.32.3.tar.gz", hash = "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760", size = 131218 }
 dependencies = [
     { name = "certifi" },
     { name = "charset-normalizer" },
     { name = "idna" },
     { name = "urllib3" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/63/70/2bf7780ad2d390a8d301ad0b550f1581eadbd9a20f896afe06353c2a2913/requests-2.32.3.tar.gz", hash = "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760", size = 131218 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f9/9b/335f9764261e915ed497fcdeb11df5dfd6f7bf257d4a6a2a686d80da4d54/requests-2.32.3-py3-none-any.whl", hash = "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6", size = 64928 },
 ]
