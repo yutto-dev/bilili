@@ -2,6 +2,7 @@
   "name": "bilili-docs",
   "description": "bilili documentation",
   "license": "CC0-1.0",
+  "packageManager": "pnpm@9.5.0",
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider BILILI_VERSIONS=`node scripts/get_latest_version.mjs bilili yutto` vuepress dev",
     "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider BILILI_VERSIONS=`node scripts/get_latest_version.mjs bilili yutto` vuepress build",
@@ -11,7 +12,6 @@
     "@vuepress/plugin-back-to-top": "^1.9.10",
     "cross-env": "^7.0.3",
     "markdown-it": "^14.1.0",
-    "node-fetch": "^3.3.2",
     "vuepress": "^1.9.10",
     "vuepress-plugin-cursor-effects": "^1.1.6",
     "vuepress-plugin-dynamic-title": "^1.0.0",
