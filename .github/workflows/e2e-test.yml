@@ -37,7 +37,7 @@ jobs:
       - name: Initialize venv and install packages
         run: |
           pipx install uv
-          just setup
+          just install
           source .venv/bin/activate
 
       - name: e2e without subprocess

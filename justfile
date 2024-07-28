@@ -1,8 +1,8 @@
 set positional-arguments
 
-PYTHON := ".venv/bin/python"
+VERSION := `uv run python -c "import sys; from bilili.__version__ import VERSION as bilili_version; sys.stdout.write(bilili_version)"`
 
-setup:
+install:
   uv sync
 
 clean-venv:
@@ -18,9 +18,9 @@ test:
 build:
   uv tool run --from build python -m build --installer uv .
 
-release version:
-  @echo 'Tagging {{version}}...'
-  git tag {{version}}
+release:
+  @echo 'Tagging {{VERSION}}...'
+  git tag {{VERSION}}
   @echo 'Push to GitHub to trigger publish process...'
   git push --tags
 
