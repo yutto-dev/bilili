@@ -36,9 +36,9 @@ bilili = "bilili.__main__:main"
 
 [tool.uv]
 dev-dependencies = [
-  "pytest>=7.4.0",
-  "ruff==0.4.8",
-  "pytest-rerunfailures>=11.0",
+  "pytest>=8.3.0",
+  "ruff==0.5.5",
+  "pytest-rerunfailures>=14.0",
 ]
 
 [tool.uv.sources]
