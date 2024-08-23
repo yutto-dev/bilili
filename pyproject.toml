@@ -41,12 +41,6 @@ dev-dependencies = [
   "pytest-rerunfailures>=14.0",
 ]
 
-[tool.uv.sources]
-bilili = { workspace = true }
-
-[tool.uv.workspace]
-include = ["src/bilili"]
-
 [tool.setuptools.packages.find]
 where = ["src"]
 
