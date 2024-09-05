@@ -16,7 +16,7 @@ test:
   just clean
 
 build:
-  uv tool run --from build python -m build --installer uv .
+  uv build
 
 release:
   @echo 'Tagging {{VERSION}}...'
