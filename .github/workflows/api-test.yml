@@ -18,6 +18,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v1
+
       - name: Install python
         uses: actions/setup-python@v5
         with:
@@ -29,11 +32,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Initialize venv and install packages
+      - name: Install dependencies
         run: |
-          pipx install uv
-          just install
-          source .venv/bin/activate
+          just ci-install
 
       - name: Test bilili API
         run: |

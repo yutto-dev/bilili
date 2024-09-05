@@ -43,6 +43,9 @@ lint:
 fmt:
   uv run ruff format .
 
+ci-install:
+  just install
+
 ci-api-test:
   uv run pytest -m "api and not ci_skip" --reruns 3 --reruns-delay 1
   just clean

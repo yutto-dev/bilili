@@ -18,6 +18,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v1
+
       - name: Install python
         uses: actions/setup-python@v5
         with:
@@ -34,11 +37,9 @@ jobs:
           sudo apt update
           sudo apt install ffmpeg
 
-      - name: Initialize venv and install packages
+      - name: Install dependencies
         run: |
-          pipx install uv
-          just install
-          source .venv/bin/activate
+          just ci-install
 
       - name: e2e without subprocess
         run: |
