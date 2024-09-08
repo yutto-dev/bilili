@@ -3,7 +3,6 @@ import os
 import re
 import sys
 import time
-from typing import List
 from urllib.parse import quote, unquote
 
 from .__version__ import VERSION as bilili_version
@@ -25,7 +24,7 @@ from .utils.thread import Flag, ThreadPool
 from .video import BililiContainer
 
 
-def parse_episodes(episodes_str: str, total: int) -> List[int]:
+def parse_episodes(episodes_str: str, total: int) -> list[int]:
     """将选集字符串转为列表"""
 
     if total == 0:

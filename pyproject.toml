@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "bilili"
 description = "🍻 bilibili video and danmaku downloader | B站视频、弹幕下载器"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 authors = [{ name = "Nyakku Shigure", email = "sigure.qaq@gmail.com" }]
 keywords = ["python", "bilibili", "video", "download", "spider", "danmaku"]
 license = { text = "GPLv3" }
@@ -16,7 +16,6 @@ classifiers = [
   "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -49,7 +48,7 @@ version = { attr = "bilili.__version__.VERSION" }
 
 [tool.ruff]
 line-length = 120
-target-version = "py38"
+target-version = "py39"
 
 [tool.ruff.lint]
 select = [

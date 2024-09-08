@@ -16,9 +16,9 @@
    -  `https://www.bilibili.com/bangumi/play/epxxxxxx` 番剧的播放页（ep 号的）也是可以哒
    -  `https://b23.tv/epxxxxxx` 当然也包括它的短链接啦
 
-## 我的解释器：Python <Badge type="tip" text="3.8+"/>
+## 我的解释器：Python <Badge type="tip" text="3.9+"/>
 
-为了能够正常与你交流，你需要先安装 Python 前辈，当然一定要是 3.8 以上的版本，不然她可能也不知道我在说什么。
+为了能够正常与你交流，你需要先安装 Python 前辈，当然一定要是 3.9 以上的版本，不然她可能也不知道我在说什么。
 
 如果你是 Windows，请自行去 [Python 官网](https://www.python.org/)下载并安装，安装时记得要勾选「Add to PATH」选项，不然可能需要你手动添加到环境变量。
 

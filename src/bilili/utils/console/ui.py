@@ -3,7 +3,7 @@ import os
 import platform
 import shutil
 import sys
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Optional, Union
 
 from ..base import get_string_width
 from .colorful import Back, Fore, Style, colored_string
@@ -12,7 +12,7 @@ from .logger import Logger
 IS_WINDOWS = platform.system() == "Windows"
 
 
-def get_terminal_size() -> Tuple[int, int]:
+def get_terminal_size() -> tuple[int, int]:
     """Get the size of the console.
     @refs: https://github.com/willmcgugan/rich/blob/e5246436cd75de32f3436cc88d6e4fdebe13bd8d/rich/console.py#L918-L951
     Returns:
@@ -87,7 +87,7 @@ class View:
         return get_terminal_size()[1]
 
     @classmethod
-    def calc_area_size(cls, string: str) -> Tuple[int, int]:
+    def calc_area_size(cls, string: str) -> tuple[int, int]:
         lines = string.split("\n")
         return (len(lines), get_string_width(lines[0]))
 
@@ -232,7 +232,7 @@ class Center(Component):
 
 
 class ProgressBar(Component):
-    def __init__(self, symbols: Union[str, List[str]] = "░▏▎▍▌▋▊▉█", width: int = View.get_width()):
+    def __init__(self, symbols: Union[str, list[str]] = "░▏▎▍▌▋▊▉█", width: int = View.get_width()):
         super().__init__()
         self.width = width
         self.symbols = symbols
@@ -256,7 +256,7 @@ class ProgressBar(Component):
 
 
 class DynamicSymbol(Component):
-    def __init__(self, symbols: Union[str, List[str]] = "⠁⠂⠄⡀⢀⠠⠐⠈"):
+    def __init__(self, symbols: Union[str, list[str]] = "⠁⠂⠄⡀⢀⠠⠐⠈"):
         super().__init__()
         self.symbols = symbols
         self.index = 0
