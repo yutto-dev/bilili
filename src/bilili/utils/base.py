@@ -1,7 +1,7 @@
 import os
 import random
 import re
-from typing import Any, Optional, Tuple
+from typing import Any, Optional
 
 
 class Ref:
@@ -56,7 +56,7 @@ def touch_file(path: str) -> str:
     return os.path.normpath(path)
 
 
-def touch_url(url: str, spider) -> Tuple[Optional[str], bool]:
+def touch_url(url: str, spider) -> tuple[Optional[str], bool]:
     """与资源进行测试连接，并获取该资源的 size 与 是否可以断点续传"""
     # 某些资源 head 无法获得真实 size
     methods = [spider.head, spider.get]

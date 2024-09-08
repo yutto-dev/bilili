@@ -1,6 +1,7 @@
 import os
 import random
-from typing import Callable, List, Tuple, Union
+from collections.abc import Callable
+from typing import Union
 
 import requests
 
@@ -22,7 +23,7 @@ class RemoteFile(Handler):
     updated: Callable[..., None]
 
     def __init__(
-        self, url: str, local_path: str, mirrors: List[str] = [], range: Tuple[int, Union[int, str]] = (0, "")
+        self, url: str, local_path: str, mirrors: list[str] = [], range: tuple[int, Union[int, str]] = (0, "")
     ):
         super().__init__(["before_download", "before_update", "updated", "downloaded"])
         self.url = url

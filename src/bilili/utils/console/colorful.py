@@ -1,6 +1,6 @@
 import os
 import sys
-from typing import Dict, Optional
+from typing import Optional
 
 # 使部分终端正确显示颜色
 if sys.platform == "win32":
@@ -9,7 +9,7 @@ if sys.platform == "win32":
 Fore = str
 Back = str
 Style = str
-CodeMap = Dict[str, Dict[str, int]]
+CodeMap = dict[str, dict[str, int]]
 
 _no_color = False
 

@@ -2,7 +2,6 @@ import os
 import random
 import shutil
 import subprocess
-from typing import List
 
 
 class FFmpegNotFoundError(Exception):
@@ -31,7 +30,7 @@ class FFmpeg:
         if hasattr(self, "tmp_dir") and os.path.exists(self.tmp_dir):
             shutil.rmtree(self.tmp_dir)
 
-    def exec(self, params: List[str]):
+    def exec(self, params: list[str]):
         """调用 ffmpeg"""
         cmd = [self.path]
         cmd.extend(params)
@@ -48,7 +47,7 @@ class FFmpeg:
         ]  # fmt: skip
         self.exec(params)
 
-    def join_videos(self, video_path_list: List[str], output_path: str) -> None:
+    def join_videos(self, video_path_list: list[str], output_path: str) -> None:
         """将视频拼接起来"""
 
         concat_list_path = os.path.join(self.tmp_dir, f"concat_list_{random.randint(0, 9999):04}.tmp").replace(

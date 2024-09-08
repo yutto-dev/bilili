@@ -1,5 +1,5 @@
 import os
-from typing import Dict
+from typing import Any
 
 import requests
 
@@ -19,15 +19,13 @@ class Crawler(requests.Session):
         self.headers.update(Crawler.header)
         self.verify = False
 
-    def set_cookies(self, cookies: Dict[str, str]):
+    def set_cookies(self, cookies: dict[str, str]):
         """传入一个字典，用于设置 cookies"""
 
         self.cookies_dict = cookies
         requests.utils.add_dict_to_cookiejar(self.cookies, cookies)
 
-    def download_bin(
-        self, url: str, file_path: str, stream: bool = True, chunk_size: int = 1024, **kw: Dict[str, str]
-    ) -> None:
+    def download_bin(self, url: str, file_path: str, stream: bool = True, chunk_size: int = 1024, **kw: Any) -> None:
         """下载二进制文件"""
 
         res = self.get(url, stream=stream, **kw)
@@ -52,7 +50,7 @@ class Crawler(requests.Session):
         else:
             os.rename(tmp_path, file_path)
 
-    def download_text(self, url: str, file_path: str, **kw: Dict[str, str]) -> None:
+    def download_text(self, url: str, file_path: str, **kw: Any) -> None:
         """下载文本，以 UTF-8 编码保存文件"""
 
         res = self.get(url, **kw)

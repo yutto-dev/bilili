@@ -1,12 +1,10 @@
-from typing import List, Union
-
 from ..utils.console.logger import Logger
 
 
 class Status:
     """多层次状态管理类"""
 
-    def __init__(self, parent: Union["Status", None] = None, children: List["Status"] = []):
+    def __init__(self, parent: "Status | None" = None, children: list["Status"] = []):
         self.parent = None
         self.children = []
         if parent is not None:
@@ -21,7 +19,7 @@ class Status:
     def set_parent(self, parent: "Status"):
         parent.add_child(self)
 
-    def add_children(self, children: List["Status"]):
+    def add_children(self, children: list["Status"]):
         for child in children:
             self.add_child(child)
 
@@ -37,7 +35,7 @@ class Status:
 class DownloaderStatus(Status):
     """下载状态类"""
 
-    def __init__(self, parent: Union["Status", None] = None, children: List["Status"] = []):
+    def __init__(self, parent: "Status | None" = None, children: list["Status"] = []):
         super().__init__(parent=parent, children=children)
         self.__total_size: int = 0
         self.__size: int = 0

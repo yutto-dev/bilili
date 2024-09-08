@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import List
 
 
 class Media(Enum):
@@ -95,7 +94,7 @@ audio_quality_map = {
 }
 
 
-def gen_quality_sequence(quality: int = 127, type: Media = Media.VIDEO) -> List[int]:
+def gen_quality_sequence(quality: int = 127, type: Media = Media.VIDEO) -> list[int]:
     """根据默认先降后升的清晰度机制生成清晰度序列"""
     quality_sequence_default = {
         Media.VIDEO: video_quality_sequence_default,

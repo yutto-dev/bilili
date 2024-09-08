@@ -1,12 +1,10 @@
-from typing import List
-
 noop = lambda *args, **kwargs: None
 
 
 class Handler:
     """事件处理器"""
 
-    def __init__(self, events: List[str] = []):
+    def __init__(self, events: list[str] = []):
         """初始化事件处理器
 
         Args:
