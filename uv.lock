@@ -3,14 +3,24 @@ requires-python = ">=3.9"
 
 [[package]]
 name = "biliass"
-version = "1.3.13"
+version = "2.1.0"
 source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "protobuf" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/2f/6c/65b25e28185ce6bdbb3b3906ac5cc64b81d9b24fc7905358016e3b33d6b1/biliass-1.3.13.tar.gz", hash = "sha256:744d661df982453e21ee38036926c5bd7598079fa699030a48c7aefa8fc5a7e1", size = 24605 }
+sdist = { url = "https://files.pythonhosted.org/packages/46/e0/8ef67c46c28ee8587a849209e191f5b88eb19c9bf31f73cdd35222eec065/biliass-2.1.0.tar.gz", hash = "sha256:c9548564e7f4efa0e75610cc2a0bf31e4d716d906141155ebf670e7c7192e1bf", size = 31604 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a9/48/b71bca4ce75d3f70137d431dd0f04026b9e4040fd21ecdad096be820e179/biliass-1.3.13-py3-none-any.whl", hash = "sha256:0f67e55415eb79a7010bb9fbd220ec7767bbab661969025bdd8413bb308d51f9", size = 25728 },
+    { url = "https://files.pythonhosted.org/packages/cc/8d/e777d7090ba8d15f8cdef4bf8b1eab4fd5551d6ad70647cb01a0226391e6/biliass-2.1.0-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:8f834fc8dabcec160b7af5adb7c1a8700fa5462d07732273c930217e3d5f8a9a", size = 1124839 },
+    { url = "https://files.pythonhosted.org/packages/3f/73/e1904ee2fc74da27a92ebc9901e930ac8172b94a7136b72b83406d8c063a/biliass-2.1.0-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:b594f851aef082aa821aa11b63b0037ed97c6f6dd3dcd0ede2cc7ddcc0e61086", size = 1074091 },
+    { url = "https://files.pythonhosted.org/packages/3f/b4/f3d1e3b90231faa07d75f15c6d1c9326bd4908a57d90285c2b221cad894c/biliass-2.1.0-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3155e6db4b67cf6df3bcb1c8621504a7c197204893b85c08c8cb4d2472774d32", size = 1263558 },
+    { url = "https://files.pythonhosted.org/packages/d7/26/9e1ce4dee4bd4bc3a39b819a40b6c01333c2fe7789a9dd1ff952db616646/biliass-2.1.0-cp39-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:918bdd5426973a35e11acd84da4963a8ba2462c986d3769943ef00f3dbb6698a", size = 1211210 },
+    { url = "https://files.pythonhosted.org/packages/e4/55/c66a004730b1f85c947d460dabd305d5de0dfacf11f593f1142a627134b5/biliass-2.1.0-cp39-abi3-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:e740adfaac73fc56d4cfed04e450af5f52028e12be49b73f9823f5ef827960ff", size = 1293640 },
+    { url = "https://files.pythonhosted.org/packages/de/47/937dc2a15b90eef7877db8be0f7592d79b1751df21f288f6d48a4de3d4db/biliass-2.1.0-cp39-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:046d0bdc606e1cd72b74fd50191e227b910acea613063d5f3d118e8fb784f40c", size = 1350636 },
+    { url = "https://files.pythonhosted.org/packages/d4/af/f03a3b7c43c4c5ae8a98787df006ead31de15d00db83f031c21be5a72118/biliass-2.1.0-cp39-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:4a4de37e1520ef554778631db65cb2be3b38129d9ab59af2cf7966c3b1d7dc6d", size = 1401829 },
+    { url = "https://files.pythonhosted.org/packages/d0/7e/77627edb19c0c7079a4fab19c62539770d4dde9350b0b096670ad466931f/biliass-2.1.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:693e9b0577a47195276520261500485c7d5b230abdecfd5dca543aa0cdb0914f", size = 1285001 },
+    { url = "https://files.pythonhosted.org/packages/81/97/2d83e1f392731a4c402898da96c4458192c84e3ceeced2c3a308519670d4/biliass-2.1.0-cp39-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:5e7205157a68ba0c1e2820cdc4d109b5b07a5bbef3dba549067dd144ea57b9f7", size = 1415361 },
+    { url = "https://files.pythonhosted.org/packages/0c/74/7ef1404c05e1ed7dd18e40242399cf140eab1bcd2aec11e30271a816b4b0/biliass-2.1.0-cp39-abi3-musllinux_1_2_armv7l.whl", hash = "sha256:6e7f4f0082c5918195a4ff5303564e7c9047addc05e460916439bb39f528e335", size = 1435308 },
+    { url = "https://files.pythonhosted.org/packages/c0/2c/1cc63ff4e4ba925655b033f271e299f8e96af8807a0ee5dae8aba56c36df/biliass-2.1.0-cp39-abi3-musllinux_1_2_i686.whl", hash = "sha256:5f68abd8f5e22c1c4458ebaf82cea626e4dbf720db155e72aa70f3e13da782dc", size = 1392390 },
+    { url = "https://files.pythonhosted.org/packages/3f/89/eda0a77f277cbc8703a3f1a5291cfe065000bed8a760339c8327ce69188f/biliass-2.1.0-cp39-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:9f1fb880249f02e234f277dad52401ef3c23237c74b994bd720a4819a76a2bb3", size = 1433597 },
+    { url = "https://files.pythonhosted.org/packages/60/3b/bb10bde29cdf8c590d33c3500c2ff8417cb5d8d4e2d6e5981375d10984ce/biliass-2.1.0-cp39-abi3-win32.whl", hash = "sha256:d60bef8219fe1a5de2c69c1f6122b351ab55ca929179346e54b42afd1839914e", size = 871750 },
+    { url = "https://files.pythonhosted.org/packages/e8/a8/d6d800059df095389743f13f6437b7bd58ef06bb273b751a98c1ccc436c0/biliass-2.1.0-cp39-abi3-win_amd64.whl", hash = "sha256:6625661a040235e51b52376a80130b4c032f20ce11246ea1612fde052356993a", size = 951888 },
 ]
 
 [[package]]
@@ -31,7 +41,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "biliass", specifier = "==1.3.13" },
+    { name = "biliass", specifier = "==2.1.0" },
     { name = "requests", specifier = ">=2.27.0" },
 ]
 
@@ -172,22 +182,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/96/2d/02d4312c973c6050a18b314a5ad0b3210edb65a906f868e31c111dede4a6/pluggy-1.5.0.tar.gz", hash = "sha256:2cffa88e94fdc978c4c574f15f9e59b7f4201d439195c3715ca9e2486f1d0cf1", size = 67955 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/88/5f/e351af9a41f866ac3f1fac4ca0613908d9a41741cfcf2228f4ad853b697d/pluggy-1.5.0-py3-none-any.whl", hash = "sha256:44e1ad92c8ca002de6377e165f3e0f1be63266ab4d554740532335b9d75ea669", size = 20556 },
-]
-
-[[package]]
-name = "protobuf"
-version = "5.28.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/3c/0b/7a997c8939f698d72bdea14d57116e43d3051fffb3b2964c30938c4a08e6/protobuf-5.28.1.tar.gz", hash = "sha256:42597e938f83bb7f3e4b35f03aa45208d49ae8d5bcb4bc10b9fc825e0ab5e423", size = 422422 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/5a/d6/6dedb8a2fbbeb4ac92bb9dd830f77800bbe353799eb8b11d2659beffb9f4/protobuf-5.28.1-cp310-abi3-win32.whl", hash = "sha256:fc063acaf7a3d9ca13146fefb5b42ac94ab943ec6e978f543cd5637da2d57957", size = 419673 },
-    { url = "https://files.pythonhosted.org/packages/28/ff/6af7b6fad3bd85820f00f3753a2ebd6bdd9dbf29da5a4252e9f402bdfe2a/protobuf-5.28.1-cp310-abi3-win_amd64.whl", hash = "sha256:4c7f5cb38c640919791c9f74ea80c5b82314c69a8409ea36f2599617d03989af", size = 431486 },
-    { url = "https://files.pythonhosted.org/packages/99/80/46b61e647a9386f5dc836e9660818f79afd80a4d5802535ec07a7c6aa16e/protobuf-5.28.1-cp38-abi3-macosx_10_9_universal2.whl", hash = "sha256:4304e4fceb823d91699e924a1fdf95cde0e066f3b1c28edb665bda762ecde10f", size = 414743 },
-    { url = "https://files.pythonhosted.org/packages/b3/21/33dbf04427a11c2de5fb835bb37c5d1522e9d5556a92df0acd13644860a9/protobuf-5.28.1-cp38-abi3-manylinux2014_aarch64.whl", hash = "sha256:0dfd86d2b5edf03d91ec2a7c15b4e950258150f14f9af5f51c17fa224ee1931f", size = 316526 },
-    { url = "https://files.pythonhosted.org/packages/c0/be/bac52549cab1aaab112d380b3f2a80a348ba7083a80bf4ff4be4fb5a6729/protobuf-5.28.1-cp38-abi3-manylinux2014_x86_64.whl", hash = "sha256:51f09caab818707ab91cf09cc5c156026599cf05a4520779ccbf53c1b352fb25", size = 316613 },
-    { url = "https://files.pythonhosted.org/packages/01/bf/16e5687b8075b0a8aeb1c015d4b6fa02b5e986858b03dab9445f940d6acb/protobuf-5.28.1-cp39-cp39-win32.whl", hash = "sha256:4b4b9a0562a35773ff47a3df823177ab71a1f5eb1ff56d8f842b7432ecfd7fd2", size = 419596 },
-    { url = "https://files.pythonhosted.org/packages/96/a3/0f2ddc643387e2c13dbb1a3d7d91a184d9deed3da8b3dc1513db79ab896a/protobuf-5.28.1-cp39-cp39-win_amd64.whl", hash = "sha256:f24e5d70e6af8ee9672ff605d5503491635f63d5db2fffb6472be78ba62efd8f", size = 431558 },
-    { url = "https://files.pythonhosted.org/packages/51/3d/71fae0078424ba8ea70b222b6fa56ef771a9918ab91cee806c2abc9d57fa/protobuf-5.28.1-py3-none-any.whl", hash = "sha256:c529535e5c0effcf417682563719e5d8ac8d2b93de07a56108b4c2d436d7a29a", size = 169572 },
 ]
 
 [[package]]
