@@ -2,7 +2,7 @@
   "name": "bilili-docs",
   "description": "bilili documentation",
   "license": "CC0-1.0",
-  "packageManager": "pnpm@9.12.0",
+  "packageManager": "pnpm@9.12.1",
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider BILILI_VERSIONS=`node scripts/get_latest_version.mjs bilili yutto` vuepress dev",
     "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider BILILI_VERSIONS=`node scripts/get_latest_version.mjs bilili yutto` vuepress build",
