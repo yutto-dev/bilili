@@ -18,7 +18,9 @@
 
 **文档戳这里啦 → [bilili の可愛い自己紹介](https://bilili.nyakku.moe)**
 
-如果想要体验 v2 请戳这里 → [yutto<sup>2.0.0-rc</sup>](https://github.com/yutto-dev/yutto)
+> [!WARNING]
+>
+> 由于 B 站近期 API 的变动较大，导致 bilili 部分功能无法正常使用，相关问题已在 v2 版本（[yutto](https://github.com/yutto-dev/yutto)）中修复，限于个人精力，无法同时维护两个版本，所以建议大家尽快迁移至 v2 版本，感谢大家一直以来对 bilili 的支持～
 
 ## 特性
 

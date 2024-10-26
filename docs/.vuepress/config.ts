@@ -101,6 +101,7 @@ export default defineConfig4CustomTheme<ThemeConfig>({
         'thanks',
       ],
     },
+    status: '<DeprecationNotice />',
     repo: 'yutto-dev/bilili',
     docsDir: 'docs',
     docsBranch: 'main',
